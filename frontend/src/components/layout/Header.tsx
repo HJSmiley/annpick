@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  openLoginModal: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -48,12 +52,12 @@ const Header: React.FC = () => {
             </nav>
           </div>
           <div>
-            <Link 
-              to="/login" 
-              className={`hover:text-orange-500 transition-colors ${isActive('/login') ? 'text-orange-500' : 'text-gray-500'}`}
+            <button 
+              onClick={openLoginModal}
+              className="hover:text-orange-500 transition-colors text-gray-500"
             >
               로그인/가입
-            </Link>
+            </button>
           </div>
         </div>
       </div>

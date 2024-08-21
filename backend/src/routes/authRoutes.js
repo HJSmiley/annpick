@@ -1,4 +1,3 @@
-// src/routes/index.js
 const express = require("express");
 const passport = require("../config/passportConfig");
 const authenticateToken = require("../middleware/authMiddleware");
@@ -45,8 +44,39 @@ router.get("/", (req, res) => {
     `);
 });
 
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: Authentication routes
+ */
+
+/**
+ * @swagger
+ * /auth/naver:
+ *   get:
+ *     summary: 네이버 로그인
+ *     tags: [Auth]
+ *     responses:
+ *       302:
+ *         description: 네이버 로그인 페이지로 리디렉션
+ */
+
 // 네이버 로그인 라우트
 router.get("/auth/naver", passport.authenticate("naver"));
+
+/**
+ * @swagger
+ * /auth/naver/callback:
+ *   get:
+ *     summary: 네이버 로그인 콜백
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: 네이버 로그인 성공 후 리디렉션
+ *       401:
+ *         description: 인증 실패
+ */
 
 // 네이버 인증 후 콜백 라우트 (여기서 JWT 토큰 생성 및 반환)
 router.get(

@@ -1,6 +1,7 @@
 const { express, cors, bodyParser, passport } = require("./config/appConfig");
 const sequelize = require("./config/dbConfig");
-const indexRoutes = require("./routes/index");
+const { swaggerUi, swaggerSpec } = require("./config/swaggerConfig");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -21,9 +22,12 @@ app.use(cors());
 app.use(bodyParser.json()); // JSON 요청 파싱
 app.use(bodyParser.urlencoded({ extended: true })); // URL-encoded 요청 파싱
 
+// Swagger UI 설정
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // Passport 초기화
 app.use(passport.initialize());
 
-app.use("/", indexRoutes);
+app.use("/", authRoutes);
 
 module.exports = app;

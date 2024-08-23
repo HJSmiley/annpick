@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+  </head>
+  <body>
+    <h1>Welcome to the Home Page</h1>
+    <a href="/auth/naver">네이버 로그인</a><br /><br />
+    <button id="profileButton">Go to Profile</button>
+    <script>
+      document.getElementById("profileButton").onclick = function () {
+        const token = localStorage.getItem("jwtToken"); // localStorage에서 토큰 가져오기
+
+        if (token) {
+          fetch("/profile", {
+            method: "GET",
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Unauthorized");
+              }
+              return response.text(); // HTML 텍스트로 응답을 처리
+            })
+            .then((html) => {
+              // 응답으로 받은 HTML을 현재 페이지에 삽입
+              document.open();
+              document.write(html);
+              document.close();
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("Failed to load profile page. Please try again.");
+            });
+        } else {
+          console.error("No JWT token found, please login first.");
+          alert("No JWT token found. Please login first.");
+        }
+      };
+    </script>
+  </body>
+</html>

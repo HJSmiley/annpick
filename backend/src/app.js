@@ -2,8 +2,14 @@ const { express, cors, bodyParser, passport } = require("./config/appConfig");
 const sequelize = require("./config/dbConfig");
 const { swaggerUi, swaggerSpec } = require("./config/swaggerConfig");
 const authRoutes = require("./routes/authRoutes");
+const profileRoutes = require("./routes/profileRoutes");
+const path = require("path");
 
 const app = express();
+
+// 템플릿 엔진 설정
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 
 // Sequelize 데이터베이스 동기화
 sequelize
@@ -15,19 +21,15 @@ sequelize
     console.error("An error occurred while synchronizing the models:", err);
   });
 
-// CORS 미들웨어 설정
+// 미들웨어 설정
 app.use(cors());
-
-// Body Parser 미들웨어 설정
-app.use(bodyParser.json()); // JSON 요청 파싱
-app.use(bodyParser.urlencoded({ extended: true })); // URL-encoded 요청 파싱
-
-// Swagger UI 설정
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Passport 초기화
-app.use(passport.initialize());
-
+// 라우트 설정
 app.use("/", authRoutes);
+app.use("/", profileRoutes);
 
 module.exports = app;

@@ -9,21 +9,19 @@ interface Slide {
 
 const PromotionBanner: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  console.log('디렉토리 위치',__dirname); // 현재 파일이 위치한 디렉토리 경로
-console.log('파일 위치',__filename); // 현재 파일의 전체 경로
 
   const slides: Slide[] = [
-    { imageUrl: '/images/istock.jpg', link: '/promo1', title: '바보' },
-    { imageUrl: '/images/istock2.jpg', link: '/promo2', title: '프로모션 2' },
-    { imageUrl: '/images/istock3.jpg', link: '/promo3', title: '프로모션 3' },
-    { imageUrl: '/images/istock4.png', link: '/promo4', title: '프로모션 4' },
-    // 최대 5개까지 추가 가능
+    { imageUrl: '/images/지브리1.png', link: '/promo4', title: '프로모션 4' },
+    { imageUrl: '/images/지브리2.jpg', link: '/promo5', title: '프로모션 5' },
+    { imageUrl: '/images/지브리7.jpg', link: '/promo6', title: '프로모션 6' },
+    { imageUrl: '/images/지브리10.jpg', link: '/promo7', title: '프로모션 7' },
+    { imageUrl: '/images/지브리16.jpg', link: '/promo8', title: '프로모션 8' },
   ];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 4000); // 4초마다 슬라이드 변경
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [slides.length]);
@@ -37,7 +35,7 @@ console.log('파일 위치',__filename); // 현재 파일의 전체 경로
   };
 
   return (
-    <div className="relative h-[70vh] overflow-hidden"> {/* 높이를 70vh로 조정 */}
+    <div className="relative h-[80vh] overflow-hidden">
       {slides.map((slide, index) => (
         <div
           key={index}

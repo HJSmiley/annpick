@@ -25,25 +25,25 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow' : 'bg-transparent'}`}>
+    <header className={`absolute top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow' : 'bg-transparent'}`}>
       <div className="container mx-auto px-4 md:px-8 lg:px-16">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center space-x-8">
-            <Link to="/" className="text-2xl font-bold text-black">엔픽</Link>
+            <Link to="/" className={`text-2xl font-bold ${isScrolled ? 'text-black' : 'text-white'}`}>엔픽</Link>
             <nav>
               <ul className="flex space-x-6">
                 <li>
-                  <Link 
-                    to="/" 
-                    className={`hover:text-orange-500 transition-colors ${isActive('/') ? 'text-orange-500' : 'text-gray-500'}`}
+                  <Link
+                    to="/"
+                    className={`hover:text-orange-500 transition-colors ${isActive('/') ? 'text-orange-500' : isScrolled ? 'text-gray-500' : 'text-white'}`}
                   >
                     홈
                   </Link>
                 </li>
                 <li>
-                  <Link 
-                    to="/anime-search" 
-                    className={`hover:text-orange-500 transition-colors ${isActive('/anime-search') ? 'text-orange-500' : 'text-gray-500'}`}
+                  <Link
+                    to="/anime-search"
+                    className={`hover:text-orange-500 transition-colors ${isActive('/anime-search') ? 'text-orange-500' : isScrolled ? 'text-gray-500' : 'text-white'}`}
                   >
                     애니 검색
                   </Link>
@@ -52,9 +52,9 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
             </nav>
           </div>
           <div>
-            <button 
+            <button
               onClick={openLoginModal}
-              className="hover:text-orange-500 transition-colors text-gray-500"
+              className={`hover:text-orange-500 transition-colors ${isScrolled ? 'text-gray-500' : 'text-white'}`}
             >
               로그인/가입
             </button>

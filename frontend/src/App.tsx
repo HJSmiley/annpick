@@ -19,10 +19,10 @@ const App: React.FC = () => {
     <Router>
       <div className="flex flex-col min-h-screen">
         <Header openLoginModal={openLoginModal} />
-        <main className="flex-grow pt-16">
+        <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home openLoginModal={openLoginModal} />} />
-            <Route path="/anime-search" element={<AnimeSearch/>} />
+            <Route path="/anime-search" element={<AnimeSearch />} />
             <Route path="/login" element={<Login />} />
             <Route path="/anime/:id" element={<AnimeDetail />} />
           </Routes>

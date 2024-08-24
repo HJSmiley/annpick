@@ -1,0 +1,25 @@
+﻿**********************
+Windows PowerShell 기록 시작
+시작 시간: 20240824182051
+사용자 이름: LAPTOP-VBB8H5JS\hyeju
+RunAs 사용자: LAPTOP-VBB8H5JS\hyeju
+구성 이름: 
+Machine: LAPTOP-VBB8H5JS (Microsoft Windows NT 10.0.22631.0)
+호스트 응용 프로그램: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Scoop\apps\vscode\1.90.2\resources\app\out\vs\workbench\contrib\terminal\browser\media\shellIntegration.ps1" } catch {}
+프로세스 ID: 26076
+PSVersion: 5.1.22621.3958
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.22621.3958
+BuildVersion: 10.0.22621.3958
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+기록이 시작되었습니다. 출력 파일은 C:\dev\annpick\docs\logfile.txt입니다.
+]633;D;0]633;A]633;P;Cwd=C:\x5cdev\x5cannpick\x5cbackendPS C:\dev\annpick\backend> ]633;P;Prompt=PS C:\x5cdev\x5cannpick\x5cbackend> ]633;B
+PS>Stop-Transcript
+**********************
+Windows PowerShell 기록 끝
+종료 시간: 20240824182125
+**********************

@@ -7,7 +7,6 @@ const passport = require("../config/passportConfig");
 
 const router = express.Router();
 
-router.get("/", renderLoginPage);
 router.get("/auth/naver", passport.authenticate("naver"));
 router.get(
   "/auth/naver/callback",

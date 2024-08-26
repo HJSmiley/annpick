@@ -25,12 +25,7 @@ sequelize
   });
 
 // 미들웨어 설정
-app.use(
-  cors({
-    origin: "http://121.166.239.33:3000", // 프론트엔드의 로컬 주소
-    credentials: true, // 쿠키와 인증 정보를 포함할 수 있도록 설정
-  })
-);
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());

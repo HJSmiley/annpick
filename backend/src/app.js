@@ -28,7 +28,6 @@ sequelize
 app.use(
   cors({
     origin: "*",
-    credentials: true,
   })
 );
 app.use(bodyParser.json());

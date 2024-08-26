@@ -11,7 +11,7 @@ passport.use(
     {
       clientID: process.env.NAVER_CLIENT_ID,
       clientSecret: process.env.NAVER_CLIENT_SECRET,
-      callbackURL: "http://localhost:8000/auth/naver/callback",
+      callbackURL: "http://3.36.94.230:8000/auth/naver/callback",
     },
     async function (accessToken, refreshToken, profile, done) {
       try {

@@ -14,10 +14,6 @@ const { saveAnimeData } = require("./controllers/animeController");
 
 const app = express();
 
-// 템플릿 엔진 설정
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "ejs");
-
 // Sequelize 데이터베이스 동기화
 sequelize
   .sync({ force: false })

@@ -27,7 +27,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   };
 
   const handleSocialLogin = (provider: string) => {
-    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/auth/${provider}`;
+    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/v1/auth/${provider}`;
   };
 
   return (

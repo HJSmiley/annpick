@@ -1,9 +1,6 @@
 const express = require("express");
-const {
-  renderLoginPage,
-  naverCallback,
-} = require("../controllers/authController");
-const passport = require("../config/passportConfig");
+const naverCallback = require("../controllers/authController");
+const passport = require("../config/authConfig");
 
 const router = express.Router();
 

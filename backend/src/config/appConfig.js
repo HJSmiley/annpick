@@ -3,14 +3,19 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const passport = require("passport");
-const jwt = require("jsonwebtoken");
-const NaverStrategy = require("passport-naver").Strategy;
+const sequelize = require("./dbConfig");
+const { swaggerUi, swaggerSpec } = require("./swaggerConfig");
+const authRoutes = require("../routes/authRoutes");
+const saveAnimeData = require("../controllers/animeController");
 
 module.exports = {
   express,
   cors,
   bodyParser,
   passport,
-  jwt,
-  NaverStrategy,
+  sequelize,
+  swaggerUi,
+  swaggerSpec,
+  authRoutes,
+  saveAnimeData,
 };

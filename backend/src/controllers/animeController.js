@@ -55,4 +55,4 @@ const saveAnimeData = async () => {
   }
 };
 
-module.exports = { saveAnimeData };
+module.exports = saveAnimeData;

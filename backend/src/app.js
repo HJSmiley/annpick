@@ -1,16 +1,16 @@
 require("./models/associations"); // 모델 간의 관계 설정을 불러옴
 
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const passport = require("passport");
-const sequelize = require("./config/dbConfig");
-const { swaggerUi, swaggerSpec } = require("./config/swaggerConfig");
-const authRoutes = require("./routes/authRoutes");
-const profileRoutes = require("./routes/profileRoutes");
-const path = require("path");
-
-const { saveAnimeData } = require("./controllers/animeController");
+const {
+  express,
+  cors,
+  bodyParser,
+  passport,
+  sequelize,
+  swaggerUi,
+  swaggerSpec,
+  authRoutes,
+  saveAnimeData,
+} = require("./config/appConfig");
 
 const app = express();
 
@@ -27,7 +27,7 @@ sequelize
 // 미들웨어 설정
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: `${process.env.FRONTEND_URL}`,
     credentials: true,
   })
 );
@@ -38,7 +38,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // 라우트 설정
 app.use("/", authRoutes);
-app.use("/", profileRoutes);
+
 // Anilist API 데이터를 가져와 MySQL RDS에 저장하는 라우트
 app.get("/fetch-anime", async (req, res) => {
   console.log("Fetching anime data...");

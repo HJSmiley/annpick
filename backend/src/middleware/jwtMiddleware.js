@@ -25,3 +25,14 @@ async function authenticateToken(req, res, next) {
 }
 
 module.exports = authenticateToken;
+
+// profileRoutes.js
+// const express = require("express");
+// const { renderProfilePage } = require("../controllers/profileController");
+// const authenticateToken = require("../middleware/jwtMiddleware");
+
+// const router = express.Router();
+
+// router.get("/profile", authenticateToken, renderProfilePage);
+
+// module.exports = router;

@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-[100px]
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-[72px]
         ${isScrolled ? 'bg-white shadow' : 'bg-transparent'}`}
     >
       <div className="container mx-auto px-4 md:px-8 lg:px-16 h-full">
@@ -37,10 +37,11 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
           <div className="flex items-center space-x-8">
             {/* 로고 링크 */}
             <Link to="/" className="flex items-center">
-              <svg width="150" height="60" viewBox="0 0 150 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <img src= "/anpicktest.svg" alt= "앤픽 로고" className="w-[80px] h-[40px]"/>
+              {/* <svg width="120" height="60" viewBox="0 0 150 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="150" height="60" fill="#FF6B6B"/>
                 <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="24" fontWeight="bold">엔픽 로고</text>
-              </svg>
+              </svg> */}
             </Link>
             {/* 네비게이션 메뉴 */}
             <nav>

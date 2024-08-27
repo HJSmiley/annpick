@@ -15,18 +15,12 @@ const AnimeDetail = lazy(() => import('./pages/AnimeDetail'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Layout component
-const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
-
-  const openLoginModal = () => setIsLoginModalOpen(true);
-  const closeLoginModal = () => setIsLoginModalOpen(false);
-
+const Layout: React.FC<{ children: React.ReactNode; openLoginModal: () => void }> = ({ children, openLoginModal }) => {
   return (
     <>
       <Header openLoginModal={openLoginModal} />
       <main>{children}</main>
       <Footer />
-      <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
     </>
   );
 };
@@ -52,10 +46,10 @@ const App: React.FC = () => {
     <ErrorBoundary>
       <AuthProvider>
         <Router>
-          <Layout>
+          <Layout openLoginModal={openLoginModal}>
             <Suspense fallback={<LoadingSpinner />}>
               <Routes>
-                <Route path="/" element={<Home openLoginModal={openLoginModal} />} />
+                <Route path="/" element={<Home />} />
                 <Route path="/profile" element={
                   <ProtectedRoute>
                     <Profile />

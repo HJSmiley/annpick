@@ -1,13 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PromotionBanner from '../components/PromotionBanner';
 import AnimeList from '../components/anime/AnimeList';
-import { dummyAnimes, dummyAnimes2, dummyAnimes3 } from '../components/data/dummuyData';
+import { Anime } from '../types/anime';
 
-interface HomeProps {
-  openLoginModal: () => void;
-}
+const Home: React.FC = () => {
+  const [animeSections, setAnimeSections] = useState<{ title: string; animes: Anime[] }[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-const Home: React.FC<HomeProps> = ({ openLoginModal }) => {
+  useEffect(() => {
+    const fetchAnimeData = async () => {
+      try {
+        setIsLoading(true);
+        // 더미 데이터 생성 (총 15개의 애니메이션)
+        const dummyData = [
+          {
+            title: "인기 애니메이션 Top 15",
+            animes: Array(15).fill(null).map((_, index) => ({
+              id: index,
+              title: `애니메이션 ${index + 1}`,
+              image: `https://via.placeholder.com/150?text=Anime${index + 1}`,
+            }))
+          },
+        ];
+        setAnimeSections(dummyData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '알 수 없는 에러가 발생했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAnimeData();
+  }, []);
+
+  if (isLoading) return <div>로딩 중...</div>;
+  if (error) return <div>에러: {error}</div>;
+
   return (
     <div>
       <div className="relative h-[90vh]">
@@ -15,12 +44,12 @@ const Home: React.FC<HomeProps> = ({ openLoginModal }) => {
       </div>
       <div className="bg-white">
         <div className="container mx-auto px-4 md:px-8 lg:px-16 py-8">
-          <h1 className="text-3xl font-bold mb-4">전 세계가 주목한 인기 Top 10</h1>
-          <AnimeList animes={dummyAnimes} />
-          <h1 className="text-3xl font-bold mb-8 text-left">전 세계가 주목한 인기 리스트</h1>
-          <AnimeList animes={dummyAnimes2} />
-          <h1 className="text-3xl font-bold mb-8 text-left">애니매니아가 주목한 인기 리스트</h1>
-          <AnimeList animes={dummyAnimes3} />
+          {animeSections.map((section, index) => (
+            <div key={index} className="mb-8">
+              <h1 className="text-3xl font-bold mb-4 text-left">{section.title}</h1>
+              <AnimeList animes={section.animes} />
+            </div>
+          ))}
         </div>
       </div>
     </div>

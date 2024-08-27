@@ -1,3 +1,4 @@
+const path = require("path");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const options = {
@@ -10,11 +11,11 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:8000",
+        url: `${process.env.BACKEND_URL}`,
       },
     ],
   },
-  apis: ["../routes/*.js"], // API 주석이 포함된 파일 경로
+  apis: [path.join(__dirname, "../routes/*.js")], // API 주석이 포함된 파일 경로
 };
 
 const swaggerSpec = swaggerJsdoc(options);

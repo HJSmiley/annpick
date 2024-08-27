@@ -38,19 +38,22 @@ app.use(passport.initialize());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // 라우트 설정
-app.use("/", authRoutes);
-app.use("/", animeRoutes); // animeRoutes 추가
+app.use("/api/v1", authRoutes);
+app.use("/api/v1", animeRoutes);
 
-// Anilist API 데이터를 가져와 MySQL RDS에 저장하는 라우트
-app.get("/fetch-anime", async (req, res) => {
-  console.log("Fetching anime data...");
+/*
+// 스케줄러 설정 (예: 매일 자정에 실행)
+const schedule = require("node-schedule");
+
+schedule.scheduleJob("0 0 * * *", async () => {
   try {
+    console.log("Fetching anime data...");
     await saveAnimeData();
-    res.status(200).send("Anime data has been fetched and saved.");
+    console.log("Anime data has been fetched and saved.");
   } catch (error) {
-    console.error("Error fetching or saving anime data:", error); // 오류 로그 확인
-    res.status(500).send("Failed to fetch or save anime data.");
+    console.error("Error fetching or saving anime data:", error);
   }
 });
+*/
 
 module.exports = app;

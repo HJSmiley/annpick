@@ -128,7 +128,11 @@ const saveAnimeData = async () => {
 
 const getAnimeList = async (req, res) => {
   try {
+    // 쿼리 파라미터에서 limit 값을 가져오고, 기본값을 10으로 설정
+    const limit = parseInt(req.query.limit, 10) || 10;
+
     const animeList = await Anime.findAll({
+      limit, // 가져올 개수 지정
       include: [
         {
           model: Genre,
@@ -145,6 +149,7 @@ const getAnimeList = async (req, res) => {
       const tags = anime.Tags.sort((a, b) => b.rank - a.rank).slice(0, 4); // rank 순으로 정렬 후 4개만 추출
 
       return {
+        anime_id: anime.anime_id,
         thumbnail_url: anime.thumbnail_url,
         title: anime.anime_title,
         format: anime.format,

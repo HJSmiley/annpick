@@ -4,7 +4,7 @@ import './index.css';
 import './styles/globals.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { AnimeProvider } from '../src/context/AnimeContext';
+import { AnimeProvider } from './contexts/AnimeContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

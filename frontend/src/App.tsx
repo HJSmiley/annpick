@@ -1,13 +1,46 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React, { useState, Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import LoginModal from './components/auth/LoginModal';
-import AnimeSearch from './components/anime/AnimeSearch';
-import AnimeDetail from './pages/AnimeDetail';
-import Home from './pages/Home';
+import LoadingSpinner from './components/common/LoadingSpinner';
+import ErrorBoundary from './components/error/ErrorBoundary';
 
-const Login: React.FC = () => <h1>로그인/가입</h1>;
+// Lazy-loaded components
+const Home = lazy(() => import('./pages/Home'));
+const Profile = lazy(() => import('./pages/Profile'));
+const AnimeSearch = lazy(() => import('./pages/AnimeSearch'));
+const AnimeDetail = lazy(() => import('./pages/AnimeDetail'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+
+// Layout component
+const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
+
+  const openLoginModal = () => setIsLoginModalOpen(true);
+  const closeLoginModal = () => setIsLoginModalOpen(false);
+
+  return (
+    <>
+      <Header openLoginModal={openLoginModal} />
+      <main>{children}</main>
+      <Footer />
+      <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
+    </>
+  );
+};
+
+// Protected Route component
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { state } = useAuth();
+  
+  if (state.loading) {
+    return <LoadingSpinner />;
+  }
+  
+  return state.isAuthenticated ? <>{children}</> : <Navigate to="/" replace />;
+};
 
 const App: React.FC = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
@@ -16,21 +49,28 @@ const App: React.FC = () => {
   const closeLoginModal = () => setIsLoginModalOpen(false);
 
   return (
-    <Router>
-      <div className="flex flex-col min-h-screen">
-        <Header openLoginModal={openLoginModal} />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home openLoginModal={openLoginModal} />} />
-            <Route path="/anime-search" element={<AnimeSearch />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/anime/:id" element={<AnimeDetail />} />
-          </Routes>
-        </main>
-        <Footer />
-        <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
-      </div>
-    </Router>
+    <ErrorBoundary>
+      <AuthProvider>
+        <Router>
+          <Layout>
+            <Suspense fallback={<LoadingSpinner />}>
+              <Routes>
+                <Route path="/" element={<Home openLoginModal={openLoginModal} />} />
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                } />
+                <Route path="/anime-search" element={<AnimeSearch />} />
+                <Route path="/anime/:id" element={<AnimeDetail />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </Layout>
+          <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 };
 

@@ -1,4 +1,3 @@
-// models/Anime.js
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/dbConfig");
 
@@ -18,14 +17,34 @@ Anime.init(
     thumbnail_url: {
       type: DataTypes.STRING(255),
     },
+    banner_image_url: {
+      // 새로운 필드
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
     format: {
-      type: DataTypes.ENUM("TV", "ONA", "OVA", "Movie"),
+      type: DataTypes.ENUM("TV", "ONA", "OVA", "MOVIE"),
     },
     is_completed: {
       type: DataTypes.BOOLEAN,
     },
     release_date: {
       type: DataTypes.DATE,
+    },
+    description: {
+      // 새로운 필드
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    season_int: {
+      // 새로운 필드
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    studio: {
+      // 새로운 필드
+      type: DataTypes.STRING(100),
+      allowNull: true,
     },
     anime_created_at: {
       type: DataTypes.DATE,

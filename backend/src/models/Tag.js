@@ -1,8 +1,9 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/dbConfig");
 
-const Tag = sequelize.define(
-  "Tag",
+class Tag extends Model {}
+
+Tag.init(
   {
     tag_id: {
       type: DataTypes.INTEGER,
@@ -10,19 +11,18 @@ const Tag = sequelize.define(
       primaryKey: true,
     },
     tag_name: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.STRING(100),
+      allowNull: false,
     },
     rank: {
       type: DataTypes.INTEGER,
-      comment: "태그의 중요도(백분율)",
-    },
-    tag_created_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      allowNull: true,
     },
   },
   {
-    tableName: "Tag",
+    sequelize,
+    modelName: "Tag",
+    tableName: "Tags",
     timestamps: false,
   }
 );

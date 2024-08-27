@@ -1,9 +1,9 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/dbConfig");
 
-class AniTag extends Model {}
+class AnimeStaffs extends Model {}
 
-AniTag.init(
+AnimeStaffs.init(
   {
     anime_id: {
       type: DataTypes.INTEGER,
@@ -13,21 +13,25 @@ AniTag.init(
       },
       allowNull: false,
     },
-    tag_id: {
+    staff_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Tag", // 참조할 모델 이름
-        key: "tag_id",
+        model: "Staff", // 참조할 모델 이름
+        key: "staff_id",
       },
+      allowNull: false,
+    },
+    role: {
+      type: DataTypes.STRING(100), // 역할을 저장할 필드
       allowNull: false,
     },
   },
   {
     sequelize,
-    modelName: "AniTag",
-    tableName: "AniTags",
+    modelName: "AnimeStaffs",
+    tableName: "AnimeStaffs",
     timestamps: false,
   }
 );
 
-module.exports = AniTag;
+module.exports = AnimeStaffs;

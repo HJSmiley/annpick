@@ -1,29 +1,32 @@
-// services/anilistService.js
 const axios = require("axios");
 
 const fetchAnimeData = async () => {
   const query = `
-    query ($page: Int, $perPage: Int) {
+    query ($page: Int, $perPage: Int, $startDate: FuzzyDateInt, $endDate: FuzzyDateInt) {
       Page(page: $page, perPage: $perPage) {
-        media(seasonYear: 2023, type: ANIME, sort: START_DATE_DESC) {
+        media(search:"one piece", startDate_greater: $startDate, startDate_lesser: $endDate, type: ANIME, countryOfOrigin: "JP") {
           id
           title {
-            romaji
-            english
+            native
           }
-          description
+          description(asHtml: false)
           startDate {
             year
             month
             day
           }
-          season
+          seasonInt
           coverImage {
-            large
+            extraLarge
           }
+          bannerImage
           genres
           format
           status
+          tags {
+            name
+            rank
+          }
           staff {
             edges {
               node {
@@ -31,6 +34,12 @@ const fetchAnimeData = async () => {
                   full
                 }
               }
+              role
+            }
+          }
+          studios {
+            nodes {
+              name
             }
           }
         }
@@ -41,6 +50,8 @@ const fetchAnimeData = async () => {
   const variables = {
     page: 1,
     perPage: 100,
+    startDate: 19940101,
+    endDate: 20240930,
   };
 
   try {

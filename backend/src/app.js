@@ -9,6 +9,7 @@ const {
   swaggerUi,
   swaggerSpec,
   authRoutes,
+  animeRoutes,
   saveAnimeData,
 } = require("./config/appConfig");
 
@@ -38,6 +39,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // 라우트 설정
 app.use("/", authRoutes);
+app.use("/", animeRoutes); // animeRoutes 추가
 
 // Anilist API 데이터를 가져와 MySQL RDS에 저장하는 라우트
 app.get("/fetch-anime", async (req, res) => {

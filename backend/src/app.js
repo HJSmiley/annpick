@@ -10,7 +10,6 @@ const {
   swaggerSpec,
   authRoutes,
   animeRoutes,
-  saveAnimeData,
 } = require("./config/appConfig");
 
 const app = express();
@@ -40,20 +39,5 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // 라우트 설정
 app.use("/api/v1", authRoutes);
 app.use("/api/v1", animeRoutes);
-
-/*
-// 스케줄러 설정 (예: 매일 자정에 실행)
-const schedule = require("node-schedule");
-
-schedule.scheduleJob("0 0 * * *", async () => {
-  try {
-    console.log("Fetching anime data...");
-    await saveAnimeData();
-    console.log("Anime data has been fetched and saved.");
-  } catch (error) {
-    console.error("Error fetching or saving anime data:", error);
-  }
-});
-*/
 
 module.exports = app;

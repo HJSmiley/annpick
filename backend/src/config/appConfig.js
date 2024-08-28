@@ -7,7 +7,6 @@ const sequelize = require("./dbConfig");
 const { swaggerUi, swaggerSpec } = require("./swaggerConfig");
 const authRoutes = require("../routes/authRoutes");
 const animeRoutes = require("../routes/animeRoutes");
-const saveAnimeData = require("../controllers/animeController");
 
 module.exports = {
   express,
@@ -19,5 +18,4 @@ module.exports = {
   swaggerSpec,
   authRoutes,
   animeRoutes,
-  saveAnimeData,
 };

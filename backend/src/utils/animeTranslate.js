@@ -1,6 +1,56 @@
+// 스태프 이름을 한국어로 번역하는 함수
+const translateStaffName = (staffName) => {
+  const translations = {
+    "John Doe": "존 도",
+    "Jane Smith": "제인 스미스",
+    "Eiichirou Oda": "오다 에이이치로",
+    "Junji Shimizu": "시미즈 준지",
+    "Takashi Ootsuka": "오오츠카 타카시",
+    "Katsumi Tokoro": "토코로 카츠미",
+    "Kounosuke Uda": "우다 코우노스케",
+    "Kazuhisa Takenouchi": "타케노우치 카즈히사",
+    "Takahiro Imamuro": "이마무로 타카히로",
+    "Tatsuya Nagamine": "나가미네 타츠야",
+    "Gorou Taniguchi": "타니구치 고로",
+    "Hiroaki Miyamoto": "미야모토 히로아키",
+    // 추가 번역 데이터
+  };
+
+  return translations[staffName] || staffName;
+};
+
+// 스태프 역할을 한국어로 번역하는 함수
+const translateStaffRole = (role) => {
+  const roles = {
+    director: "감독",
+    origin: "원작",
+  };
+
+  return roles[role] || "Unknown";
+};
+
+// 장르 이름을 한글로 번역하는 매핑
+const genreTranslations = {
+  Action: "액션",
+  Adventure: "모험",
+  Comedy: "코미디",
+  Drama: "드라마",
+  Fantasy: "판타지",
+  // 필요한 다른 장르를 여기에 추가
+};
+
+// 장르를 한글로 번역하는 함수
+const translateGenre = (genres) => {
+  const translatedGenres = genres
+    .map((genre) => genreTranslations[genre] || genre) // 매핑된 번역이 없으면 원래 이름 사용
+    .sort((a, b) => a.localeCompare(b, "ko-KR")); // 가나다순 정렬
+  return translatedGenres;
+};
+
 // 태그 이름을 한글로 번역하는 매핑
 // prettier-ignore
-const tagTranslations = {    "Pirates": "해적",
+const tagTranslations = {
+    "Pirates": "해적",
     "Shounen": "소년",
     "Ensemble Cast": "앙상블 캐스트",
     "Travel": "여행",
@@ -93,7 +143,8 @@ const tagTranslations = {    "Pirates": "해적",
     "Alternate Universe": "평행 우주",
     "Augmented Reality": "증강 현실",
     "Bar": "술집",
-    "Full CGI": "전체 CGI"};
+    "Full CGI": "전체 CGI"
+};
 
 // 태그를 한글로 번역하는 함수
 const translateTag = (tags) => {
@@ -101,4 +152,9 @@ const translateTag = (tags) => {
   return translatedTags;
 };
 
-module.exports = { translateTag };
+module.exports = {
+  translateStaffName,
+  translateStaffRole,
+  translateGenre,
+  translateTag,
+};

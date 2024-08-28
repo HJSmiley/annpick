@@ -1,4 +1,4 @@
-const { saveAnimeData } = require("../src/controllers/animeController");
+const { saveAnimeData } = require("../src/services/animeService");
 
 const runSaveAnimeData = async () => {
   try {

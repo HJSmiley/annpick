@@ -1,9 +1,9 @@
 // src/services/animeService.ts
-import { Anime } from '../types/anime';
+import { AnimeData } from '../types/anime';
 
 const API_URL = 'https://api.example.com/animes'; // 실제 API URL로 변경해야 합니다
 
-export const fetchAnimes = async (): Promise<Anime[]> => {
+export const fetchAnimes = async (): Promise<AnimeData[]> => {
   const response = await fetch(API_URL);
   if (!response.ok) {
     throw new Error('Failed to fetch animes');
@@ -11,7 +11,7 @@ export const fetchAnimes = async (): Promise<Anime[]> => {
   return response.json();
 };
 
-export const fetchAnimeById = async (id: number): Promise<Anime> => {
+export const fetchAnimeById = async (id: number): Promise<AnimeData> => {
   const response = await fetch(`${API_URL}/${id}`);
   if (!response.ok) {
     throw new Error('Failed to fetch anime');

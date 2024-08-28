@@ -16,6 +16,7 @@ const PromotionBanner: React.FC = () => {
   const slides: Slide[] = [
     { imageUrl: '/images/지브리1.png', link: '/promo4', title: '프로모션 4' },
     { imageUrl: '/images/지브리2.jpg', link: '/promo5', title: '프로모션 5' },
+    { imageUrl: '/images/Banner.jpg', link: '/promo1', title: '프로모션 1' },
     { imageUrl: '/images/지브리7.jpg', link: '/promo6', title: '프로모션 6' },
     { imageUrl: '/images/지브리10.jpg', link: '/promo7', title: '프로모션 7' },
     { imageUrl: '/images/지브리16.jpg', link: '/promo8', title: '프로모션 8' },

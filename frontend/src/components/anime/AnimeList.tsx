@@ -2,10 +2,10 @@ import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import AnimeCard from './AnimeCard';
 import SwipeButton from '../common/SwipeButton';
-import { Anime } from '../../types/anime';
+import { AnimeData } from '../../types/anime';
 
 interface AnimeListProps {
-  animes: Anime[];
+  animes: AnimeData[];
 }
 
 const AnimeList: React.FC<AnimeListProps> = ({ animes }) => {
@@ -40,9 +40,9 @@ const AnimeList: React.FC<AnimeListProps> = ({ animes }) => {
         animate={{ x: `${-startIndex * 20}%` }}
         transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
       >
-        {animes.map((anime, index) => (
-          <div key={anime.id} className="flex-none w-1/5 px-2">
-            <AnimeCard {...anime} index={index + 1} />
+        {animes.map((animeData, index: number) => (
+          <div key={animeData.anime_id} className="flex-none w-1/5 px-2">
+            <AnimeCard {...animeData} index={index + 1} />
           </div>
         ))}
       </motion.div>

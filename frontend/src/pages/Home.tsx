@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import PromotionBanner from '../components/PromotionBanner';
 import AnimeList from '../components/anime/AnimeList';
-import { Anime } from '../types/anime';
+import { AnimeData } from '../types/anime';
 
 const Home: React.FC = () => {
-  const [animeSections, setAnimeSections] = useState<{ title: string; animes: Anime[] }[]>([]);
+  const [animeSections, setAnimeSections] = useState<{ title: string; animes: AnimeData[] }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -12,19 +13,18 @@ const Home: React.FC = () => {
     const fetchAnimeData = async () => {
       try {
         setIsLoading(true);
-        // 더미 데이터 생성 (총 15개의 애니메이션)
-        const dummyData = [
-          {
-            title: "인기 애니메이션 Top 15",
-            animes: Array(15).fill(null).map((_, index) => ({
-              id: index,
-              title: `애니메이션 ${index + 1}`,
-              image: `https://via.placeholder.com/150?text=Anime${index + 1}`,
-            }))
-          },
-        ];
-        setAnimeSections(dummyData);
+        const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].join(',');
+        const response = await axios.get<AnimeData[]>(`http://3.36.94.230:8000/api/v1/animecards?ids=${ids}`);
+        const animeData = response.data;
+
+        const section = {
+          title: "인기 애니메이션 Top 15",
+          animes: animeData
+        };
+
+        setAnimeSections([section]);
       } catch (err) {
+        console.error('Error fetching anime data:', err);
         setError(err instanceof Error ? err.message : '알 수 없는 에러가 발생했습니다.');
       } finally {
         setIsLoading(false);

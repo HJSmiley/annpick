@@ -1,10 +1,10 @@
 // src/contexts/AnimeContext.tsx
 import React, { createContext, useState, useContext, ReactNode } from 'react';
-import { Anime } from '../types/anime';
+import { AnimeData } from '../types/anime';
 
 interface AnimeContextType {
-  animes: Anime[];
-  setAnimes: React.Dispatch<React.SetStateAction<Anime[]>>;
+  animes: AnimeData[];
+  setAnimes: React.Dispatch<React.SetStateAction<AnimeData[]>>;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   error: string | null;
@@ -22,7 +22,7 @@ export const useAnime = () => {
 };
 
 export const AnimeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [animes, setAnimes] = useState<Anime[]>([]);
+  const [animes, setAnimes] = useState<AnimeData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

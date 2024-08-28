@@ -12,6 +12,10 @@ const User = sequelize.define(
     email: {
       type: DataTypes.STRING(255),
       comment: "SNS 이메일",
+      allowNull: false,
+    },
+    profile_img: {
+      type: DataTypes.STRING(255),
     },
     nickname: {
       type: DataTypes.STRING(20),
@@ -30,25 +34,16 @@ const User = sequelize.define(
       type: DataTypes.CHAR(1),
       comment: "남성: M, 여성: F",
     },
-    nationality: {
-      type: DataTypes.CHAR(1),
-      comment: "내국인: D (Domestic), 외국인: F (Foreign)",
-    },
     user_status: {
       type: DataTypes.CHAR(1),
-      comment: "A(ctivated), H(ibernated), D(eleted)",
-    },
-    user_created_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
-    user_updated_at: {
-      type: DataTypes.DATE,
+      comment: "활성: A(ctivated), 휴면: H(ibernated), 탈퇴: D(eleted)",
     },
   },
   {
+    sequelize,
+    modelName: "User",
     tableName: "User",
-    timestamps: false,
+    timestamps: true,
   }
 );
 

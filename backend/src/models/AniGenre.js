@@ -5,10 +5,10 @@ const Anime = require("./Anime");
 const Genre = require("./Genre");
 
 // Anime-Genre 중간 테이블 정의
-const AnimeGenre = sequelize.define(
+const AniGenre = sequelize.define(
   "AnimeGenre",
   {
-    id: {
+    anigenre_id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
@@ -29,12 +29,11 @@ const AnimeGenre = sequelize.define(
     },
   },
   {
-    tableName: "AnimeGenres",
-    timestamps: false,
+    sequelize,
+    modelName: "AniGenre",
+    tableName: "AniGenre",
+    timestamps: true,
   }
 );
 
-Anime.belongsToMany(Genre, { through: AnimeGenre, foreignKey: "anime_id" });
-Genre.belongsToMany(Anime, { through: AnimeGenre, foreignKey: "genre_id" });
-
-module.exports = AnimeGenre;
+module.exports = AniGenre;

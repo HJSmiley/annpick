@@ -1,20 +1,28 @@
 const User = require("./User");
 const Anime = require("./Anime");
+const Staff = require("./Staff");
+const Genre = require("./Genre");
 const Tag = require("./Tag");
-const AniTag = require("./AniTag");
-const Preference = require("./Preference");
 const Review = require("./Review");
-const Recommendation = require("./Recommendation");
-const UserTag = require("./UserTag");
+const AniStaff = require("./AniStaff");
+const AniGenre = require("./AniGenre");
+const AniTag = require("./AniTag");
+const UserRatedAnime = require("./UserRatedAnime");
+const UserClusterPreference = require("./UserClusterPreference");
+const RecommendationCluster = require("./RecommendationCluster");
 
 // 모델 내보내기
 module.exports = {
   User,
   Anime,
+  Staff,
+  Genre,
   Tag,
-  AniTag,
-  Preference,
   Review,
-  Recommendation,
-  UserTag,
+  AniStaff,
+  AniGenre,
+  AniTag,
+  UserRatedAnime,
+  UserClusterPreference,
+  RecommendationCluster,
 };

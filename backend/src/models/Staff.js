@@ -19,8 +19,8 @@ Staff.init(
   {
     sequelize,
     modelName: "Staff",
-    tableName: "Staffs",
-    timestamps: false,
+    tableName: "Staff",
+    timestamps: true,
   }
 );
 

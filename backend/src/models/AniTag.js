@@ -5,10 +5,15 @@ class AniTag extends Model {}
 
 AniTag.init(
   {
+    anitag_id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     anime_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Anime", // 참조할 모델 이름
+        model: "Anime",
         key: "anime_id",
       },
       allowNull: false,
@@ -16,17 +21,21 @@ AniTag.init(
     tag_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Tag", // 참조할 모델 이름
+        model: "Tag",
         key: "tag_id",
       },
       allowNull: false,
+    },
+    tag_score: {
+      type: DataTypes.INTEGER,
+      comment: "각 태그와 애니메이션 간의 연관성(백분율)",
     },
   },
   {
     sequelize,
     modelName: "AniTag",
-    tableName: "AniTags",
-    timestamps: false,
+    tableName: "AniTag",
+    timestamps: true,
   }
 );
 

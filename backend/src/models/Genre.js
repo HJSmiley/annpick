@@ -13,14 +13,13 @@ Genre.init(
     },
     genre_name: {
       type: DataTypes.STRING(50),
-      allowNull: false,
     },
   },
   {
     sequelize,
     modelName: "Genre",
-    tableName: "Genres",
-    timestamps: false,
+    tableName: "Genre",
+    timestamps: true,
   }
 );
 

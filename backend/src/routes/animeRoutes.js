@@ -1,23 +1,29 @@
 const express = require("express");
-const { getAnimeList } = require("../controllers/animeController");
+const {
+  getAnimeById,
+  getAnimeByIds,
+} = require("../controllers/animeController");
 
 const router = express.Router();
 
+// prettier-ignore
 /**
  * @swagger
- * /api/v1/animecard:
+ * /api/v1/animecards:
  *   get:
- *     summary: 애니메이션 카드 정보를 가져옴
- *     tags: [애니메이션]
+ *     summary: 여러 id의 애니메이션 정보를 가져옴
+ *     tags:
+ *       - 애니메이션
  *     parameters:
  *       - in: query
- *         name: limit
+ *         name: ids
+ *         required: true
  *         schema:
- *           type: integer
- *         description: 반환할 애니메이션의 최대 개수
+ *           type: string
+ *           description: 요청할 애니메이션의 ID 리스트
  *     responses:
  *       200:
- *         description: 애니메이션 카드 정보
+ *         description: 애니메이션 정보 리스트
  *         content:
  *           application/json:
  *             schema:
@@ -43,7 +49,11 @@ const router = express.Router();
  *                     type: array
  *                     items:
  *                       type: string
+ *       404:
+ *         description: 애니메이션을 찾을 수 없음
+ *       500:
+ *         description: 서버 에러
  */
-router.get("/animecard", getAnimeList);
+router.get("/animecards", getAnimeByIds);
 
 module.exports = router;

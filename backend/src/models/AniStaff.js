@@ -1,14 +1,19 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/dbConfig");
 
-class AnimeStaffs extends Model {}
+class AniStaff extends Model {}
 
-AnimeStaffs.init(
+AniStaff.init(
   {
+    anistaff_id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     anime_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Anime", // 참조할 모델 이름
+        model: "Anime",
         key: "anime_id",
       },
       allowNull: false,
@@ -16,22 +21,22 @@ AnimeStaffs.init(
     staff_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Staff", // 참조할 모델 이름
+        model: "Staff",
         key: "staff_id",
       },
       allowNull: false,
     },
     role: {
-      type: DataTypes.STRING(100), // 역할을 저장할 필드
-      allowNull: false,
+      type: DataTypes.STRING(10),
+      comment: "원작자: origin, 감독: director, 성우: voiceactor",
     },
   },
   {
     sequelize,
-    modelName: "AnimeStaffs",
-    tableName: "AnimeStaffs",
-    timestamps: false,
+    modelName: "AniStaff",
+    tableName: "AniStaff",
+    timestamps: true,
   }
 );
 
-module.exports = AnimeStaffs;
+module.exports = AniStaff;

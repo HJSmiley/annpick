@@ -11,16 +11,14 @@ Anime.init(
       primaryKey: true,
     },
     anime_title: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(255),
       allowNull: false,
     },
     thumbnail_url: {
       type: DataTypes.STRING(255),
     },
-    banner_image_url: {
-      // 새로운 필드
+    banner_img_url: {
       type: DataTypes.STRING(255),
-      allowNull: true,
     },
     format: {
       type: DataTypes.ENUM("TV", "ONA", "OVA", "MOVIE"),
@@ -32,30 +30,20 @@ Anime.init(
       type: DataTypes.DATE,
     },
     description: {
-      // 새로운 필드
       type: DataTypes.TEXT,
-      allowNull: true,
     },
-    season_int: {
-      // 새로운 필드
+    season: {
       type: DataTypes.INTEGER,
-      allowNull: true,
     },
     studio: {
-      // 새로운 필드
       type: DataTypes.STRING(100),
-      allowNull: true,
-    },
-    anime_created_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
     },
   },
   {
     sequelize,
     modelName: "Anime",
     tableName: "Anime",
-    timestamps: false,
+    timestamps: true,
   }
 );
 

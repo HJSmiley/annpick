@@ -97,9 +97,7 @@ const tagTranslations = {    "Pirates": "해적",
 
 // 태그를 한글로 번역하는 함수
 const translateTag = (tags) => {
-  const translatedTags = tags
-    .map((tag) => tagTranslations[tag] || tag) // 매핑된 번역이 없으면 원래 이름 사용
-    .slice(0, 4); // 4개까지만 반환
+  const translatedTags = tags.map((tag) => tagTranslations[tag] || tag); // 매핑된 번역이 없으면 원래 이름 사용
   return translatedTags;
 };
 

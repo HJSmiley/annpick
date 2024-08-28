@@ -28,14 +28,12 @@ const Review = sequelize.define(
     review_content: {
       type: DataTypes.TEXT,
     },
-    review_created_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
   },
   {
+    sequelize,
+    modelName: "Review",
     tableName: "Review",
-    timestamps: false,
+    timestamps: true,
   }
 );
 

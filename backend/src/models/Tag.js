@@ -14,16 +14,12 @@ Tag.init(
       type: DataTypes.STRING(100),
       allowNull: false,
     },
-    rank: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
   },
   {
     sequelize,
     modelName: "Tag",
-    tableName: "Tags",
-    timestamps: false,
+    tableName: "Tag",
+    timestamps: true,
   }
 );
 

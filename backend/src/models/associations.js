@@ -3,23 +3,44 @@ const Anime = require("./Anime");
 const Genre = require("./Genre");
 const Staff = require("./Staff");
 const Tag = require("./Tag");
-const AnimeGenre = require("./AnimeGenre");
-const AnimeStaffs = require("./AnimeStaffs");
+const User = require("./User");
+const AniGenre = require("./AniGenre");
+const AniStaff = require("./AniStaff");
 const AniTag = require("./AniTag");
+const RecommendationCluster = require("./RecommendationCluster");
+const UserClusterPreference = require("./UserClusterPreference");
+const UserRatedAnime = require("./UserRatedAnime");
 
-// Anime와 Genre 간의 관계 설정
-Anime.belongsToMany(Genre, { through: AnimeGenre, foreignKey: "anime_id" });
-Genre.belongsToMany(Anime, { through: AnimeGenre, foreignKey: "genre_id" });
+// User와 RecommendationCluster 간의 다대다 관계 설정
+User.belongsToMany(RecommendationCluster, {
+  through: UserClusterPreference,
+  foreignKey: "user_id",
+  otherKey: "cluster_group",
+});
 
-// Anime와 Staff 간의 관계 설정
+RecommendationCluster.belongsToMany(User, {
+  through: UserClusterPreference,
+  foreignKey: "cluster_group",
+  otherKey: "user_id",
+});
+
+// User와 Anime 간의 다대다 관계 설정
+User.belongsToMany(Anime, { through: UserRatedAnime, foreignKey: "user_id" });
+Anime.belongsToMany(User, { through: UserRatedAnime, foreignKey: "anime_id" });
+
+// Anime와 Genre 간의 다대다 관계 설정
+Anime.belongsToMany(Genre, { through: AniGenre, foreignKey: "anime_id" });
+Genre.belongsToMany(Anime, { through: AniGenre, foreignKey: "genre_id" });
+
+// Anime와 Staff 간의 다대다 관계 설정
 Anime.belongsToMany(Staff, {
-  through: AnimeStaffs,
+  through: AniStaff,
   foreignKey: "anime_id",
   otherKey: "staff_id",
 });
 
 Staff.belongsToMany(Anime, {
-  through: AnimeStaffs,
+  through: AniStaff,
   foreignKey: "staff_id",
   otherKey: "anime_id",
 });
@@ -36,3 +57,7 @@ Tag.belongsToMany(Anime, {
   foreignKey: "tag_id",
   otherKey: "anime_id",
 });
+
+// Anime와 RecommendationCluster 간의 1대다 관계 설정
+Anime.hasMany(RecommendationCluster, { foreignKey: "anime_id" });
+RecommendationCluster.belongsTo(Anime, { foreignKey: "anime_id" });

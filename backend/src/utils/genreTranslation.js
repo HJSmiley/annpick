@@ -13,8 +13,7 @@ const genreTranslations = {
 const translateGenre = (genres) => {
   const translatedGenres = genres
     .map((genre) => genreTranslations[genre] || genre) // 매핑된 번역이 없으면 원래 이름 사용
-    .sort((a, b) => a.localeCompare(b, "ko-KR")) // 가나다순 정렬
-    .slice(0, 3); // 3개까지만 반환
+    .sort((a, b) => a.localeCompare(b, "ko-KR")); // 가나다순 정렬
   return translatedGenres;
 };
 

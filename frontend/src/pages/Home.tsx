@@ -17,21 +17,46 @@ const Home: React.FC = () => {
       try {
         setIsLoading(true);
 
-        // 섹션 데이터를 utils에서 가져옴
         const sections = getAnimeSections();
+        console.log("Sections:", sections); // 로깅 추가
 
         const responsePromises = sections.map(async (section) => {
           const ids = section.ids.join(",");
           const response = await axios.get<AnimeData[]>(
             `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/cards?ids=${ids}`
           );
+
+          console.log(
+            "Response data for section:",
+            section.title,
+            response.data
+          ); // 로깅 추가
+
+          // 데이터를 anime_id 순서에 맞게 정렬하고 undefined 제거
+          const sortedAnimes = section.ids
+            .map((id) => {
+              const anime = response.data.find(
+                (anime) => anime.anime_id === id
+              ); // anime_id 사용
+              console.log("Found anime for id:", id, anime); // 로깅 추가
+              return anime;
+            })
+            .filter((anime): anime is AnimeData => anime !== undefined);
+
+          console.log(
+            "Sorted animes for section:",
+            section.title,
+            sortedAnimes
+          ); // 로깅 추가
+
           return {
             title: section.title,
-            animes: response.data,
+            animes: sortedAnimes,
           };
         });
 
         const fetchedSections = await Promise.all(responsePromises);
+        console.log("Fetched sections:", fetchedSections); // 로깅 추가
         setAnimeSections(fetchedSections);
       } catch (err) {
         console.error("Error fetching anime data:", err);

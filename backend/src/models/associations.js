@@ -24,9 +24,11 @@ RecommendationCluster.belongsToMany(User, {
   otherKey: "user_id",
 });
 
-// User와 Anime 간의 다대다 관계 설정
-User.belongsToMany(Anime, { through: UserRatedAnime, foreignKey: "user_id" });
-Anime.belongsToMany(User, { through: UserRatedAnime, foreignKey: "anime_id" });
+User.hasMany(UserRatedAnime, { foreignKey: "user_id" });
+Anime.hasMany(UserRatedAnime, { foreignKey: "anime_id" });
+
+UserRatedAnime.belongsTo(User, { foreignKey: "user_id" });
+UserRatedAnime.belongsTo(Anime, { foreignKey: "anime_id" });
 
 // Anime와 Genre 간의 다대다 관계 설정
 Anime.belongsToMany(Genre, { through: AniGenre, foreignKey: "anime_id" });

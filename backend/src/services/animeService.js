@@ -8,6 +8,7 @@ const {
   AniTag,
   AniGenre,
   AniStaff,
+  UserRatedAnime,
 } = require("../models");
 
 const fetchAnimeData = async () => {
@@ -197,4 +198,29 @@ const saveAnimeData = async () => {
   }
 };
 
-module.exports = { fetchAnimeData, saveAnimeData };
+const saveRating = async (user_id, anime_id, rating) => {
+  try {
+    let userRating = await UserRatedAnime.findOne({
+      where: { user_id, anime_id },
+    });
+
+    if (userRating) {
+      // 이미 평가한 기록이 있으면 업데이트
+      userRating.rating = rating;
+      await userRating.save();
+    } else {
+      // 평가한 기록이 없으면 새로 생성
+      userRating = await UserRatedAnime.create({
+        user_id,
+        anime_id,
+        rating,
+      });
+    }
+
+    return userRating;
+  } catch (error) {
+    throw new Error("Error saving rating: " + error.message);
+  }
+};
+
+module.exports = { fetchAnimeData, saveAnimeData, saveRating };

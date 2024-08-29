@@ -2,14 +2,16 @@ const express = require("express");
 const {
   getAnimeByIds,
   getAnimeDetails,
+  rateAnime,
 } = require("../controllers/animeController");
+const ensureAuthenticated = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
 // prettier-ignore
 /**
  * @swagger
- * /api/v1/animecards:
+ * /api/v1/anime/cards:
  *   get:
  *     summary: 여러 ID의 애니메이션 정보를 가져옴
  *     tags:
@@ -54,12 +56,12 @@ const router = express.Router();
  *       500:
  *         description: 서버 에러
  */
-router.get("/animecards", getAnimeByIds);
+router.get("/anime/cards", getAnimeByIds);
 
 // prettier-ignore
 /**
  * @swagger
- * /api/v1/animedetails/{id}:
+ * /api/v1/anime/details/{id}:
  *   get:
  *     summary: 특정 ID의 애니메이션 상세 정보를 가져옴
  *     tags:
@@ -122,6 +124,68 @@ router.get("/animecards", getAnimeByIds);
  *       500:
  *         description: 서버 에러
  */
-router.get("/animedetails/:id", getAnimeDetails);
+router.get("/anime/details/:id", ensureAuthenticated, getAnimeDetails);
+
+/**
+ * @swagger
+ * /api/v1/anime/ratings:
+ *   post:
+ *     summary: Rate an anime
+ *     description: Allows a user to rate an anime. If the user has already rated the anime, the rating will be updated.
+ *     tags:
+ *       - Anime
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               anime_id:
+ *                 type: integer
+ *                 example: 1
+ *               rating:
+ *                 type: number
+ *                 format: float
+ *                 example: 4.5
+ *     responses:
+ *       200:
+ *         description: Rating saved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Rating saved successfully
+ *                 rating:
+ *                   type: object
+ *                   properties:
+ *                     user_id:
+ *                       type: integer
+ *                       example: 1
+ *                     anime_id:
+ *                       type: integer
+ *                       example: 1
+ *                     rating:
+ *                       type: number
+ *                       format: float
+ *                       example: 4.5
+ *       500:
+ *         description: Failed to save rating
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to save rating
+ *                 error:
+ *                   type: string
+ *                   example: Internal server error
+ */
+router.post("/anime/ratings", ensureAuthenticated, rateAnime);
 
 module.exports = router;

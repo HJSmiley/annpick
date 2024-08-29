@@ -14,10 +14,15 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const { login, state } = useAuth();
 
   useEffect(() => {
-    if (isOpen && location.pathname !== "/login") {
-      navigate("/login");
+    const queryParams = new URLSearchParams(window.location.search);
+    const token = queryParams.get("token");
+
+    if (token) {
+      localStorage.setItem("token", token);
+      // 홈 페이지로 리다이렉트
+      navigate("/");
     }
-  }, [isOpen, location.pathname, navigate]);
+  }, [navigate]);
 
   if (!isOpen) return null;
 

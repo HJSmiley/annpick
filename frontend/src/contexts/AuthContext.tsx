@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 interface User {
   name: string;
   email: string;
+  nickname: string;
 }
 
 interface AuthContextType {
@@ -14,6 +15,7 @@ interface AuthContextType {
     loading: boolean;
     error: string | null;
     user: User | null;
+    token: string | null; // 토큰을 상태로 추가
   };
   login: (token: string) => void;
   logout: () => void;
@@ -21,12 +23,13 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const TOKEN_KEY = "auth_token"; // 로컬 스토리지에 저장할 키
+const TOKEN_KEY = "auth_token";
 
 interface JwtPayload {
   exp: number; // 토큰 만료 시간
   name: string; // 사용자 이름
   email: string; // 사용자 이메일
+  nickname: string;
 }
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -36,18 +39,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null); // 토큰 상태 추가
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem(TOKEN_KEY);
+    const storedToken = localStorage.getItem(TOKEN_KEY);
 
-    if (token) {
+    if (storedToken) {
       try {
-        const decoded: JwtPayload = jwtDecode(token);
+        const decoded: JwtPayload = jwtDecode(storedToken);
 
         if (decoded.exp * 1000 > Date.now()) {
           setIsAuthenticated(true);
-          setUser({ name: decoded.name, email: decoded.email });
+          setUser({
+            name: decoded.name,
+            email: decoded.email,
+            nickname: decoded.nickname,
+          });
+          setToken(storedToken); // 토큰 설정
         } else {
           localStorage.removeItem(TOKEN_KEY);
         }
@@ -60,14 +69,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setLoading(false);
   }, []);
 
-  const login = (token: string) => {
+  const login = (newToken: string) => {
     try {
-      const decoded: JwtPayload = jwtDecode(token);
+      const decoded: JwtPayload = jwtDecode(newToken);
 
       if (decoded.exp * 1000 > Date.now()) {
-        localStorage.setItem(TOKEN_KEY, token);
+        localStorage.setItem(TOKEN_KEY, newToken);
         setIsAuthenticated(true);
-        setUser({ name: decoded.name, email: decoded.email });
+        setUser({
+          name: decoded.name,
+          email: decoded.email,
+          nickname: decoded.nickname,
+        });
+        setToken(newToken); // 토큰 설정
         setError(null);
         navigate("/");
       } else {
@@ -83,13 +97,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem(TOKEN_KEY);
     setIsAuthenticated(false);
     setUser(null);
+    setToken(null); // 토큰 초기화
     navigate("/");
   };
 
   return (
     <AuthContext.Provider
       value={{
-        state: { isAuthenticated, loading, error, user },
+        state: { isAuthenticated, loading, error, user, token }, // token 추가
         login,
         logout,
       }}

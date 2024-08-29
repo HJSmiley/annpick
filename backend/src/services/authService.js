@@ -29,10 +29,17 @@ const findOrCreateUser = async (profileData) => {
 };
 
 const generateToken = (user) => {
-  const token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
-  });
-  console.log(`Generated JWT Token: ${token}`);
+  const token = jwt.sign(
+    {
+      id: user.user_id,
+      email: user.email, // 이메일 포함
+      nickname: user.nickname, // 닉네임 포함
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "1h",
+    }
+  );
   return token;
 };
 

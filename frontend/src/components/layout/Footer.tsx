@@ -9,7 +9,11 @@ const Footer = () => {
         <div className="flex justify-between">
           <div className="w-1/3 pl-8">
             <a href="/" className="block mb-4">
-              <img src="/path-to-your-logo.png" alt="앤픽 로고" className="h-8" />
+              <img
+                src="/images/anpicktest.svg"
+                alt="앤픽 로고"
+                className="h-8"
+              />
             </a>
             <p className="text-gray-600 font-semibold mb-1">(주) 앤픽</p>
             <div className="text-m text-gray-600">
@@ -22,22 +26,46 @@ const Footer = () => {
             <div>
               <h3 className="font-semibold mb-4">앤픽</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">소개</a></li>
+                <li>
+                  <a href="#" className="text-gray-600 hover:text-gray-900">
+                    소개
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold mb-4">고객센터</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">공지사항</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">자주 묻는 질문</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">제휴 문의</a></li>
+                <li>
+                  <a href="#" className="text-gray-600 hover:text-gray-900">
+                    공지사항
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-gray-600 hover:text-gray-900">
+                    자주 묻는 질문
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-gray-600 hover:text-gray-900">
+                    제휴 문의
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold mb-4">서비스</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">이용 약관</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">개인정보 처리방침</a></li>
+                <li>
+                  <a href="#" className="text-gray-600 hover:text-gray-900">
+                    이용 약관
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-gray-600 hover:text-gray-900">
+                    개인정보 처리방침
+                  </a>
+                </li>
               </ul>
             </div>
           </div>

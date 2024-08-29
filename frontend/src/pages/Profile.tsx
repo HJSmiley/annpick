@@ -17,10 +17,17 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Welcome, {state.user?.name}!</h1>
-      <p>Email: {state.user?.email}</p>
-      <button onClick={handleLogout}>Logout</button>
+    <div className="container mx-auto px-4 md:px-8 lg:px-16 py-8 mt-16">
+      <h1 className="text-3xl font-bold mb-4">
+        Welcome, {state.user?.nickname}!
+      </h1>
+      <p className="text-xl mb-4">Email: {state.user?.email}</p>
+      <button
+        onClick={handleLogout}
+        className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded"
+      >
+        Logout
+      </button>
     </div>
   );
 };

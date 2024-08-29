@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { ReactComponent as ArrowIcon } from "../../assets/icons/ic_more.svg";
 import { AnimeData } from "../../types/anime";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface AnimeCardProps extends AnimeData {
   index: number;
@@ -22,9 +23,11 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
   const [hover, setHover] = useState(0);
   const [isResetting, setIsResetting] = useState(false);
 
+  const { state } = useAuth(); // AuthContext에서 상태를 가져옴
+
   const fetchRatingFromServer = async (animeId: number) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = state.isAuthenticated ? state.token : null; // AuthContext에서 토큰을 가져옴
       const headers: HeadersInit = {
         "Content-Type": "application/json",
       };
@@ -57,7 +60,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
 
   const sendRatingToServer = async (animeId: number, rating: number) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = state.isAuthenticated ? state.token : null; // AuthContext에서 토큰을 가져옴
 
       if (!token) {
         throw new Error("No token found, please log in again.");

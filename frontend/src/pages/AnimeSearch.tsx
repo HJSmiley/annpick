@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import React, { useState, useEffect } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 interface AnimeItem {
   id: number;
@@ -24,13 +24,12 @@ const AnimeSearch: React.FC = () => {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 md:px-8 lg:px-16 py-8">
-      <h1 className="text-3xl font-bold mb-4">애니검색</h1>
+    <div className="container mx-auto px-4 md:px-8 lg:px-16 py-8 mt-16">
       <InfiniteScroll
         dataLength={items.length}
         next={fetchMoreData}
         hasMore={hasMore}
-        loader={<h4>Loading...</h4>}
+        loader={<h4 className="mt-4 text-center">로딩 중...</h4>}
       >
         {items.map((item) => (
           <div key={item.id}>{item.title}</div>

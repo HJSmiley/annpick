@@ -46,8 +46,9 @@ const Home: React.FC = () => {
     fetchAnimeData();
   }, []);
 
-  if (isLoading) return <div>로딩 중...</div>;
-  if (error) return <div>에러: {error}</div>;
+  if (isLoading)
+    return <div className="mt-28 mb-8 text-center">로딩 중...</div>;
+  if (error) return <div className="mt-28 mb-8 text-center">에러: {error}</div>;
 
   return (
     <div>

@@ -93,13 +93,23 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
           </div>
           {/* 로그인/가입 버튼 또는 프로필 버튼 */}
           <div>
-            <button
-              onClick={openLoginModal}
-              className="font-bold text-xl transition-colors"
-              style={{ color: getTextColor(false) }}
-            >
-              <span className="hover:text-orange-500">로그인/가입</span>
-            </button>
+            {state.isAuthenticated ? (
+              <Link
+                to="/profile"
+                className="font-bold text-xl transition-colors"
+                style={{ color: getTextColor(false) }}
+              >
+                <span className="hover:text-orange-500">프로필</span>
+              </Link>
+            ) : (
+              <button
+                onClick={openLoginModal}
+                className="font-bold text-xl transition-colors"
+                style={{ color: getTextColor(false) }}
+              >
+                <span className="hover:text-orange-500">로그인/가입</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -19,9 +19,9 @@ const Profile: React.FC = () => {
   return (
     <div className="container mx-auto px-4 md:px-8 lg:px-16 py-8 mt-16">
       <h1 className="text-3xl font-bold mb-4">
-        Welcome, {state.user?.nickname}!
+        반갑습니다, {state.user?.nickname}님!
       </h1>
-      <p className="text-xl mb-4">Email: {state.user?.email}</p>
+      <p className="text-xl mb-4">이메일: {state.user?.email}</p>
       <button
         onClick={handleLogout}
         className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded"

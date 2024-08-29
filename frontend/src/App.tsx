@@ -55,8 +55,6 @@ const App: React.FC = () => {
   return (
     <ErrorBoundary>
       <Router>
-        {" "}
-        {/* Router 내부로 AuthProvider 이동 */}
         <AuthProvider>
           <Layout openLoginModal={openLoginModal}>
             <Suspense fallback={<LoadingSpinner />}>
@@ -71,7 +69,8 @@ const App: React.FC = () => {
                   }
                 />
                 <Route path="/anime-search" element={<AnimeSearch />} />
-                <Route path="/anime/:id" element={<AnimeDetail />} />
+                <Route path="/anime/:id" element={<AnimeDetail />} />{" "}
+                {/* 애니메이션 상세 페이지 라우트 */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

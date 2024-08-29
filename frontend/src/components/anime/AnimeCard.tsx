@@ -99,12 +99,14 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
 
   useEffect(() => {
     const fetchAndSetRating = async () => {
-      const initialRating = await fetchRatingFromServer(anime_id);
-      setRating(
-        initialRating !== null && initialRating !== undefined
-          ? initialRating
-          : 0
-      );
+      try {
+        const response = await fetchRatingFromServer(anime_id);
+        if (response !== null) {
+          setRating(response);
+        }
+      } catch (error) {
+        console.error("Failed to fetch rating:", error);
+      }
     };
 
     fetchAndSetRating();

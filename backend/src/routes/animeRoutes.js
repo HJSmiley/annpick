@@ -8,6 +8,10 @@ const ensureAuthenticated = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
+// 비로그인 사용자용 라우트 (별점은 0으로 설정)
+router.get("/anime/public/cards", getAnimeByIds);
+router.get("/anime/public/details/:id", getAnimeDetails);
+
 // prettier-ignore
 /**
  * @swagger
@@ -56,7 +60,7 @@ const router = express.Router();
  *       500:
  *         description: 서버 에러
  */
-router.get("/anime/cards", getAnimeByIds);
+router.get("/anime/cards", ensureAuthenticated, getAnimeByIds);
 
 // prettier-ignore
 /**

@@ -4,8 +4,10 @@ import PromotionBanner from "../components/promotion/PromotionBanner";
 import AnimeList from "../components/anime/AnimeList";
 import { AnimeData } from "../types/anime";
 import { getAnimeSections } from "../services/sections";
+import { useAuth } from "../contexts/AuthContext";
 
 const Home: React.FC = () => {
+  const { state } = useAuth();
   const [animeSections, setAnimeSections] = useState<
     { title: string; animes: AnimeData[] }[]
   >([]);
@@ -18,36 +20,24 @@ const Home: React.FC = () => {
         setIsLoading(true);
 
         const sections = getAnimeSections();
-        console.log("Sections:", sections); // 로깅 추가
+        const apiEndpoint = state.isAuthenticated
+          ? "/api/v1/anime/cards" // 로그인한 사용자는 인증이 필요한 엔드포인트 호출
+          : "/api/v1/anime/public/cards"; // 비로그인 사용자는 인증이 필요 없는 엔드포인트 호출
 
         const responsePromises = sections.map(async (section) => {
           const ids = section.ids.join(",");
+          const headers = state.isAuthenticated
+            ? { Authorization: `Bearer ${state.token}` }
+            : {};
+
           const response = await axios.get<AnimeData[]>(
-            `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/cards?ids=${ids}`
+            `${process.env.REACT_APP_BACKEND_URL}${apiEndpoint}?ids=${ids}`,
+            { headers }
           );
 
-          console.log(
-            "Response data for section:",
-            section.title,
-            response.data
-          ); // 로깅 추가
-
-          // 데이터를 anime_id 순서에 맞게 정렬하고 undefined 제거
           const sortedAnimes = section.ids
-            .map((id) => {
-              const anime = response.data.find(
-                (anime) => anime.anime_id === id
-              ); // anime_id 사용
-              console.log("Found anime for id:", id, anime); // 로깅 추가
-              return anime;
-            })
+            .map((id) => response.data.find((anime) => anime.anime_id === id))
             .filter((anime): anime is AnimeData => anime !== undefined);
-
-          console.log(
-            "Sorted animes for section:",
-            section.title,
-            sortedAnimes
-          ); // 로깅 추가
 
           return {
             title: section.title,
@@ -56,12 +46,11 @@ const Home: React.FC = () => {
         });
 
         const fetchedSections = await Promise.all(responsePromises);
-        console.log("Fetched sections:", fetchedSections); // 로깅 추가
         setAnimeSections(fetchedSections);
       } catch (err) {
         console.error("Error fetching anime data:", err);
         setError(
-          err instanceof Error ? err.message : "알 수 없는 에러가 발생했습니다."
+          err instanceof Error ? err.message : "Unknown error occurred."
         );
       } finally {
         setIsLoading(false);
@@ -69,11 +58,12 @@ const Home: React.FC = () => {
     };
 
     fetchAnimeData();
-  }, []);
+  }, [state.isAuthenticated, state.token]);
 
   if (isLoading)
-    return <div className="mt-28 mb-8 text-center">로딩 중...</div>;
-  if (error) return <div className="mt-28 mb-8 text-center">에러: {error}</div>;
+    return <div className="mt-28 mb-8 text-center">Loading...</div>;
+  if (error)
+    return <div className="mt-28 mb-8 text-center">Error: {error}</div>;
 
   return (
     <div>
@@ -83,7 +73,7 @@ const Home: React.FC = () => {
       <div className="bg-white">
         <div className="container mx-auto px-4 md:px-8 lg:px-16 py-8">
           {animeSections.map((section, index) => (
-            <div key={index} className="mb-8">
+            <div key={index} className="mb-12">
               <h1 className="text-3xl font-bold mb-4 text-left">
                 {section.title}
               </h1>

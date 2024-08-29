@@ -19,6 +19,7 @@ Anime.init(
     },
     banner_img_url: {
       type: DataTypes.STRING(255),
+      allowNull: true,
     },
     format: {
       type: DataTypes.ENUM("TV", "ONA", "OVA", "MOVIE"),

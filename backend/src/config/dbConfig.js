@@ -10,7 +10,8 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST, // RDS 엔드포인트
     port: process.env.DB_PORT, // 포트 번호
     dialect: "mysql",
-    logging: console.log, // SQL 쿼리 로깅 활성화
+    // logging: console.log, // SQL 쿼리 로깅 활성화
+    logging: false, // 이 옵션을 추가하여 로그를 비활성화
   }
 );
 

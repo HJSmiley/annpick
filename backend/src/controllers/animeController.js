@@ -10,7 +10,7 @@ const {
 const getAnimeByIds = async (req, res) => {
   try {
     const animeIds = req.query.ids;
-    const userId = req.user ? req.user.user_id : null; // user가 없으면 null로 설정
+    const userId = req.user ? req.user.user_id : null;
 
     if (!animeIds) {
       return res.status(400).json({ error: "No ids provided" });
@@ -36,9 +36,9 @@ const getAnimeByIds = async (req, res) => {
 
     const response = await Promise.all(
       animeList.map(async (anime) => {
-        let userRating = null;
+        let userRating = 0; // 기본값으로 0 설정
+
         if (userId) {
-          // 인증된 사용자만 별점을 조회
           const ratingRecord = await UserRatedAnime.findOne({
             where: { user_id: userId, anime_id: anime.anime_id },
             attributes: ["rating"],
@@ -58,7 +58,7 @@ const getAnimeByIds = async (req, res) => {
           tags: translateTag(anime.Tags.map((tag) => tag.tag_name))
             .sort((a, b) => b.rank - a.rank)
             .slice(0, 4),
-          user_rating: userRating, // 비로그인 사용자는 null, 로그인 사용자는 별점 정보
+          user_rating: userRating, // 비로그인 사용자는 0, 로그인 사용자는 별점 정보
         };
       })
     );
@@ -88,11 +88,14 @@ const getAnimeDetails = async (req, res) => {
       return res.status(404).json({ error: "애니메이션을 찾을 수 없습니다." });
     }
 
-    // 사용자의 별점 가져오기
-    const userRating = await UserRatedAnime.findOne({
-      where: { user_id: userId, anime_id: anime.anime_id },
-      attributes: ["rating"],
-    });
+    let userRating = 0; // 기본값으로 0 설정
+    if (userId) {
+      const ratingRecord = await UserRatedAnime.findOne({
+        where: { user_id: userId, anime_id: anime.anime_id },
+        attributes: ["rating"],
+      });
+      userRating = ratingRecord ? ratingRecord.rating : 0;
+    }
 
     const response = {
       anime_id: anime.anime_id,
@@ -106,7 +109,7 @@ const getAnimeDetails = async (req, res) => {
       season: formatSeason(anime.season),
       studio: anime.studio,
       genres: translateGenre(
-        anime.Genres.map((genres) => genres.genre_name)
+        anime.Genres.map((genre) => genre.genre_name)
       ).slice(0, 3),
       tags: translateTag(anime.Tags.map((tag) => tag.tag_name))
         .sort((a, b) => b.rank - a.rank)
@@ -115,7 +118,7 @@ const getAnimeDetails = async (req, res) => {
         name: translateStaffName(staff.staff_name),
         role: translateStaffRole(staff.AniStaff.role),
       })),
-      user_rating: userRating ? userRating.rating : null, // 사용자의 별점
+      user_rating: userRating, // 비로그인 사용자는 0, 로그인 사용자는 별점 정보
     };
 
     res.status(200).json(response);

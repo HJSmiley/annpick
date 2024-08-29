@@ -14,14 +14,28 @@ const formatReleaseDate = (dateString) => {
   return `${year}년 ${month}월 ${day}일`;
 };
 
-// 시즌을 'YYYY년 QX' 형식으로 포맷
+// 시즌을 'YY년 QX' 형식으로 포맷, 90년대와 2000년대 모두 포함
 const formatSeason = (seasonInt) => {
   if (typeof seasonInt !== "number" || seasonInt < 0) {
     return null;
   }
-  const year = Math.floor(seasonInt / 10);
-  const quarter = seasonInt % 10;
-  return `${year}년 ${quarter}분기`;
+
+  let yearPrefix;
+  const year = Math.floor(seasonInt / 10); // 두 자리 숫자에서 앞 자리 추출
+  const quarter = seasonInt % 10; // 두 자리 숫자에서 뒷 자리 추출
+
+  // 90년대는 90~99, 2000년대는 00~99로 가정
+  if (year >= 90) {
+    yearPrefix = 1900; // 90년대
+  } else {
+    yearPrefix = 2000; // 2000년대
+  }
+
+  const fullYear = yearPrefix + year;
+  const shortYear = fullYear.toString().slice(2); // 'YY' 형식으로 연도 추출
+
+  // 'YY년 QX분기' 형식으로 반환
+  return `${shortYear}년 ${quarter}분기`;
 };
 
 module.exports = { formatReleaseDate, formatSeason };

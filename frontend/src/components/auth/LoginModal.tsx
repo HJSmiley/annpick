@@ -26,7 +26,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
   const handleClose = () => {
     onClose();
-    navigate(-1);
+    navigate("/");
   };
 
   const handleSocialLogin = (provider: string) => {

@@ -180,22 +180,31 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
       {isHovered && (
         <div className="absolute inset-0 bg-black bg-opacity-70 text-white p-4 flex flex-col">
           <div className="flex justify-between items-center mb-2">
-            <span className="bg-gray-700 px-2 py-1 rounded text-xs">
-              {format}
-            </span>
-            <span className="bg-gray-700 px-2 py-1 rounded text-xs">
-              {status}
-            </span>
+            <div className="flex space-x-2">
+              {" "}
+              {/* format과 status의 간격 설정 */}
+              <span className="border border-white border-opacity-50 px-2 py-1 rounded-lg text-xs">
+                {format}
+              </span>
+              <span className="bg-orange-500 px-2 py-1 rounded-lg text-xs">
+                {status}
+              </span>
+            </div>
           </div>
           <h3 className="text-lg font-semibold mb-2">{title}</h3>
+          <div className="text-sm mb-2">{genres.join(", ")}</div>
           <div className="text-sm mb-2">
-            <strong>장르:</strong> {genres.join(", ")}
-          </div>
-          <div className="text-sm mb-2">
-            <strong>태그:</strong> {tags.slice(0, 3).join(", ")}
+            {tags.slice(0, 3).map((tag, index) => (
+              <span
+                key={index}
+                className="bg-gray-700 bg-opacity-50 px-2 py-1 rounded text-xs mr-2"
+              >
+                {tag}
+              </span>
+            ))}
           </div>
           <div className="flex items-center justify-between mt-auto">
-            <div className="flex">{renderStars()}</div>
+            <div className="flex">{renderStars()}</div> {/* 별점 위치를 위로 */}
             <Link to={`/anime/${anime_id}`} className="text-white">
               <ArrowIcon className="w-6 h-6" />
             </Link>

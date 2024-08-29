@@ -38,7 +38,17 @@ const Home: React.FC = () => {
           );
 
           const sortedAnimes = section.ids
-            .map((id) => response.data.find((anime) => anime.anime_id === id))
+            .map((id) => {
+              const anime = response.data.find(
+                (anime) => anime.anime_id === id
+              );
+              if (!anime) {
+                console.warn(
+                  `Anime with id ${id} not found in section ${section.title}`
+                );
+              }
+              return anime;
+            })
             .filter((anime): anime is AnimeData => anime !== undefined);
 
           return {
@@ -48,6 +58,7 @@ const Home: React.FC = () => {
         });
 
         const fetchedSections = await Promise.all(responsePromises);
+        console.log("Fetched sections:", fetchedSections); // 최종 결과 확인
         setAnimeSections(fetchedSections);
       } catch (err) {
         console.error("Error fetching anime data:", err);

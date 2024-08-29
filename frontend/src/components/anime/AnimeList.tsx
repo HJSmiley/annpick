@@ -20,7 +20,7 @@ const AnimeList: React.FC<AnimeListProps> = ({
 
   const moveCards = useCallback(
     (direction: "left" | "right") => {
-      const moveBy = 5;
+      const moveBy = visibleCount;
       setStartIndex((prevIndex) => {
         if (direction === "left") {
           return Math.max(prevIndex - moveBy, 0);
@@ -29,7 +29,7 @@ const AnimeList: React.FC<AnimeListProps> = ({
         }
       });
     },
-    [animes.length]
+    [animes.length, visibleCount]
   );
 
   const visibleAnimes = animes.slice(startIndex, startIndex + visibleCount);
@@ -37,13 +37,15 @@ const AnimeList: React.FC<AnimeListProps> = ({
   return (
     <div className="relative">
       <div className="overflow-hidden">
+        {" "}
+        {/* 슬라이딩 애니메이션이 숨겨진 부분에서 잘리도록 설정 */}
         <motion.div
           className="flex"
           initial={false}
-          animate={{ x: `${-startIndex * 20}%` }}
+          animate={{ x: `${(-startIndex * 100) / visibleCount}%` }} // 애니메이션의 이동을 정확하게 계산
           transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
         >
-          {visibleAnimes.map((animeData, index: number) => (
+          {animes.map((animeData, index: number) => (
             <div key={animeData.anime_id} className="flex-none w-1/5 px-2">
               <AnimeCard
                 {...animeData}
@@ -51,7 +53,6 @@ const AnimeList: React.FC<AnimeListProps> = ({
                 onRatingClick={onRatingClick}
                 isModalOpen={isModalOpen}
               />{" "}
-              {/* isModalOpen 전달 */}
             </div>
           ))}
         </motion.div>
@@ -62,7 +63,6 @@ const AnimeList: React.FC<AnimeListProps> = ({
             direction="left"
             onClick={() => moveCards("left")}
             aria-label="이전 애니메이션 보기"
-            className="ml-[+5px]"
           />
         </div>
       )}
@@ -72,7 +72,6 @@ const AnimeList: React.FC<AnimeListProps> = ({
             direction="right"
             onClick={() => moveCards("right")}
             aria-label="다음 애니메이션 보기"
-            className="mr-[+5px]"
           />
         </div>
       )}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import PromotionBanner from "../components/PromotionBanner";
+import PromotionBanner from "../components/promotion/PromotionBanner";
 import AnimeList from "../components/anime/AnimeList";
 import { AnimeData } from "../types/anime";
 import { getAnimeSections } from "../services/sections";
@@ -16,6 +16,7 @@ const Home: React.FC = () => {
     const fetchAnimeData = async () => {
       try {
         setIsLoading(true);
+
         // 섹션 데이터를 utils에서 가져옴
         const sections = getAnimeSections();
 

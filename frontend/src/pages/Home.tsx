@@ -5,6 +5,7 @@ import AnimeList from "../components/anime/AnimeList";
 import { AnimeData } from "../types/anime";
 import { getAnimeSections } from "../services/sections";
 import { useAuth } from "../contexts/AuthContext";
+import LoginModal from "../components/auth/LoginModal";
 
 const Home: React.FC = () => {
   const { state } = useAuth();
@@ -13,6 +14,7 @@ const Home: React.FC = () => {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchAnimeData = async () => {
@@ -21,15 +23,15 @@ const Home: React.FC = () => {
 
         const sections = getAnimeSections();
         const apiEndpoint = state.isAuthenticated
-          ? "/api/v1/anime/cards" // 로그인한 사용자는 인증이 필요한 엔드포인트 호출
-          : "/api/v1/anime/public/cards"; // 비로그인 사용자는 인증이 필요 없는 엔드포인트 호출
+          ? "/api/v1/anime/cards"
+          : "/api/v1/anime/public/cards";
+
+        const headers = state.isAuthenticated
+          ? { Authorization: `Bearer ${state.token}` }
+          : {};
 
         const responsePromises = sections.map(async (section) => {
           const ids = section.ids.join(",");
-          const headers = state.isAuthenticated
-            ? { Authorization: `Bearer ${state.token}` }
-            : {};
-
           const response = await axios.get<AnimeData[]>(
             `${process.env.REACT_APP_BACKEND_URL}${apiEndpoint}?ids=${ids}`,
             { headers }
@@ -60,10 +62,15 @@ const Home: React.FC = () => {
     fetchAnimeData();
   }, [state.isAuthenticated, state.token]);
 
+  const handleRatingClick = () => {
+    if (!state.isAuthenticated) {
+      setIsModalOpen(true);
+    }
+  };
+
   if (isLoading)
-    return <div className="mt-28 mb-8 text-center">Loading...</div>;
-  if (error)
-    return <div className="mt-28 mb-8 text-center">Error: {error}</div>;
+    return <div className="mt-28 mb-8 text-center">로딩 중...</div>;
+  if (error) return <div className="mt-28 mb-8 text-center">에러: {error}</div>;
 
   return (
     <div>
@@ -77,11 +84,17 @@ const Home: React.FC = () => {
               <h1 className="text-3xl font-bold mb-4 text-left">
                 {section.title}
               </h1>
-              <AnimeList animes={section.animes} />
+              <AnimeList
+                animes={section.animes}
+                onRatingClick={handleRatingClick}
+                isModalOpen={isModalOpen}
+              />
             </div>
           ))}
         </div>
       </div>
+
+      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };

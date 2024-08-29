@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
+import LoginModal from "../components/auth/LoginModal";
 
 interface Staff {
   name: string;
@@ -29,13 +30,13 @@ interface AnimeDetails {
 const AnimeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { state } = useAuth();
-
   const [anime, setAnime] = useState<AnimeDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState<number>(0);
   const [isResetting, setIsResetting] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // 로그인 모달 상태 관리
 
   const fetchRatingFromServer = async (animeId: number) => {
     try {
@@ -111,8 +112,8 @@ const AnimeDetail: React.FC = () => {
         setLoading(true);
 
         const apiEndpoint = state.isAuthenticated
-          ? `/api/v1/anime/details/${id}` // 로그인한 사용자는 인증이 필요한 엔드포인트 호출
-          : `/api/v1/anime/public/details/${id}`; // 비로그인 사용자는 인증이 필요 없는 엔드포인트 호출
+          ? `/api/v1/anime/details/${id}`
+          : `/api/v1/anime/public/details/${id}`;
 
         const headers = state.isAuthenticated
           ? { Authorization: `Bearer ${state.token}` }
@@ -145,6 +146,11 @@ const AnimeDetail: React.FC = () => {
 
   const handleRating = useCallback(
     (currentRating: number) => {
+      if (!state.isAuthenticated) {
+        setIsModalOpen(true); // 비로그인 상태에서는 로그인 모달을 띄움
+        return;
+      }
+
       if (rating === currentRating || currentRating <= rating) {
         setIsResetting(true);
         setRating(0);
@@ -156,7 +162,7 @@ const AnimeDetail: React.FC = () => {
         sendRatingToServer(parseInt(id!), currentRating);
       }
     },
-    [rating, id]
+    [rating, id, state.isAuthenticated]
   );
 
   const renderStars = () => {
@@ -224,7 +230,6 @@ const AnimeDetail: React.FC = () => {
           </div>
         </div>
       )}
-
       <div className="container mx-auto px-4 md:px-8 lg:px-16 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-2">
@@ -266,6 +271,8 @@ const AnimeDetail: React.FC = () => {
           </div>
         </div>
       </div>
+      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />{" "}
+      {/* 로그인 모달 컴포넌트 추가 */}
     </div>
   );
 };

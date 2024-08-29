@@ -24,9 +24,9 @@ const Profile: React.FC = () => {
       <p className="text-xl mb-4">이메일: {state.user?.email}</p>
       <button
         onClick={handleLogout}
-        className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded"
+        className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg"
       >
-        Logout
+        로그아웃
       </button>
     </div>
   );

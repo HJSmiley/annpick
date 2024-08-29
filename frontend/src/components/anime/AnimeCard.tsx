@@ -7,6 +7,8 @@ import { useAuth } from "../../contexts/AuthContext";
 
 interface AnimeCardProps extends AnimeData {
   index: number;
+  onRatingClick?: () => void; // onRatingClick을 props로 추가
+  isModalOpen?: boolean; // 모달 열림 여부를 추가
 }
 
 const AnimeCard: React.FC<AnimeCardProps> = ({
@@ -17,17 +19,19 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
   status,
   genres,
   tags,
+  onRatingClick,
+  isModalOpen, // 모달 열림 여부 추가
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [isResetting, setIsResetting] = useState(false);
 
-  const { state } = useAuth(); // AuthContext에서 상태를 가져옴
+  const { state } = useAuth();
 
   const fetchRatingFromServer = async (animeId: number) => {
     try {
-      const token = state.isAuthenticated ? state.token : null; // AuthContext에서 토큰을 가져옴
+      const token = state.isAuthenticated ? state.token : null;
       const headers: HeadersInit = {
         "Content-Type": "application/json",
       };
@@ -60,7 +64,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
 
   const sendRatingToServer = async (animeId: number, rating: number) => {
     try {
-      const token = state.isAuthenticated ? state.token : null; // AuthContext에서 토큰을 가져옴
+      const token = state.isAuthenticated ? state.token : null;
 
       if (!token) {
         throw new Error("No token found, please log in again.");
@@ -82,12 +86,8 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
         }
       );
 
-      if (response.status === 401) {
-        throw new Error("Unauthorized: Invalid or expired token.");
-      }
-
       if (!response.ok) {
-        throw new Error("Failed to send rating");
+        throw new Error(`Failed to send rating, status: ${response.status}`);
       }
 
       const data = await response.json();
@@ -120,6 +120,11 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
 
   const handleRating = useCallback(
     (currentRating: number) => {
+      if (!state.isAuthenticated) {
+        onRatingClick?.(); // 비로그인 상태에서는 onRatingClick 호출하여 로그인 모달을 띄움
+        return;
+      }
+
       if (rating === currentRating || currentRating <= rating) {
         setIsResetting(true);
         setRating(0);
@@ -131,7 +136,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
         sendRatingToServer(anime_id, currentRating);
       }
     },
-    [rating, anime_id]
+    [rating, anime_id, state.isAuthenticated, onRatingClick]
   );
 
   const renderStars = () => {
@@ -172,7 +177,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
     <div
       className="relative overflow-hidden rounded-lg shadow-lg aspect-[3/4]"
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseLeave={() => !isModalOpen && setIsHovered(false)} // 모달이 열려있을 경우 onMouseLeave를 무시
     >
       <img
         src={thumbnail_url}
@@ -183,8 +188,6 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
         <div className="absolute inset-0 bg-black bg-opacity-70 text-white p-4 flex flex-col">
           <div className="flex justify-between items-center mb-2">
             <div className="flex space-x-2">
-              {" "}
-              {/* format과 status의 간격 설정 */}
               <span className="border border-white border-opacity-50 px-2 py-1 rounded-lg text-xs">
                 {format}
               </span>
@@ -206,7 +209,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
             ))}
           </div>
           <div className="flex items-center justify-between mt-auto">
-            <div className="flex">{renderStars()}</div> {/* 별점 위치를 위로 */}
+            <div className="flex">{renderStars()}</div>
             <Link to={`/anime/${anime_id}`} className="text-white">
               <ArrowIcon className="w-6 h-6" />
             </Link>

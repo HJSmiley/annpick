@@ -1,8 +1,6 @@
 // 스태프 이름을 한국어로 번역하는 함수
 const translateStaffName = (staffName) => {
   const translations = {
-    "John Doe": "존 도",
-    "Jane Smith": "제인 스미스",
     "Eiichirou Oda": "오다 에이이치로",
     "Junji Shimizu": "시미즈 준지",
     "Takashi Ootsuka": "오오츠카 타카시",

@@ -1,10 +1,13 @@
 const passport = require("passport");
 const NaverStrategy = require("passport-naver").Strategy;
+const JwtStrategy = require("passport-jwt").Strategy;
+const ExtractJwt = require("passport-jwt").ExtractJwt;
 const {
   findOrCreateUser,
   generateToken,
   fetchNaverProfile,
 } = require("../services/authService");
+const { User } = require("../models");
 
 passport.use(
   new NaverStrategy(
@@ -31,6 +34,28 @@ passport.use(
       }
     }
   )
+);
+
+// JWT 전략 설정
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET, // JWT 토큰 서명 검증을 위한 비밀 키
+};
+
+passport.use(
+  new JwtStrategy(opts, async (jwt_payload, done) => {
+    try {
+      // JWT의 payload에서 사용자를 검색
+      const user = await User.findByPk(jwt_payload.id);
+      if (user) {
+        return done(null, user);
+      } else {
+        return done(null, false); // 사용자 없음
+      }
+    } catch (err) {
+      return done(err, false); // 에러 발생
+    }
+  })
 );
 
 module.exports = passport;

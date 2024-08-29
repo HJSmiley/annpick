@@ -1,4 +1,4 @@
-const { User } = require("../models/User");
+const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
 
@@ -29,11 +29,11 @@ const findOrCreateUser = async (profileData) => {
 };
 
 const generateToken = (user) => {
-  return jwt.sign(
-    { id: user.user_id }, // 사용자 ID만 포함
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
+  const token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+  console.log(`Generated JWT Token: ${token}`);
+  return token;
 };
 
 const fetchNaverProfile = async (accessToken) => {

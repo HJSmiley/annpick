@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface HeaderProps {
   openLoginModal: () => void;
@@ -7,6 +8,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
   const location = useLocation();
+  const { state } = useAuth(); // 인증 상태 가져오기
   const [isScrolled, setIsScrolled] = useState(false);
 
   // 스크롤 이벤트 리스너를 추가하여 페이지 스크롤 상태를 감지합니다.
@@ -20,8 +22,8 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // 현재 활성화된 링크를 확인하는 함수입니다.
@@ -30,14 +32,18 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-[72px]
-        ${isScrolled ? 'bg-white shadow' : 'bg-transparent'}`}
+        ${isScrolled ? "bg-white shadow" : "bg-transparent"}`}
     >
       <div className="container mx-auto px-4 md:px-8 lg:px-16 h-full">
         <div className="flex justify-between items-center h-full">
           <div className="flex items-center space-x-8">
             {/* 로고 링크 */}
             <Link to="/" className="flex items-center">
-              <img src= "/anpicktest.svg" alt= "앤픽 로고" className="w-[80px] h-[40px]"/>
+              <img
+                src="/anpicktest.svg"
+                alt="앤픽 로고"
+                className="w-[80px] h-[40px]"
+              />
               {/* <svg width="120" height="60" viewBox="0 0 150 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="150" height="60" fill="#FF6B6B"/>
                 <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="24" fontWeight="bold">엔픽 로고</text>
@@ -50,7 +56,11 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
                   <Link
                     to="/"
                     className={`font-black text-xl hover:text-orange-500 transition-colors ${
-                      isActive('/') ? 'text-orange-500' : isScrolled ? 'text-gray-800' : 'text-white'
+                      isActive("/")
+                        ? "text-orange-500"
+                        : isScrolled
+                        ? "text-gray-800"
+                        : "text-white"
                     }`}
                   >
                     홈
@@ -60,7 +70,11 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
                   <Link
                     to="/anime-search"
                     className={`font-bold text-xl hover:text-orange-500 transition-colors ${
-                      isActive('/anime-search') ? 'text-orange-500' : isScrolled ? 'text-gray-800' : 'text-white'
+                      isActive("/anime-search")
+                        ? "text-orange-500"
+                        : isScrolled
+                        ? "text-gray-800"
+                        : "text-white"
                     }`}
                   >
                     애니 검색
@@ -69,16 +83,27 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
               </ul>
             </nav>
           </div>
-          {/* 로그인/가입 버튼 */}
+          {/* 로그인/가입 버튼 또는 프로필 버튼 */}
           <div>
-            <button
-              onClick={openLoginModal}
-              className={`font-bold text-xl hover:text-orange-500 transition-colors ${
-                isScrolled ? 'text-gray-800' : 'text-white'
-              }`}
-            >
-              로그인/가입
-            </button>
+            {state.isAuthenticated ? (
+              <Link
+                to="/profile"
+                className={`font-bold text-xl hover:text-orange-500 transition-colors ${
+                  isScrolled ? "text-gray-800" : "text-white"
+                }`}
+              >
+                프로필
+              </Link>
+            ) : (
+              <button
+                onClick={openLoginModal}
+                className={`font-bold text-xl hover:text-orange-500 transition-colors ${
+                  isScrolled ? "text-gray-800" : "text-white"
+                }`}
+              >
+                로그인/가입
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -18,9 +18,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     const token = queryParams.get("token");
 
     if (token) {
-      localStorage.setItem("token", token);
-      // 홈 페이지로 리다이렉트
-      navigate("/");
+      login(token); // 로그인 처리
     }
   }, [navigate]);
 

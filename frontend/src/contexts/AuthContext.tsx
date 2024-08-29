@@ -1,141 +1,108 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+// src/contexts/AuthContext.tsx
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
-// Types
 interface User {
-  id: string;
   name: string;
   email: string;
 }
 
-interface AuthState {
-  user: User | null;
-  isAuthenticated: boolean;
-  loading: boolean;
-  error: string | null;
-}
-
-type AuthAction =
-  | { type: 'LOGIN'; payload: User }
-  | { type: 'LOGOUT' }
-  | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'SET_ERROR'; payload: string };
-
 interface AuthContextType {
-  state: AuthState;
-  dispatch: React.Dispatch<AuthAction>;
-  login: (token: string) => Promise<void>;
+  state: {
+    isAuthenticated: boolean;
+    loading: boolean;
+    error: string | null;
+    user: User | null;
+  };
+  login: (token: string) => void;
   logout: () => void;
 }
 
-// Initial state
-const initialState: AuthState = {
-  user: null,
-  isAuthenticated: false,
-  loading: true,
-  error: null,
-};
-
-// Context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Reducer
-function authReducer(state: AuthState, action: AuthAction): AuthState {
-  switch (action.type) {
-    case 'LOGIN':
-      return {
-        ...state,
-        user: action.payload,
-        isAuthenticated: true,
-        loading: false,
-        error: null,
-      };
-    case 'LOGOUT':
-      return {
-        ...state,
-        user: null,
-        isAuthenticated: false,
-        loading: false,
-        error: null,
-      };
-    case 'SET_LOADING':
-      return {
-        ...state,
-        loading: action.payload,
-      };
-    case 'SET_ERROR':
-      return {
-        ...state,
-        error: action.payload,
-        loading: false,
-      };
-    default:
-      return state;
-  }
+const TOKEN_KEY = "auth_token"; // 로컬 스토리지에 저장할 키
+
+interface JwtPayload {
+  exp: number; // 토큰 만료 시간
+  name: string; // 사용자 이름
+  email: string; // 사용자 이메일
 }
 
-// Provider component
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(authReducer, initialState);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
 
-  const login = async (token: string) => {
+  useEffect(() => {
+    const token = localStorage.getItem(TOKEN_KEY);
+
+    if (token) {
+      try {
+        const decoded: JwtPayload = jwtDecode(token);
+
+        if (decoded.exp * 1000 > Date.now()) {
+          setIsAuthenticated(true);
+          setUser({ name: decoded.name, email: decoded.email });
+        } else {
+          localStorage.removeItem(TOKEN_KEY);
+        }
+      } catch (e) {
+        console.error("Failed to decode JWT token", e);
+        localStorage.removeItem(TOKEN_KEY);
+      }
+    }
+
+    setLoading(false);
+  }, []);
+
+  const login = (token: string) => {
     try {
-      const user = await fetchUserInfo(token);
-      dispatch({ type: 'LOGIN', payload: user });
-      localStorage.setItem('token', token);
-    } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Login failed' });
+      const decoded: JwtPayload = jwtDecode(token);
+
+      if (decoded.exp * 1000 > Date.now()) {
+        localStorage.setItem(TOKEN_KEY, token);
+        setIsAuthenticated(true);
+        setUser({ name: decoded.name, email: decoded.email });
+        setError(null);
+        navigate("/");
+      } else {
+        setError("Token has expired");
+      }
+    } catch (e) {
+      console.error("Failed to decode JWT token", e);
+      setError("Invalid token");
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    dispatch({ type: 'LOGOUT' });
+    localStorage.removeItem(TOKEN_KEY);
+    setIsAuthenticated(false);
+    setUser(null);
+    navigate("/");
   };
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const user = await fetchUserInfo(token);
-          dispatch({ type: 'LOGIN', payload: user });
-        } catch (error) {
-          console.error('Auth check failed:', error);
-          dispatch({ type: 'LOGOUT' });
-        }
-      } else {
-        dispatch({ type: 'SET_LOADING', payload: false });
-      }
-    };
-
-    checkAuth();
-  }, []);
-
   return (
-    <AuthContext.Provider value={{ state, dispatch, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        state: { isAuthenticated, loading, error, user },
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-// Custom hook for using auth context
-export function useAuth() {
+export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-}
-
-// Helper function to fetch user info
-async function fetchUserInfo(token: string): Promise<User> {
-  const response = await fetch('/api/user', {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch user info');
-  }
-  
-  return response.json();
-}
+};

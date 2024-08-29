@@ -3,6 +3,7 @@ import axios from "axios";
 import PromotionBanner from "../components/PromotionBanner";
 import AnimeList from "../components/anime/AnimeList";
 import { AnimeData } from "../types/anime";
+import { getAnimeSections } from "../services/sections";
 
 const Home: React.FC = () => {
   const [animeSections, setAnimeSections] = useState<
@@ -15,20 +16,22 @@ const Home: React.FC = () => {
     const fetchAnimeData = async () => {
       try {
         setIsLoading(true);
-        const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].join(
-          ","
-        );
-        const response = await axios.get<AnimeData[]>(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/cards?ids=${ids}`
-        );
-        const animeData = response.data;
+        // 섹션 데이터를 utils에서 가져옴
+        const sections = getAnimeSections();
 
-        const section = {
-          title: "인기 애니메이션 Top 15",
-          animes: animeData,
-        };
+        const responsePromises = sections.map(async (section) => {
+          const ids = section.ids.join(",");
+          const response = await axios.get<AnimeData[]>(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/cards?ids=${ids}`
+          );
+          return {
+            title: section.title,
+            animes: response.data,
+          };
+        });
 
-        setAnimeSections([section]);
+        const fetchedSections = await Promise.all(responsePromises);
+        setAnimeSections(fetchedSections);
       } catch (err) {
         console.error("Error fetching anime data:", err);
         setError(

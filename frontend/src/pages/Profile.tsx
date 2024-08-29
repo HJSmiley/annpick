@@ -1,8 +1,8 @@
-import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import React from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 const Profile: React.FC = () => {
-  const { state, dispatch } = useAuth();
+  const { state, logout } = useAuth();
 
   if (state.loading) {
     return <div>Loading...</div>;
@@ -13,8 +13,7 @@ const Profile: React.FC = () => {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    dispatch({ type: 'LOGOUT' });
+    logout(); // 로그아웃 처리
   };
 
   return (

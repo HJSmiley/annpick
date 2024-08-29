@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import React, { useState, useEffect, useCallback } from 'react';
 
-// 각 슬라이드의 데이터 구조를 정의
+// Slide 인터페이스 정의: 각 슬라이드의 구조를 정의합니다.
 interface Slide {
   imageUrl: string;
   link: string;
@@ -9,8 +8,10 @@ interface Slide {
 }
 
 const PromotionBanner: React.FC = () => {
-  // 현재 표시 중인 슬라이드의 인덱스를 state로 관리
+  // 현재 슬라이드의 인덱스를 관리하는 state
   const [currentSlide, setCurrentSlide] = useState(0);
+  // 자동 슬라이딩 여부를 관리하는 state
+  const [isAutoSliding, setIsAutoSliding] = useState(true);
 
   // 슬라이드 데이터 배열
   const slides: Slide[] = [
@@ -22,37 +23,37 @@ const PromotionBanner: React.FC = () => {
     { imageUrl: '/images/지브리16.jpg', link: '/promo8', title: '프로모션 8' },
   ];
 
-  // 3초마다 자동으로 다음 슬라이드로 전환
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 3000);
-
-    // 컴포넌트 언마운트 시 인터벌 클리어
-    return () => clearInterval(interval);
+  // 다음 슬라이드로 이동하는 함수
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
   }, [slides.length]);
 
-  // 특정 슬라이드로 직접 이동하는 함수
+  // 자동 슬라이딩을 위한 useEffect
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isAutoSliding) {
+      interval = setInterval(nextSlide, 5000); // 5초마다 다음 슬라이드로 이동
+    }
+    return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 제거
+  }, [isAutoSliding, nextSlide]);
+
+  // 특정 슬라이드로 이동하는 함수
   const changeSlide = (index: number) => {
     setCurrentSlide(index);
-  };
-
-  // 다음 슬라이드로 이동하는 함수
-  // 주의: 이 함수는 이미 순환 기능을 포함하고 있습니다.
-  // 마지막 슬라이드에서 다음으로 넘어가면 자동으로 첫 번째 슬라이드로 이동합니다.
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
+    setIsAutoSliding(false); // 수동 조작 시 자동 슬라이딩 일시 중지
+    setTimeout(() => setIsAutoSliding(true), 5000); // 5초 후 자동 슬라이딩 재개
   };
 
   // 이전 슬라이드로 이동하는 함수
-  // 주의: 이 함수는 이미 순환 기능을 포함하고 있습니다.
-  // 첫 번째 슬라이드에서 이전으로 가면 자동으로 마지막 슬라이드로 이동합니다.
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    setIsAutoSliding(false); // 수동 조작 시 자동 슬라이딩 일시 중지
+    setTimeout(() => setIsAutoSliding(true), 5000); // 5초 후 자동 슬라이딩 재개
   };
 
   return (
-    <div className="absolute inset-0"> {/* 배너 컨테이너: 부모 요소 전체를 채웁니다 */}
+    <div className="relative w-full h-full overflow-hidden">
+      {/* 슬라이드 이미지 렌더링 */}
       {slides.map((slide, index) => (
         <div
           key={index}
@@ -60,15 +61,14 @@ const PromotionBanner: React.FC = () => {
             index === currentSlide ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          {/* 슬라이드 이미지 */}
           <img
             src={slide.imageUrl}
             alt={slide.title}
             className="w-full h-full object-cover object-center"
           />
-          {/* 그라데이션 오버레이: 이미지 위에 약간의 어두움을 추가합니다 */}
+          {/* 그라데이션 오버레이 */}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-50"></div>
-          {/* "보러가기" 버튼 */}
+          {/* '보러가기' 버튼 */}
           <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2">
             <a
               href={slide.link}
@@ -80,22 +80,28 @@ const PromotionBanner: React.FC = () => {
         </div>
       ))}
       {/* 이전 슬라이드 버튼 */}
-      {/* 버튼 위치 조정: left-4를 변경하여 좌우 위치 조정, top-1/2를 변경하여 상하 위치 조정 */}
       <button
         onClick={prevSlide}
-        className="absolute left-10 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all duration-300"
+        className="absolute left-4 sm:left-8 md:left-12 lg:left-16 top-1/2 transform -translate-y-1/2 bg-transparent transition-all duration-300 rounded-full p-2 group"
       >
-        <FaChevronLeft size={24} />
+        <img
+          src="/images/ic_swipe_dk_prev-button.svg"
+          alt="이전"
+          className="w-[2rem] h-[2rem] sm:w-[2.5rem] sm:h-[2.5rem] md:w-[3rem] md:h-[3rem] lg:w-[4rem] lg:h-[4rem] transition-transform duration-300 group-hover:scale-110 group-hover:drop-shadow-[2px_2px_3px_rgba(0,0,0,0.3)]"
+        />
       </button>
       {/* 다음 슬라이드 버튼 */}
-      {/* 버튼 위치 조정: right-4를 변경하여 좌우 위치 조정, top-1/2를 변경하여 상하 위치 조정 */}
       <button
         onClick={nextSlide}
-        className="absolute right-10 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all duration-300"
+        className="absolute right-4 sm:right-8 md:right-12 lg:right-16 top-1/2 transform -translate-y-1/2 bg-transparent transition-all duration-300 rounded-full p-2 group"
       >
-        <FaChevronRight size={24} />
+        <img
+          src="/images/ic_swipe_dk_next-button.svg"
+          alt="다음"
+          className="w-[2rem] h-[2rem] sm:w-[2.5rem] sm:h-[2.5rem] md:w-[3rem] md:h-[3rem] lg:w-[4rem] lg:h-[4rem] transition-transform duration-300 group-hover:scale-110 group-hover:drop-shadow-[2px_2px_3px_rgba(0,0,0,0.3)]"
+        />
       </button>
-      {/* 슬라이드 인디케이터 (하단 점) */}
+      {/* 슬라이드 인디케이터 */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
         {slides.map((_, index) => (
           <button

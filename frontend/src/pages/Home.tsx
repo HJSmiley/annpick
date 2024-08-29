@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import PromotionBanner from '../components/PromotionBanner';
+import PromotionBanner from '../components/promotion/PromotionBanner';
 import AnimeList from '../components/anime/AnimeList';
 import { AnimeData } from '../types/anime';
 
@@ -14,7 +14,7 @@ const Home: React.FC = () => {
       try {
         setIsLoading(true);
         const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].join(',');
-        const response = await axios.get<AnimeData[]>(`http://3.36.94.230:8000/api/v1/animecards?ids=${ids}`);
+        const response = await axios.get<AnimeData[]>(`http://3.36.94.230:8000/api/v1/anime/cards?ids=${ids}`);
         const animeData = response.data;
 
         const section = {

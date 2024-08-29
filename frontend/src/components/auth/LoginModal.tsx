@@ -33,14 +33,16 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto">
       <Draggable handle=".modal-handle">
-        <div className="bg-white rounded-lg relative max-w-md w-full mx-4 my-8">
+        <div className="bg-white rounded-2xl relative max-w-md w-full mx-4 my-8">
           <div className="modal-handle cursor-move p-4 bg-gray-100 rounded-t-lg">
-            <h2 className="text-center text-2xl font-bold">앤픽</h2>
+           
           </div>
           <div className="p-6 max-h-[80vh] overflow-y-auto">
+
             <h6 className="text-center text-sm mb-4">
               내 취향에 딱 맞는 애니메이션 추천 서비스
             </h6>
+             <h1 className="text-center text-2xl font-bold">앤픽</h1>
             <button
               onClick={handleClose}
               className="absolute top-2 right-2 text-2xl"

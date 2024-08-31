@@ -5,12 +5,84 @@ const {
   rateAnime,
 } = require("../controllers/animeController");
 const ensureAuthenticated = require("../middleware/authMiddleware");
+const { searchAnimes } = require("../controllers/animeController");
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/v1/anime/search:
+ *   get:
+ *     summary: 애니메이션 검색
+ *     description: 주어진 쿼리와 필터를 사용하여 애니메이션을 검색합니다.
+ *     tags:
+ *       - Anime
+ *     parameters:
+ *       - in: query
+ *         name: query
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - in: query
+ *         name: genre
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: 장르 필터
+ *       - in: query
+ *         name: tag
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: 태그 필터
+ *       - in: query
+ *         name: staff
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: 스태프 필터
+ *     responses:
+ *       200:
+ *         description: 검색된 애니메이션 리스트
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 12345
+ *                   title:
+ *                     type: string
+ *                     example: 원피스
+ *                   popularity:
+ *                     type: integer
+ *                     example: 10000
+ *                   genres:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                       example: Action
+ *                   tags:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                       example: Pirate
+ *                   staff:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                       example: Eiichiro Oda
+ *       500:
+ *         description: 서버 오류
+ */
+router.get("/search", searchAnimes);
+
 // 비로그인 사용자용 라우트 (별점은 0으로 설정)
-router.get("/anime/public/cards", getAnimeByIds);
-router.get("/anime/public/details/:id", getAnimeDetails);
+router.get("/public/cards", getAnimeByIds);
+router.get("/public/details/:id", getAnimeDetails);
 
 // prettier-ignore
 /**
@@ -60,7 +132,7 @@ router.get("/anime/public/details/:id", getAnimeDetails);
  *       500:
  *         description: 서버 에러
  */
-router.get("/anime/cards", ensureAuthenticated, getAnimeByIds);
+router.get("/cards", ensureAuthenticated, getAnimeByIds);
 
 // prettier-ignore
 /**
@@ -128,7 +200,7 @@ router.get("/anime/cards", ensureAuthenticated, getAnimeByIds);
  *       500:
  *         description: 서버 에러
  */
-router.get("/anime/details/:id", ensureAuthenticated, getAnimeDetails);
+router.get("/details/:id", ensureAuthenticated, getAnimeDetails);
 
 /**
  * @swagger
@@ -190,6 +262,6 @@ router.get("/anime/details/:id", ensureAuthenticated, getAnimeDetails);
  *                   type: string
  *                   example: Internal server error
  */
-router.post("/anime/ratings", ensureAuthenticated, rateAnime);
+router.post("/ratings", ensureAuthenticated, rateAnime);
 
 module.exports = router;

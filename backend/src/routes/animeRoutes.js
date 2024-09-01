@@ -16,7 +16,7 @@ const router = express.Router();
  *     summary: 애니메이션 검색
  *     description: 주어진 쿼리와 필터를 사용하여 애니메이션을 검색합니다.
  *     tags:
- *       - Anime
+ *       - 애니메이션
  *     parameters:
  *       - in: query
  *         name: query
@@ -80,16 +80,130 @@ const router = express.Router();
  */
 router.get("/search", searchAnimes);
 
-// 비로그인 사용자용 라우트 (별점은 0으로 설정)
+/**
+ * @swagger
+ * /api/v1/anime/public/cards:
+ *   get:
+ *     summary: 퍼블릭 엔드포인트 - 여러 ID의 애니메이션 정보를 가져옴
+ *     description: 로그인이 필요 없는 퍼블릭 엔드포인트로, 애니메이션 카드 정보를 가져옵니다. 별점은 0으로 설정됩니다.
+ *     tags:
+ *       - 애니메이션
+ *     parameters:
+ *       - in: query
+ *         name: ids
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: 요청할 애니메이션의 ID 리스트
+ *     responses:
+ *       200:
+ *         description: 애니메이션 정보 리스트
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   anime_id:
+ *                     type: integer
+ *                   thumbnail_url:
+ *                     type: string
+ *                   title:
+ *                     type: string
+ *                   format:
+ *                     type: string
+ *                   status:
+ *                     type: string
+ *                   genres:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                   tags:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *       404:
+ *         description: 애니메이션을 찾을 수 없음
+ *       500:
+ *         description: 서버 에러
+ */
 router.get("/public/cards", getAnimeByIds);
+
+/**
+ * @swagger
+ * /api/v1/anime/public/details/{id}:
+ *   get:
+ *     summary: 퍼블릭 엔드포인트 - 특정 ID의 애니메이션 상세 정보를 가져옴
+ *     description: 로그인이 필요 없는 퍼블릭 엔드포인트로, 특정 애니메이션의 상세 정보를 가져옵니다.
+ *     tags:
+ *       - 애니메이션
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           description: 애니메이션의 ID
+ *     responses:
+ *       200:
+ *         description: 애니메이션 상세 정보
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 anime_id:
+ *                   type: integer
+ *                 title:
+ *                   type: string
+ *                 thumbnail_url:
+ *                   type: string
+ *                 banner_img_url:
+ *                   type: string
+ *                 format:
+ *                   type: string
+ *                 status:
+ *                   type: string
+ *                 release_date:
+ *                   type: string
+ *                   format: date
+ *                 description:
+ *                   type: string
+ *                 season:
+ *                   type: string
+ *                 studio:
+ *                   type: string
+ *                 genres:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 tags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 staff:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       role:
+ *                         type: string
+ *       404:
+ *         description: 애니메이션을 찾을 수 없음
+ *       500:
+ *         description: 서버 에러
+ */
 router.get("/public/details/:id", getAnimeDetails);
 
-// prettier-ignore
 /**
  * @swagger
  * /api/v1/anime/cards:
  *   get:
  *     summary: 여러 ID의 애니메이션 정보를 가져옴
+ *     description: 인증된 사용자에 대한 엔드포인트로, 애니메이션 카드 정보를 가져옵니다. 별점은 사용자 DB 정보를 반영합니다.
  *     tags:
  *       - 애니메이션
  *     parameters:
@@ -134,12 +248,12 @@ router.get("/public/details/:id", getAnimeDetails);
  */
 router.get("/cards", ensureAuthenticated, getAnimeByIds);
 
-// prettier-ignore
 /**
  * @swagger
  * /api/v1/anime/details/{id}:
  *   get:
  *     summary: 특정 ID의 애니메이션 상세 정보를 가져옴
+ *     description: 인증된 사용자에 대한 엔드포인트로, 특정 애니메이션의 상세 정보를 가져옵니다.
  *     tags:
  *       - 애니메이션
  *     parameters:
@@ -206,10 +320,10 @@ router.get("/details/:id", ensureAuthenticated, getAnimeDetails);
  * @swagger
  * /api/v1/anime/ratings:
  *   post:
- *     summary: Rate an anime
- *     description: Allows a user to rate an anime. If the user has already rated the anime, the rating will be updated.
+ *     summary: 애니메이션에 별점 부여
+ *     description: 사용자가 애니메이션에 별점을 부여할 수 있습니다. 사용자가 이미 별점을 부여한 경우, 별점이 업데이트됩니다.
  *     tags:
- *       - Anime
+ *       - 애니메이션
  *     requestBody:
  *       required: true
  *       content:
@@ -226,7 +340,7 @@ router.get("/details/:id", ensureAuthenticated, getAnimeDetails);
  *                 example: 4.5
  *     responses:
  *       200:
- *         description: Rating saved successfully
+ *         description: 별점 저장 성공
  *         content:
  *           application/json:
  *             schema:
@@ -249,7 +363,7 @@ router.get("/details/:id", ensureAuthenticated, getAnimeDetails);
  *                       format: float
  *                       example: 4.5
  *       500:
- *         description: Failed to save rating
+ *         description: 별점 저장 실패
  *         content:
  *           application/json:
  *             schema:

@@ -59,7 +59,7 @@ const getAnimeByIds = async (req, res) => {
           tags: translateTag(anime.Tags.map((tag) => tag.tag_name))
             .sort((a, b) => b.rank - a.rank)
             .slice(0, 4),
-          user_rating: userRating, // 비로그인 사용자는 0, 로그인 사용자는 별점 정보
+          user_rating: userId ? userRating : 0, // 비로그인 사용자는 0, 로그인 사용자는 별점 정보
         };
       })
     );
@@ -123,7 +123,7 @@ const getAnimeDetails = async (req, res) => {
         name: translateStaffName(staff.staff_name),
         role: translateStaffRole(staff.AniStaff.role),
       })),
-      user_rating: userRating, // 비로그인 사용자는 0, 로그인 사용자는 별점 정보
+      user_rating: userId ? userRating : 0, // 비로그인 사용자는 0, 로그인 사용자는 별점 정보
     };
 
     res.status(200).json(response);
@@ -138,7 +138,7 @@ const getAnimeDetails = async (req, res) => {
 const rateAnime = async (req, res) => {
   const { anime_id, rating } = req.body;
 
-  if (!anime_id || !rating) {
+  if (!anime_id || rating === undefined) {
     return res
       .status(400)
       .json({ message: "애니메이션 ID와 별점 정보가 필요합니다." });
@@ -155,21 +155,27 @@ const rateAnime = async (req, res) => {
       where: { user_id, anime_id },
     });
 
-    if (userRating) {
-      userRating.rating = rating;
-      await userRating.save();
+    if (rating === 0) {
+      // rating이 0이면 기록을 삭제
+      if (userRating) {
+        await userRating.destroy();
+        return res.status(200);
+      }
     } else {
-      userRating = await UserRatedAnime.create({
-        user_id,
-        anime_id,
-        rating,
-      });
+      // 별점이 이미 존재하면 업데이트, 존재하지 않으면 새로 생성
+      if (userRating) {
+        userRating.rating = rating;
+        await userRating.save();
+      } else {
+        userRating = await UserRatedAnime.create({
+          user_id,
+          anime_id,
+          rating,
+        });
+      }
     }
 
-    return res.status(200).json({
-      message: "별점이 성공적으로 저장되었습니다.",
-      rating: userRating,
-    });
+    return res.status(200);
   } catch (error) {
     console.error("별점을 저장하는 중 오류 발생:", error);
     return res.status(500).json({

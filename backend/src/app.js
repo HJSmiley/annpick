@@ -18,7 +18,7 @@ const app = express();
 
 // Sequelize 데이터베이스 동기화
 sequelize
-  .sync({ force: true })
+  .sync({ force: false })
   .then(() => {
     console.log("All models were synchronized successfully.");
   })

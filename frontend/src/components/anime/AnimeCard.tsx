@@ -7,8 +7,8 @@ import { useAuth } from "../../contexts/AuthContext";
 
 interface AnimeCardProps extends AnimeData {
   index: number;
-  onRatingClick?: () => void; // onRatingClick을 props로 추가
-  isModalOpen?: boolean; // 모달 열림 여부를 추가
+  onRatingClick?: () => void;
+  isModalOpen?: boolean;
 }
 
 const AnimeCard: React.FC<AnimeCardProps> = ({
@@ -20,7 +20,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
   genres,
   tags,
   onRatingClick,
-  isModalOpen, // 모달 열림 여부 추가
+  isModalOpen,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [rating, setRating] = useState(0);
@@ -121,7 +121,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
   const handleRating = useCallback(
     (currentRating: number) => {
       if (!state.isAuthenticated) {
-        onRatingClick?.(); // 비로그인 상태에서는 onRatingClick 호출하여 로그인 모달을 띄움
+        onRatingClick?.();
         return;
       }
 
@@ -174,53 +174,55 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
   };
 
   return (
-    <div
-      className="relative overflow-hidden rounded-lg shadow-lg aspect-[3/4]"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => !isModalOpen && setIsHovered(false)} // 모달이 열려있을 경우 onMouseLeave를 무시
-    >
-      <img
-        src={thumbnail_url}
-        alt={title}
-        className="w-full h-full object-cover"
-      />
-      {isHovered && (
-        <div className="absolute inset-0 bg-black bg-opacity-70 text-white p-4 flex flex-col">
-          <div className="flex justify-between items-center mb-2">
-            <div className="flex space-x-2">
-              <span className="border border-white border-opacity-50 px-2 py-1 rounded-lg text-xs">
-                {format}
-              </span>
-              <span className="bg-orange-500 px-2 py-1 rounded-lg text-xs">
-                {status}
-              </span>
+    <div className="relative">
+      <div
+        className="relative overflow-hidden rounded-lg shadow-lg aspect-[3/4]"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => !isModalOpen && setIsHovered(false)}
+      >
+        <img
+          src={thumbnail_url}
+          alt={title}
+          className="w-full h-full object-cover"
+        />
+        {isHovered && (
+          <div className="absolute inset-0 bg-black bg-opacity-70 text-white p-4 flex flex-col">
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex space-x-2">
+                <span className="border border-white border-opacity-50 px-2 py-1 rounded-lg text-xs">
+                  {format}
+                </span>
+                <span className="bg-orange-500 px-2 py-1 rounded-lg text-xs">
+                  {status}
+                </span>
+              </div>
+            </div>
+            <div className="text-sm mb-2">{genres.join(", ")}</div>
+            <div className="text-sm mb-2">
+              {tags.slice(0, 3).map((tag, index) => (
+                <span
+                  key={index}
+                  className="bg-gray-700 bg-opacity-50 px-2 py-1 rounded text-xs mr-2"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <div className="flex items-center justify-between mt-auto">
+              <div className="flex">{renderStars()}</div>
+              <Link to={`/anime/${anime_id}`} className="text-white">
+                <ArrowIcon className="w-6 h-6" />
+              </Link>
             </div>
           </div>
-          <h3 className="text-lg font-semibold mb-2">{title}</h3>
-          <div className="text-sm mb-2">{genres.join(", ")}</div>
-          <div className="text-sm mb-2">
-            {tags.slice(0, 3).map((tag, index) => (
-              <span
-                key={index}
-                className="bg-gray-700 bg-opacity-50 px-2 py-1 rounded text-xs mr-2"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-          <div className="flex items-center justify-between mt-auto">
-            <div className="flex">{renderStars()}</div>
-            <Link to={`/anime/${anime_id}`} className="text-white">
-              <ArrowIcon className="w-6 h-6" />
-            </Link>
-          </div>
-        </div>
-      )}
-      {!isHovered && (
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-          <h3 className="text-white text-lg font-semibold">{title}</h3>
-        </div>
-      )}
+        )}
+      </div>
+      {/* 제목을 카드 밖 하단에 표시하는 새로운 div */}
+      <div className="mt-2">
+        <h3 className="text-lg font-semibold line-clamp-2 text-gray-800 dark:text-white">
+          {title}
+        </h3>
+      </div>
     </div>
   );
 };

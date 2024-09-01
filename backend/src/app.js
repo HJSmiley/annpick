@@ -27,12 +27,26 @@ sequelize
   });
 
 // 미들웨어 설정
+const allowedOrigins = [
+  process.env.FRONTEND_URL, // .env 파일에 설정된 배포 URL
+  "https://d2rj4857nnqxpf.cloudfront.net", // 만약 .env 파일을 통해 설정되지 않는 추가 URL이 있다면 여기 추가
+  "http://127.0.0.1:3000", // 개발 환경에서의 로컬 URL
+];
+
 app.use(
   cors({
-    origin: `${process.env.FRONTEND_URL}`,
+    origin: (origin, callback) => {
+      // origin이 허용된 목록에 있거나, origin이 없는 경우 (비어 있는 경우)
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());

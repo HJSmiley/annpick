@@ -79,7 +79,7 @@ const AnimeList: React.FC<AnimeListProps> = ({
         </motion.div>
       </div>
       {startIndex > 0 && (
-        <div className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10">
+        <div className="absolute left-2 top-[45%] transform -translate-y-1/2 z-10">
           <SwipeButton
             direction="left"
             onClick={() => moveCards("left")}
@@ -88,7 +88,7 @@ const AnimeList: React.FC<AnimeListProps> = ({
         </div>
       )}
       {startIndex < animes.length - visibleCount && (
-        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10">
+        <div className="absolute right-2 top-[45%] transform -translate-y-1/2 z-10">
           <SwipeButton
             direction="right"
             onClick={() => moveCards("right")}

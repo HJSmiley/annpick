@@ -29,7 +29,7 @@ const SwipeButton: React.FC<SwipeButtonProps> = ({
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className={`w-6 h-6 ${direction === 'left' ? 'rotate-180' : ''}`}
+        className={`w-6 h-6 ${direction === 'left' ? 'rotate-180' : ''} hover:text-orange-500`}
       >
         <polyline points="9 18 15 12 9 6" />
       </svg>

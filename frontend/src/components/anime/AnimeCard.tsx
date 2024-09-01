@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
-import { ReactComponent as ArrowIcon } from "../../assets/icons/ic_more.svg";
+import { ReactComponent as ArrowIcon } from "../../assets/icons/ic_next.svg";
 import { AnimeData } from "../../types/anime";
 import { useAuth } from "../../contexts/AuthContext";
 

@@ -156,7 +156,7 @@ const PromotionBanner: React.FC = () => {
         className="absolute left-4 sm:left-8 md:left-12 lg:left-16 top-1/2 transform -translate-y-1/2 bg-transparent transition-all duration-300 rounded-full p-2 group"
       >
         <img
-          src="/images/ic_swipe_dk_prev-button.svg"
+          src="/images/banner_swipe_dk_prev-button.svg"
           alt="이전"
           className="w-[2rem] h-[2rem] sm:w-[2.5rem] sm:h-[2.5rem] md:w-[3rem] md:h-[3rem] lg:w-[4rem] lg:h-[4rem] transition-transform duration-300 group-hover:scale-110 group-hover:drop-shadow-[2px_2px_3px_rgba(0,0,0,0.3)]"
         />
@@ -167,7 +167,7 @@ const PromotionBanner: React.FC = () => {
         className="absolute right-4 sm:right-8 md:right-12 lg:right-16 top-1/2 transform -translate-y-1/2 bg-transparent transition-all duration-300 rounded-full p-2 group"
       >
         <img
-          src="/images/ic_swipe_dk_next-button.svg"
+          src="/images/banner_swipe_dk_next-button.svg"
           alt="다음"
           className="w-[2rem] h-[2rem] sm:w-[2.5rem] sm:h-[2.5rem] md:w-[3rem] md:h-[3rem] lg:w-[4rem] lg:h-[4rem] transition-transform duration-300 group-hover:scale-110 group-hover:drop-shadow-[2px_2px_3px_rgba(0,0,0,0.3)]"
         />

@@ -6,6 +6,7 @@ const {
   translateGenre,
   translateTag,
 } = require("../utils/animeTranslate");
+const { searchMeiliAnimes } = require("../services/animeService");
 
 const getAnimeByIds = async (req, res) => {
   try {
@@ -13,7 +14,7 @@ const getAnimeByIds = async (req, res) => {
     const userId = req.user ? req.user.user_id : null;
 
     if (!animeIds) {
-      return res.status(400).json({ error: "No ids provided" });
+      return res.status(400).json({ error: "ID값이 없습니다." });
     }
 
     const idArray = animeIds
@@ -31,7 +32,7 @@ const getAnimeByIds = async (req, res) => {
     if (animeList.length === 0) {
       return res
         .status(404)
-        .json({ error: "No anime found for the provided ids" });
+        .json({ error: "해당하는 ID의 애니메이션을 찾을 수 없습니다." });
     }
 
     const response = await Promise.all(
@@ -65,8 +66,10 @@ const getAnimeByIds = async (req, res) => {
 
     res.status(200).json(response);
   } catch (error) {
-    console.error("Error fetching anime list:", error);
-    res.status(500).json({ error: "Failed to fetch anime list" });
+    console.error("애니메이션 리스트를 가져오는 중 오류 발생:", error);
+    res
+      .status(500)
+      .json({ error: "애니메이션 리스트를 가져오는 데 실패했습니다." });
   }
 };
 
@@ -85,10 +88,12 @@ const getAnimeDetails = async (req, res) => {
     });
 
     if (!anime) {
-      return res.status(404).json({ error: "애니메이션을 찾을 수 없습니다." });
+      return res
+        .status(404)
+        .json({ error: "해당하는 애니메이션을 찾을 수 없습니다." });
     }
 
-    let userRating = 0; // 기본값으로 0 설정
+    let userRating = 0;
     if (userId) {
       const ratingRecord = await UserRatedAnime.findOne({
         where: { user_id: userId, anime_id: anime.anime_id },
@@ -136,13 +141,13 @@ const rateAnime = async (req, res) => {
   if (!anime_id || !rating) {
     return res
       .status(400)
-      .json({ message: "Anime ID and rating are required." });
+      .json({ message: "애니메이션 ID와 별점 정보가 필요합니다." });
   }
 
   const user_id = req.user.user_id; // user_id로 접근
 
   if (!user_id) {
-    return res.status(400).json({ message: "Invalid user ID." });
+    return res.status(400).json({ message: "유효하지 않은 사용자 ID입니다." });
   }
 
   try {
@@ -161,15 +166,32 @@ const rateAnime = async (req, res) => {
       });
     }
 
-    return res
-      .status(200)
-      .json({ message: "Rating saved successfully", rating: userRating });
+    return res.status(200).json({
+      message: "별점이 성공적으로 저장되었습니다.",
+      rating: userRating,
+    });
   } catch (error) {
-    console.error("Error saving rating:", error);
-    return res
-      .status(500)
-      .json({ message: "Failed to save rating", error: error.message });
+    console.error("별점을 저장하는 중 오류 발생:", error);
+    return res.status(500).json({
+      message: "별점을 저장하는 데 실패했습니다.",
+      error: error.message,
+    });
   }
 };
 
-module.exports = { getAnimeByIds, getAnimeDetails, rateAnime };
+const searchAnimes = async (req, res) => {
+  try {
+    // 올바른 매개변수 설정
+    const query = req.query.query || ""; // 기본 값으로 빈 문자열 설정
+    const filters = req.query; // 쿼리 전체를 필터로 전달
+
+    // searchAnimes 호출
+    const results = await searchMeiliAnimes(query, filters);
+    res.json(results);
+  } catch (error) {
+    console.error("Error during search:", error);
+    res.status(500).json({ error: "An error occurred while searching animes" });
+  }
+};
+
+module.exports = { getAnimeByIds, getAnimeDetails, rateAnime, searchAnimes };

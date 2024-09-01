@@ -10,6 +10,7 @@ const AniTag = require("./AniTag");
 const UserRatedAnime = require("./UserRatedAnime");
 const UserClusterPreference = require("./UserClusterPreference");
 const RecommendationCluster = require("./RecommendationCluster");
+const AnilistAnime = require("./AnilistAnime");
 
 // 모델 내보내기
 module.exports = {
@@ -25,4 +26,5 @@ module.exports = {
   UserRatedAnime,
   UserClusterPreference,
   RecommendationCluster,
+  AnilistAnime,
 };

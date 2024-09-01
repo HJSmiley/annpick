@@ -9,7 +9,9 @@ const {
   AniGenre,
   AniStaff,
   UserRatedAnime,
+  AnilistAnime,
 } = require("../models");
+const { animeIndex } = require("../config/meiliConfig");
 
 const fetchAnimeData = async () => {
   const query = `
@@ -53,6 +55,7 @@ const fetchAnimeData = async () => {
               name
             }
           }
+          popularity
         }
       }
     }
@@ -83,22 +86,21 @@ const saveAnimeData = async () => {
     const animeData = await fetchAnimeData();
 
     for (const anime of animeData) {
-      // "TV", "Movie", "ONA", "OVA" 형식이 아닌 경우 건너뜀
       if (!["TV", "MOVIE", "ONA", "OVA"].includes(anime.format)) {
         console.log(
           `Skipping anime with unsupported format: ${anime.title.native}, Format: ${anime.format}`
         );
-        continue; // 다음 루프 반복
+        continue;
       }
 
-      // 중복 확인: 동일한 제목의 애니메이션이 이미 존재하는지 체크
       const existingAnime = await Anime.findOne({
         where: { anime_title: anime.title.native },
       });
 
+      let savedAnime; // savedAnime 변수를 블록 외부에서 정의
+
       if (!existingAnime) {
-        // 애니메이션 정보 저장
-        const savedAnime = await Anime.create({
+        savedAnime = await Anime.create({
           anime_title: anime.title.native || "Unknown Title",
           thumbnail_url: anime.coverImage.extraLarge || null,
           banner_img_url: anime.bannerImage || null,
@@ -188,6 +190,23 @@ const saveAnimeData = async () => {
         }
       } else {
         console.log(`Skipping duplicate anime: ${anime.title.native}`);
+        savedAnime = existingAnime; // 중복된 애니메이션의 경우 기존 애니메이션을 사용
+      }
+      if (savedAnime) {
+        // savedAnime이 정의된 경우에만 실행
+        const [anilistEntry, created] = await AnilistAnime.findOrCreate({
+          where: { anime_id: savedAnime.anime_id },
+          defaults: {
+            anilist_id: anime.id,
+            popularity: anime.popularity,
+            anime_id: savedAnime.anime_id,
+          },
+        });
+
+        if (!created) {
+          anilistEntry.popularity = anime.popularity;
+          await anilistEntry.save();
+        }
       }
     }
 
@@ -223,4 +242,88 @@ const saveRating = async (user_id, anime_id, rating) => {
   }
 };
 
-module.exports = { fetchAnimeData, saveAnimeData, saveRating };
+// 데이터베이스에서 데이터를 가져와 MeiliSearch에 인덱싱하는 함수
+const indexAnimeData = async () => {
+  try {
+    const animes = await Anime.findAll({
+      include: [
+        {
+          model: Genre,
+          through: { model: AniGenre },
+        },
+        {
+          model: Tag,
+          through: { model: AniTag },
+        },
+        {
+          model: Staff,
+          through: { model: AniStaff },
+        },
+      ],
+    });
+
+    const formattedAnimes = animes.map((anime) => ({
+      id: anime.anime_id,
+      title: anime.anime_title,
+      popularity: anime.popularity,
+      genres: anime.genres ? anime.genres.map((genre) => genre.genre_name) : [],
+      tags: anime.tags ? anime.tags.map((tag) => tag.tag_name) : [],
+      staff: anime.staff ? anime.staff.map((staff) => staff.staff_name) : [],
+    }));
+
+    await animeIndex.addDocuments(formattedAnimes);
+    console.log("Anime data indexed successfully");
+  } catch (error) {
+    console.error("Error indexing anime data:", error);
+  }
+};
+
+const setSortableAttributes = async () => {
+  try {
+    await animeIndex.updateSortableAttributes(["popularity"]);
+    console.log("Sortable attributes updated successfully.");
+  } catch (error) {
+    console.error("Error updating sortable attributes:", error);
+  }
+};
+
+// MeiliSearch에서 애니메이션을 검색하는 함수
+const searchMeiliAnimes = async (query, filters = {}) => {
+  try {
+    console.time("searchAnimes");
+
+    // SetSortableAttributes 호출은 한 번만 설정되도록 하는 것이 좋음
+    await setSortableAttributes();
+
+    const searchQuery = typeof query === "string" ? query : query.toString();
+
+    const searchResults = await animeIndex.search(searchQuery, {
+      filter: buildFilterString(filters),
+      sort: ["popularity:desc"],
+    });
+
+    console.timeEnd("searchAnimes");
+    return searchResults.hits;
+  } catch (error) {
+    console.error("Error searching animes:", error);
+    throw error; // 오류를 라우터로 전달하여 처리를 맡김
+  }
+};
+
+// 검색 필터 문자열을 구성하는 함수
+const buildFilterString = (filters) => {
+  const filterStrings = [];
+  if (filters.genre) filterStrings.push(`genres = "${filters.genre}"`);
+  if (filters.tag) filterStrings.push(`tags = "${filters.tag}"`);
+  if (filters.staff) filterStrings.push(`staff = "${filters.staff}"`);
+  return filterStrings.join(" AND ");
+};
+
+module.exports = {
+  fetchAnimeData,
+  saveAnimeData,
+  saveRating,
+  indexAnimeData,
+  searchMeiliAnimes,
+  buildFilterString,
+};

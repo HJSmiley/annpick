@@ -10,6 +10,7 @@ const AniTag = require("./AniTag");
 const RecommendationCluster = require("./RecommendationCluster");
 const UserClusterPreference = require("./UserClusterPreference");
 const UserRatedAnime = require("./UserRatedAnime");
+const AnilistAnime = require("./AnilistAnime");
 
 // User와 RecommendationCluster 간의 다대다 관계 설정
 User.belongsToMany(RecommendationCluster, {
@@ -34,32 +35,18 @@ UserRatedAnime.belongsTo(Anime, { foreignKey: "anime_id" });
 Anime.belongsToMany(Genre, { through: AniGenre, foreignKey: "anime_id" });
 Genre.belongsToMany(Anime, { through: AniGenre, foreignKey: "genre_id" });
 
-// Anime와 Staff 간의 다대다 관계 설정
-Anime.belongsToMany(Staff, {
-  through: AniStaff,
-  foreignKey: "anime_id",
-  otherKey: "staff_id",
-});
+// Anime과 Staff의 다대다 관계 설정
+Anime.belongsToMany(Staff, { through: AniStaff, foreignKey: "anime_id" });
+Staff.belongsToMany(Anime, { through: AniStaff, foreignKey: "staff_id" });
 
-Staff.belongsToMany(Anime, {
-  through: AniStaff,
-  foreignKey: "staff_id",
-  otherKey: "anime_id",
-});
-
-// Anime와 Tag 간의 다대다 관계 설정
-Anime.belongsToMany(Tag, {
-  through: AniTag,
-  foreignKey: "anime_id",
-  otherKey: "tag_id",
-});
-
-Tag.belongsToMany(Anime, {
-  through: AniTag,
-  foreignKey: "tag_id",
-  otherKey: "anime_id",
-});
+// Anime과 Tag의 다대다 관계 설정
+Anime.belongsToMany(Tag, { through: AniTag, foreignKey: "anime_id" });
+Tag.belongsToMany(Anime, { through: AniTag, foreignKey: "tag_id" });
 
 // Anime와 RecommendationCluster 간의 1대다 관계 설정
 Anime.hasMany(RecommendationCluster, { foreignKey: "anime_id" });
 RecommendationCluster.belongsTo(Anime, { foreignKey: "anime_id" });
+
+// Anime과 AniListAnime 간의 1대1 관계 설정
+Anime.hasOne(AnilistAnime, { foreignKey: "anime_id" });
+AnilistAnime.belongsTo(Anime, { foreignKey: "anime_id" });

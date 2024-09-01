@@ -29,7 +29,7 @@ sequelize
 // 미들웨어 설정
 const allowedOrigins = [
   process.env.FRONTEND_URL, // .env 파일에 설정된 배포 URL
-  "http://team03-test2.s3-website.ap-northeast-2.amazonaws.com/", // 만약 .env 파일을 통해 설정되지 않는 추가 URL이 있다면 여기 추가
+  "http://team03-test2.s3-website.ap-northeast-2.amazonaws.com", // 만약 .env 파일을 통해 설정되지 않는 추가 URL이 있다면 여기 추가
   "http://127.0.0.1:3000", // 개발 환경에서의 로컬 URL
 ];
 

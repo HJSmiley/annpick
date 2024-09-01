@@ -31,14 +31,16 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
 
   const fetchRatingFromServer = async (animeId: number) => {
     try {
-      const token = state.isAuthenticated ? state.token : null;
+      if (!state.isAuthenticated) {
+        // 비로그인 상태에서는 서버에 요청하지 않음
+        return null;
+      }
+
+      const token = state.token;
       const headers: HeadersInit = {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       };
-
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
 
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/details/${animeId}`,
@@ -64,11 +66,11 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
 
   const sendRatingToServer = async (animeId: number, rating: number) => {
     try {
-      const token = state.isAuthenticated ? state.token : null;
-
-      if (!token) {
+      if (!state.isAuthenticated) {
         throw new Error("No token found, please log in again.");
       }
+
+      const token = state.token;
 
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/ratings`,

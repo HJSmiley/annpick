@@ -37,23 +37,30 @@ const Home: React.FC = () => {
             { headers }
           );
 
-          const sortedAnimes = section.ids
-            .map((id) => {
-              const anime = response.data.find(
-                (anime) => anime.anime_id === id
+          const sortedAnimesPromises = section.ids.map(async (id) => {
+            const anime = response.data.find((anime) => anime.anime_id === id);
+            if (!anime) {
+              console.warn(
+                `Anime with id ${id} not found in section ${section.title}`
               );
-              if (!anime) {
-                console.warn(
-                  `Anime with id ${id} not found in section ${section.title}`
+              if (!state.isAuthenticated) {
+                // 비로그인 상태에서 public 엔드포인트로 데이터 가져오기
+                const publicResponse = await axios.get<AnimeData>(
+                  `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/public/details/${id}`
                 );
+                return publicResponse.data;
               }
-              return anime;
-            })
-            .filter((anime): anime is AnimeData => anime !== undefined);
+            }
+            return anime;
+          });
+
+          const sortedAnimes = await Promise.all(sortedAnimesPromises);
 
           return {
             title: section.title,
-            animes: sortedAnimes,
+            animes: sortedAnimes.filter(
+              (anime): anime is AnimeData => anime !== undefined
+            ),
           };
         });
 

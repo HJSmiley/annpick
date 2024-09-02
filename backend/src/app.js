@@ -53,6 +53,9 @@ app.use(passport.initialize());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // 라우트 설정
+app.get("/", (req, res) => {
+  res.send("Hello");
+});
 app.use("/api/v1", authRoutes);
 app.use("/api/v1/anime", animeRoutes);
 

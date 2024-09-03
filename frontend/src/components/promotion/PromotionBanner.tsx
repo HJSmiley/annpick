@@ -110,7 +110,7 @@ const PromotionBanner: React.FC = () => {
               /* 작은 데스크탑 */
               md:bottom-[15%] md:left-[20%] md:translate-x-0
               /* 큰 데스크탑 */
-              lg:bottom-[15%] lg:left-[15%]
+              lg:bottom-[15%] lg:left-[10.5%]
               z-20
             `}
           >

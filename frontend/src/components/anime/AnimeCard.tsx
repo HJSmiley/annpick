@@ -159,13 +159,14 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
 
       return (
         <div key={index} className="inline-block">
-          <span className="relative inline-block w-8 h-8">
+          {/* 별 간격 조정 (mx-0.5) */}
+          <span className="relative inline-block w-8 h-8 mx-0.5 sm:w-10 sm:h-10">
             {currentValue >= fullStarValue ? (
-              <FaStar className="w-8 h-8 text-yellow-400" />
+              <FaStar className="w-full h-full text-yellow-400" />
             ) : currentValue >= leftHalfValue ? (
-              <FaStarHalfAlt className="w-8 h-8 text-yellow-400" />
+              <FaStarHalfAlt className="w-full h-full text-yellow-400" />
             ) : (
-              <FaStar className="w-8 h-8 text-gray-200" />
+              <FaStar className="w-full h-full text-gray-200" />
             )}
             <div
               className="absolute top-0 left-0 w-1/2 h-full cursor-pointer"
@@ -201,26 +202,27 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
         />
         {/* 호버 시 나타나는 상세 정보 */}
         {isHovered && (
-          <div className="absolute inset-0 bg-black bg-opacity-80 text-white p-4 flex flex-col">
-            {/* 포맷 및 상태 표시 */}
-            <div className="flex justify-between items-center mb-3 pt-[30px]">
+          <div className="absolute inset-0 bg-black bg-opacity-80 text-white pt-5 pl-3 flex flex-col ">
+            {/* 포맷 및 상태 표시 - 원래 정렬로 복구 */}
+            <div className="flex justify-between items-center mb-3 pt-[35px] pl-[10px]">
               <div className="flex space-x-2">
-                <span className="border border-white border-opacity-50 px-2 py-1 rounded-[8px] text-xs">
+                <span className="border border-white border-opacity-80 px-2 py-1 rounded-[9px] text-[14px]">
                   {format}
                 </span>
-                <span className="bg-orange-600 px-2 py-1 rounded-[8px] text-xs">
+               {/* 완결 아이콘 글자 가운데 정렬 및 크기 조정 */}
+               <span className="bg-orange-600 px-2 py-1 rounded-[9px] text-[16px] flex items-center justify-center">
                   {status}
                 </span>
               </div>
             </div>
-            {/* 장르 표시 */}
-            <div className="text-[13px] mb-[15px]">{genres.join("  ")}</div>
+            {/* 장르 표시 - 구분자 제거 */}
+            <div className="text-[15px] mb-[15px] pl-[10px]">{genres.join(" ")}</div>
             {/* 태그 표시 */}
-            <div className="text-[12px] mb-2">
+            <div className="text-[15px] mb-2 pl-[10px]">
               {tags.slice(0, 3).map((tag, index) => (
                 <span
                   key={index}
-                  className="bg-gray-400 bg-opacity-60 px-2 py-1 rounded-[8px] text-xs mr-2"
+                  className="bg-gray-400 bg-opacity-60 px-2 py-1 rounded-[8px] text-m mr-2"
                 >
                   {tag}
                 </span>
@@ -228,15 +230,17 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
             </div>
             {/* 별점 및 상세 페이지 링크 */}
             <div className="flex flex-col items-center justify-between pb-2 mt-auto">
-              {/* 별점을 가운데 정렬 */}
-              <div className="flex justify-center w-full mb-4">{renderStars()}</div>
-              {/* 상세보기 버튼을 옆으로 정렬하고 오른쪽으로 배치 */}
-              <div className="flex justify-end w-full space-x-2">
+              {/* 별점 가운데 정렬 */}
+              <div className="flex justify-center w-full mb-12">
+                {renderStars()}
+              </div>
+              {/* 상세보기 버튼 - 간격 좁힘 */}
+              <div className="flex justify-end w-full space-x-[-10px]">
                 <Link to={`/anime/${anime_id}`} className="text-white">
-                  <ArrowIcon className="w-12 h-12" />
+                  <ArrowIcon className="w-13 h-13" />
                 </Link>
                 <Link to={`/anime/${anime_id}`} className="text-white">
-                  <ArrowIcon className="w-12 h-12" />
+                  <ArrowIcon className="w-13 h-13" />
                 </Link>
               </div>
             </div>

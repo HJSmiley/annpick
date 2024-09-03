@@ -16,7 +16,7 @@ const Footer = () => {
             {/* 로고 링크 */}
             <a href="/" className="block mb-4">
               <img
-                src="/images/anpicktest.svg"
+                src="/images/logo_annpick_dk.svg"
                 alt="앤픽 로고"
                 className="h-8"
               />

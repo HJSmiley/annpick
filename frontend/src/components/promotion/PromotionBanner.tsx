@@ -24,6 +24,7 @@ const PromotionBanner: React.FC = () => {
       title: "프로모션 5",
     },
     { imageUrl: "/images/Banner.jpg", link: "/promo1", title: "프로모션 1" },
+    { imageUrl: "/images/banner-img-horimia.png", link: "/promo2", title: "프로모션 2" },
     {
       imageUrl: "/images/지브리7.jpg",
       link: "https://laftel.net/search?keyword=%ED%95%98%EC%9A%B8&modal=15454",

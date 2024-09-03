@@ -33,43 +33,47 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto z-50">
-      <div className="bg-white rounded-lg relative max-w-sm w-full mx-4 my-8 p-10">
-        {" "}
+      <div className="bg-white rounded-2xl relative max-w-sm w-full mx-4 my-8 p-10">
         <button
           onClick={handleClose}
-          className="absolute top-4 right-6 text-2xl"
+          className="absolute top-4 right-6 text-2xl font-bold"
         >
           &times;
         </button>
         <div className="text-center mt-4 mb-16">
-          {" "}
-          <h6 className="text-sm mb-6">
-            내 취향에 딱 맞는 애니메이션 추천 서비스
+          <h6 className="text-m mb-6 font-bold">
+            <span className="text-orange-500">나만의 애니</span>를 만나보세요!
           </h6>
-          <h1 className="text-3xl font-bold mb-10">앤픽</h1>{" "}
+          <div className="flex justify-center">
+            <img
+              src="/images/logo_annpick_dk.svg"
+              alt="앤픽 로고"
+              className="w-[136px] h-[68px]"
+            />
+          </div>
         </div>
-        <div className="text-center">
+        <div className="text-center flex flex-col items-center">
           <img
             src="/images/kakao-login.svg"
             alt="카카오 로그인"
-            className="w-full mb-3 cursor-pointer"
+            className="w-full max-w-[250px] mb-3 cursor-pointer"
             onClick={() => handleSocialLogin("kakao")}
           />
           <img
             src="/images/naver-login.svg"
             alt="네이버 로그인"
-            className="w-full mb-3 cursor-pointer"
+            className="w-full max-w-[250px] mb-3 cursor-pointer"
             onClick={() => handleSocialLogin("naver")}
           />
           <img
             src="/images/google-login.svg"
             alt="구글 로그인"
-            className="w-full cursor-pointer"
+            className="w-full max-w-[250px] cursor-pointer"
             onClick={() => handleSocialLogin("google")}
           />
         </div>
         {state.error && (
-          <p className="text-red-500 text-center mt-4">{state.error}</p>
+          <p className="text-red-500 text-center mt-4 font-bold">{state.error}</p>
         )}
       </div>
     </div>

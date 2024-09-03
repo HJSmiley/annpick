@@ -50,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
             {/* 로고 링크 */}
             <Link to="/" className="flex items-center">
               <img
-                src="/images/anpicktest.svg"
+                src="/images/logo_annpick_white.svg"
                 alt="앤픽 로고"
                 className="w-[80px] h-[40px]"
               />

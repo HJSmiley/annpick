@@ -1,4 +1,5 @@
 require("dotenv").config();
+require("dotenv").config();
 const { Sequelize } = require("sequelize");
 
 // Sequelize 인스턴스 생성

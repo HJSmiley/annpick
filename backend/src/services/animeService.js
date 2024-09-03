@@ -255,36 +255,45 @@ const saveRating = async (user_id, anime_id, rating) => {
 };
 
 // 데이터베이스에서 데이터를 가져와 MeiliSearch에 인덱싱하는 함수
+const batchSize = 500;
+
 const indexAnimeData = async () => {
   try {
-    const animes = await Anime.findAll({
-      include: [
-        {
-          model: Genre,
-          through: { model: AniGenre },
-        },
-        {
-          model: Tag,
-          through: { model: AniTag },
-        },
-        {
-          model: Staff,
-          through: { model: AniStaff },
-        },
-      ],
-    });
+    const totalAnimes = await Anime.count();
+    for (let i = 0; i < totalAnimes; i += batchSize) {
+      const animes = await Anime.findAll({
+        offset: i,
+        limit: batchSize,
+        include: [
+          {
+            model: Genre,
+            through: { model: AniGenre },
+          },
+          {
+            model: Tag,
+            through: { model: AniTag },
+          },
+          {
+            model: Staff,
+            through: { model: AniStaff },
+          },
+        ],
+      });
 
-    const formattedAnimes = animes.map((anime) => ({
-      id: anime.anime_id,
-      title: anime.anime_title,
-      popularity: anime.popularity,
-      genres: anime.genres ? anime.genres.map((genre) => genre.genre_name) : [],
-      tags: anime.tags ? anime.tags.map((tag) => tag.tag_name) : [],
-      staff: anime.staff ? anime.staff.map((staff) => staff.staff_name) : [],
-    }));
+      const formattedAnimes = animes.map((anime) => ({
+        id: anime.anime_id,
+        title: anime.anime_title,
+        popularity: anime.popularity,
+        genres: anime.genres
+          ? anime.genres.map((genre) => genre.genre_name)
+          : [],
+        tags: anime.tags ? anime.tags.map((tag) => tag.tag_name) : [],
+        staff: anime.staff ? anime.staff.map((staff) => staff.staff_name) : [],
+      }));
 
-    await animeIndex.addDocuments(formattedAnimes);
-    console.log("Anime data indexed successfully");
+      await animeIndex.addDocuments(formattedAnimes);
+      console.log(`Batch ${i / batchSize + 1} indexed successfully`);
+    }
   } catch (error) {
     console.error("Error indexing anime data:", error);
   }

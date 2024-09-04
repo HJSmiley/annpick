@@ -9,16 +9,19 @@ interface LoginModalProps {
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const { login, state } = useAuth();
 
+  // 컴포넌트가 처음 렌더링될 때 한 번만 쿼리에서 토큰을 가져옴
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const token = queryParams.get("token");
+
+    if (token) {
+      login(token); // 로그인 처리
+    }
+  }, [login]); // login 함수만 의존성 배열에 넣어서 한 번만 실행
+
+  // 모달이 열릴 때마다 이미지 프리로드
   useEffect(() => {
     if (isOpen) {
-      const queryParams = new URLSearchParams(window.location.search);
-      const token = queryParams.get("token");
-
-      if (token) {
-        login(token); // 로그인 처리
-      }
-
-      // 모달이 열릴 때만 이미지 프리로드
       const images = [
         "/images/kakao-login.svg",
         "/images/naver-login.svg",
@@ -30,9 +33,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         img.src = image;
       });
     }
-  }, [isOpen, login]);
+  }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen) return null; // 모달이 열리지 않으면 렌더링하지 않음
 
   const handleClose = () => {
     onClose();

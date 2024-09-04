@@ -12,6 +12,20 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
   const { login, state } = useAuth();
 
+  // 이미지 프리로드
+  useEffect(() => {
+    const images = [
+      "/images/kakao-login.svg",
+      "/images/naver-login.svg",
+      "/images/google-login.svg",
+    ];
+
+    images.forEach((image) => {
+      const img = new Image();
+      img.src = image;
+    });
+  }, []);
+
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const token = queryParams.get("token");
@@ -73,7 +87,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           />
         </div>
         {state.error && (
-          <p className="text-red-500 text-center mt-4 font-bold">{state.error}</p>
+          <p className="text-red-500 text-center mt-4 font-bold">
+            {state.error}
+          </p>
         )}
       </div>
     </div>

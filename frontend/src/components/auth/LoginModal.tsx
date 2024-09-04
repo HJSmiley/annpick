@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
 interface LoginModalProps {
@@ -8,32 +7,30 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
   const { login, state } = useAuth();
 
-  // 이미지 프리로드
   useEffect(() => {
-    const images = [
-      "/images/kakao-login.svg",
-      "/images/naver-login.svg",
-      "/images/google-login.svg",
-    ];
+    if (isOpen) {
+      const queryParams = new URLSearchParams(window.location.search);
+      const token = queryParams.get("token");
 
-    images.forEach((image) => {
-      const img = new Image();
-      img.src = image;
-    });
-  }, []);
+      if (token) {
+        login(token); // 로그인 처리
+      }
 
-  useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const token = queryParams.get("token");
+      // 모달이 열릴 때만 이미지 프리로드
+      const images = [
+        "/images/kakao-login.svg",
+        "/images/naver-login.svg",
+        "/images/google-login.svg",
+      ];
 
-    if (token) {
-      login(token); // 로그인 처리
+      images.forEach((image) => {
+        const img = new Image();
+        img.src = image;
+      });
     }
-  }, [navigate]);
+  }, [isOpen, login]);
 
   if (!isOpen) return null;
 

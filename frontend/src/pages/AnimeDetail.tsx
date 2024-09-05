@@ -14,7 +14,7 @@ interface AnimeDetails {
   anime_id: number;
   title: string;
   thumbnail_url: string;
-  banner_img_url: string;
+  banner_img_url: string | null;
   format: string;
   status: string;
   release_date: string;
@@ -37,74 +37,6 @@ const AnimeDetail: React.FC = () => {
   const [hover, setHover] = useState<number>(0);
   const [isResetting, setIsResetting] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // 로그인 모달 상태 관리
-
-  const fetchRatingFromServer = async (animeId: number) => {
-    try {
-      const token = state.isAuthenticated ? state.token : null;
-      const headers: HeadersInit = {
-        "Content-Type": "application/json",
-      };
-
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/details/${animeId}`,
-        {
-          method: "GET",
-          headers: headers,
-          credentials: "include",
-        }
-      );
-
-      if (response.status === 401) {
-        console.error("Unauthorized: Invalid or expired token.");
-        return null;
-      }
-
-      const data = await response.json();
-      return data.user_rating;
-    } catch (error) {
-      console.error("Error fetching rating:", error);
-      return null;
-    }
-  };
-
-  const sendRatingToServer = async (animeId: number, rating: number) => {
-    try {
-      const token = state.isAuthenticated ? state.token : null;
-
-      if (!token) {
-        throw new Error("No token found, please log in again.");
-      }
-
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/ratings`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            anime_id: animeId,
-            rating: rating,
-          }),
-          credentials: "include",
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to send rating, status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log("Rating successfully sent:", data);
-    } catch (error) {
-      console.error("Error sending rating:", error);
-    }
-  };
 
   useEffect(() => {
     const fetchAnimeDetails = async () => {
@@ -155,14 +87,12 @@ const AnimeDetail: React.FC = () => {
         setIsResetting(true);
         setRating(0);
         setHover(0);
-        sendRatingToServer(parseInt(id!), 0);
         setTimeout(() => setIsResetting(false), 50);
       } else {
         setRating(currentRating);
-        sendRatingToServer(parseInt(id!), currentRating);
       }
     },
-    [rating, id, state.isAuthenticated]
+    [rating, state.isAuthenticated]
   );
 
   const renderStars = () => {
@@ -207,7 +137,7 @@ const AnimeDetail: React.FC = () => {
 
   return (
     <div className="relative">
-      {anime?.banner_img_url && (
+      {anime?.banner_img_url ? (
         <div
           className="relative h-[70vh] bg-cover bg-center"
           style={{ backgroundImage: `url(${anime.banner_img_url})` }}
@@ -222,6 +152,38 @@ const AnimeDetail: React.FC = () => {
                 {anime.status}
               </span>
               <span className="text-white">{anime.genres.join(", ")}</span>
+            </div>
+            <div className="flex items-center space-x-1 mt-2">
+              {renderStars()}
+              <span className="text-white ml-2">{rating} / 10</span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="relative h-[70vh] flex">
+          {/* 왼쪽 절반: 블랙박스 */}
+          <div className="w-[40%] bg-black"></div>
+
+          {/* 오른쪽 절반: 썸네일 이미지 + 그라데이션 효과 */}
+          <div
+            className="w-[60%] bg-cover bg-center"
+            style={{
+              backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 50%), url(${anime?.thumbnail_url})`,
+              backgroundPosition: "center center",
+            }}
+          ></div>
+
+          {/* 텍스트 영역 */}
+          <div className="absolute inset-0 flex flex-col justify-end px-4 md:px-8 lg:px-16 pb-8">
+            <h1 className="text-white text-4xl font-bold">{anime?.title}</h1>
+            <div className="flex items-center space-x-2 mt-2">
+              <span className="border border-white border-opacity-50 px-2 py-1 rounded-lg text-xs text-white">
+                {anime?.format}
+              </span>
+              <span className="bg-orange-500 px-2 py-1 rounded-lg text-xs text-white">
+                {anime?.status}
+              </span>
+              <span className="text-white">{anime?.genres.join(", ")}</span>
             </div>
             <div className="flex items-center space-x-1 mt-2">
               {renderStars()}
@@ -272,7 +234,6 @@ const AnimeDetail: React.FC = () => {
         </div>
       </div>
       <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />{" "}
-      {/* 로그인 모달 컴포넌트 추가 */}
     </div>
   );
 };

@@ -1,12 +1,22 @@
-const { Anime, Genre, Staff, Tag, UserRatedAnime } = require("../models");
-const { formatReleaseDate, formatSeason } = require("../utils/animeFormatting");
 const {
-  translateStaffName,
-  translateStaffRole,
-  translateGenre,
-  translateTag,
-} = require("../utils/animeTranslate");
+  Anime,
+  Genre,
+  Staff,
+  Tag,
+  AniTag,
+  UserRatedAnime,
+} = require("../models");
+const { formatReleaseDate, formatSeason } = require("../utils/animeFormatting");
 const { searchMeiliAnimes } = require("../services/animeService");
+
+// 스태프 역할을 한국어로 번역하는 함수
+const translateStaffRole = (role) => {
+  const roles = {
+    director: "감독",
+    origin: "원작",
+  };
+  return roles[role] || "Unknown";
+};
 
 const getAnimeByIds = async (req, res) => {
   try {
@@ -21,12 +31,16 @@ const getAnimeByIds = async (req, res) => {
       .split(",")
       .map((animeId) => parseInt(animeId.trim(), 10));
 
+    // Anime 정보와 관련된 필드만 먼저 로드
     const animeList = await Anime.findAll({
       where: { anime_id: idArray },
-      include: [
-        { model: Genre, through: { attributes: [] } },
-        { model: Tag, through: { attributes: [] } },
-      ],
+      attributes: [
+        "anime_id",
+        "anime_title",
+        "thumbnail_url",
+        "format",
+        "is_completed",
+      ], // 필요한 필드만 가져오기
     });
 
     if (animeList.length === 0) {
@@ -35,34 +49,54 @@ const getAnimeByIds = async (req, res) => {
         .json({ error: "해당하는 ID의 애니메이션을 찾을 수 없습니다." });
     }
 
-    const response = await Promise.all(
-      animeList.map(async (anime) => {
-        let userRating = 0; // 기본값으로 0 설정
-
-        if (userId) {
-          const ratingRecord = await UserRatedAnime.findOne({
-            where: { user_id: userId, anime_id: anime.anime_id },
-            attributes: ["rating"],
-          });
-          userRating = ratingRecord ? ratingRecord.rating : 0;
-        }
-
-        return {
-          anime_id: anime.anime_id,
-          thumbnail_url: anime.thumbnail_url,
-          title: anime.anime_title,
-          format: anime.format,
-          status: anime.is_completed ? "완결" : "방영중",
-          genres: translateGenre(
-            anime.Genres.map((genre) => genre.genre_name)
-          ).slice(0, 3),
-          tags: translateTag(anime.Tags.map((tag) => tag.tag_name))
-            .sort((a, b) => b.rank - a.rank)
-            .slice(0, 4),
-          user_rating: userId ? userRating : 0, // 비로그인 사용자는 0, 로그인 사용자는 별점 정보
-        };
+    // 쿼리 분할: 필요한 데이터만 나누어 가져옴
+    const genrePromises = animeList.map((anime) =>
+      Genre.findAll({
+        include: {
+          model: Anime,
+          where: { anime_id: anime.anime_id },
+          attributes: [],
+        },
+        attributes: ["genre_name"],
       })
     );
+
+    const aniTagPromises = animeList.map((anime) =>
+      AniTag.findAll({
+        where: { anime_id: anime.anime_id },
+        include: [{ model: Tag, attributes: ["tag_name"] }],
+        attributes: ["tag_score"],
+      })
+    );
+
+    // 병렬로 데이터를 가져오는 방식
+    const [genresArray, aniTagsArray] = await Promise.all([
+      Promise.all(genrePromises),
+      Promise.all(aniTagPromises),
+    ]);
+
+    // 필요한 데이터 결합
+    const response = animeList.map((anime, index) => {
+      const genres = genresArray[index]
+        .map((genre) => genre.genre_name)
+        .sort((a, b) => a.localeCompare(b, "ko-KR"))
+        .slice(0, 3); // 상위 3개 장르만 반환
+
+      const topTags = aniTagsArray[index]
+        .sort((a, b) => b.tag_score - a.tag_score)
+        .slice(0, 4)
+        .map((aniTag) => aniTag.Tag.tag_name); // 상위 4개의 태그만 반환
+
+      return {
+        anime_id: anime.anime_id,
+        thumbnail_url: anime.thumbnail_url,
+        title: anime.anime_title,
+        format: anime.format,
+        status: anime.is_completed ? "완결" : "방영중",
+        genres,
+        tags: topTags,
+      };
+    });
 
     res.status(200).json(response);
   } catch (error) {
@@ -81,10 +115,37 @@ const getAnimeDetails = async (req, res) => {
     const anime = await Anime.findOne({
       where: { anime_id: animeId },
       include: [
-        { model: Genre, through: { attributes: [] } },
-        { model: Tag, through: { attributes: [] } },
-        { model: Staff, through: { attributes: ["role"] } },
+        {
+          model: Genre,
+          attributes: ["genre_name"],
+          through: { attributes: [] },
+        },
+        {
+          model: AniTag,
+          attributes: ["tag_score"],
+          include: {
+            model: Tag,
+            attributes: ["tag_name"],
+          },
+        },
+        {
+          model: Staff,
+          attributes: ["staff_name"],
+          through: { attributes: ["role"] }, // AniStaff의 role을 가져옴
+        },
       ],
+      attributes: [
+        "anime_id",
+        "anime_title",
+        "thumbnail_url",
+        "banner_img_url",
+        "format",
+        "is_completed",
+        "release_date",
+        "description",
+        "season",
+        "studio",
+      ], // 필요한 필드만 가져오기
     });
 
     if (!anime) {
@@ -93,14 +154,18 @@ const getAnimeDetails = async (req, res) => {
         .json({ error: "해당하는 애니메이션을 찾을 수 없습니다." });
     }
 
-    let userRating = 0;
-    if (userId) {
-      const ratingRecord = await UserRatedAnime.findOne({
-        where: { user_id: userId, anime_id: anime.anime_id },
-        attributes: ["rating"],
-      });
-      userRating = ratingRecord ? ratingRecord.rating : 0;
-    }
+    const topTags = anime.AniTags.map((aniTag) => aniTag.Tag.tag_name);
+    const translatedStaff = anime.Staffs.map((staff) => ({
+      name: staff.staff_name,
+      role: translateStaffRole(staff.AniStaff.role),
+    }));
+
+    const userRating = userId
+      ? await UserRatedAnime.findOne({
+          where: { user_id: userId, anime_id: animeId },
+          attributes: ["rating"],
+        })
+      : null;
 
     const response = {
       anime_id: anime.anime_id,
@@ -113,17 +178,10 @@ const getAnimeDetails = async (req, res) => {
       description: anime.description,
       season: formatSeason(anime.season),
       studio: anime.studio,
-      genres: translateGenre(
-        anime.Genres.map((genre) => genre.genre_name)
-      ).slice(0, 3),
-      tags: translateTag(anime.Tags.map((tag) => tag.tag_name))
-        .sort((a, b) => b.rank - a.rank)
-        .slice(0, 4),
-      staff: anime.Staffs.map((staff) => ({
-        name: translateStaffName(staff.staff_name),
-        role: translateStaffRole(staff.AniStaff.role),
-      })),
-      user_rating: userId ? userRating : 0, // 비로그인 사용자는 0, 로그인 사용자는 별점 정보
+      genres: anime.Genres.map((genre) => genre.genre_name).slice(0, 3),
+      tags: topTags,
+      staff: translatedStaff,
+      user_rating: userRating ? userRating.rating : 0,
     };
 
     res.status(200).json(response);

@@ -18,15 +18,14 @@ const AnimeList: React.FC<AnimeListProps> = ({
   const [startIndex, setStartIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(5);
 
+  const cardWidth = 270; // 카드의 고정 너비 (픽셀)
+  const cardMargin = 16; // 카드 사이의 여백 (픽셀)
+
   const updateVisibleCount = useCallback(() => {
-    const width = window.innerWidth;
-    if (width < 640) {
-      setVisibleCount(2);
-    } else if (width < 1024) {
-      setVisibleCount(3);
-    } else {
-      setVisibleCount(5);
-    }
+    const containerWidth = window.innerWidth - 64; // 64px는 좌우 패딩 (32px * 2)
+    const totalCardWidth = cardWidth + cardMargin;
+    const newVisibleCount = Math.floor(containerWidth / totalCardWidth);
+    setVisibleCount(Math.max(1, Math.min(5, newVisibleCount))); // 최소 1개, 최대 5개
   }, []);
 
   useEffect(() => {
@@ -48,25 +47,28 @@ const AnimeList: React.FC<AnimeListProps> = ({
     [animes.length, visibleCount]
   );
 
-  const visibleAnimes = animes.slice(startIndex, startIndex + visibleCount);
+  const containerStyle: React.CSSProperties = {
+    width: `${(cardWidth + cardMargin) * visibleCount - cardMargin}px`,
+    margin: '0 auto',
+  };
 
   return (
-    <div className="relative">
+    <div className="relative" style={containerStyle}>
       <div className="overflow-hidden">
         <motion.div
           className="flex"
           initial={false}
-          animate={{ x: `${(-startIndex * 100) / visibleCount}%` }}
+          animate={{ x: `${-startIndex * (cardWidth + cardMargin)}px` }}
           transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
         >
           {animes.map((animeData, index: number) => (
-            <div 
-              key={animeData.anime_id} 
-              className={`flex-none px-2 ${
-                visibleCount === 5 ? 'w-1/5' : 
-                visibleCount === 3 ? 'w-1/3' : 
-                'w-1/2'
-              }`}
+            <div
+              key={animeData.anime_id}
+              style={{
+                flexShrink: 0,
+                width: `${cardWidth}px`,
+                marginRight: `${cardMargin}px`,
+              }}
             >
               <AnimeCard
                 {...animeData}
@@ -79,7 +81,7 @@ const AnimeList: React.FC<AnimeListProps> = ({
         </motion.div>
       </div>
       {startIndex > 0 && (
-        <div className="absolute left-2 top-[45%] transform -translate-y-1/2 z-10">
+        <div className="absolute left-[-4px] top-[43%] transform -translate-y-1/2 z-10">
           <SwipeButton
             direction="left"
             onClick={() => moveCards("left")}
@@ -88,7 +90,7 @@ const AnimeList: React.FC<AnimeListProps> = ({
         </div>
       )}
       {startIndex < animes.length - visibleCount && (
-        <div className="absolute right-2 top-[45%] transform -translate-y-1/2 z-10">
+        <div className="absolute right-[-4px] top-[43%] transform -translate-y-1/2 z-10">
           <SwipeButton
             direction="right"
             onClick={() => moveCards("right")}

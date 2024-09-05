@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { ReactComponent as ArrowIcon } from "../../assets/icons/ic_next.svg";
+import { ReactComponent as AddIcon } from "../../assets/icons/Boolean=add.svg";
 import { AnimeData } from "../../types/anime";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -218,26 +219,29 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
             {/* 장르 표시 - 구분자 제거 */}
             <div className="text-[15px] mb-[15px] pl-[10px]">{genres.join(" ")}</div>
             {/* 태그 표시 */}
-            <div className="text-[15px] mb-2 pl-[10px]">
+            {/* 코드 리뷰: 태그 컨테이너에 flex와 flex-wrap을 추가하여 줄바꿈 처리를 개선했습니다. */}
+            <div className="text-[15px] mb-2 pl-[10px] flex flex-wrap">
               {tags.slice(0, 3).map((tag, index) => (
+                // 코드 리뷰: 각 태그에 margin-bottom을 추가하여 세로 간격을 주고, 
+                // whitespace-nowrap을 추가하여 태그 내 텍스트가 끊기지 않도록 했습니다.
                 <span
                   key={index}
-                  className="bg-gray-400 bg-opacity-60 px-2 py-1 rounded-[8px] text-m mr-2"
+                  className="bg-gray-400 bg-opacity-60 px-2 py-1 rounded-[8px] text-m mr-2 mb-2 whitespace-nowrap"
                 >
                   {tag}
                 </span>
               ))}
             </div>
             {/* 별점 및 상세 페이지 링크 */}
-            <div className="flex flex-col items-center justify-between pb-2 mt-auto">
-              {/* 별점 가운데 정렬 */}
-              <div className="flex justify-center w-full mb-12">
+            <div className="flex flex-col items-start justify-between pb-2 mt-auto">
+              {/* 별점 왼쪽 정렬 */}
+              <div className="flex items-start w-full mb-12 pl-[10px]">
                 {renderStars()}
               </div>
               {/* 상세보기 버튼 - 간격 좁힘 */}
-              <div className="flex justify-end w-full space-x-[-10px]">
-                <Link to={`/anime/${anime_id}`} className="text-white">
-                  <ArrowIcon className="w-13 h-13" />
+              <div className="flex justify-end w-full space-x-[5px]">
+                <Link to={`/anime/${anime_id}`} className="text-white"> 
+                  <AddIcon className="w-13 h-13" />
                 </Link>
                 <Link to={`/anime/${anime_id}`} className="text-white">
                   <ArrowIcon className="w-13 h-13" />

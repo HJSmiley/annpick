@@ -36,7 +36,77 @@ const AnimeDetail: React.FC = () => {
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState<number>(0);
   const [isResetting, setIsResetting] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // 로그인 모달 상태 관리
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  // 서버에서 평점 가져오기
+  const fetchRatingFromServer = async (animeId: number) => {
+    try {
+      const token = state.isAuthenticated ? state.token : null;
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/details/${animeId}`,
+        {
+          method: "GET",
+          headers: headers,
+          credentials: "include",
+        }
+      );
+
+      if (response.status === 401) {
+        console.error("Unauthorized: Invalid or expired token.");
+        return null;
+      }
+
+      const data = await response.json();
+      return data.user_rating;
+    } catch (error) {
+      console.error("Error fetching rating:", error);
+      return null;
+    }
+  };
+
+  // 서버에 평점 보내기
+  const sendRatingToServer = async (animeId: number, rating: number) => {
+    try {
+      const token = state.isAuthenticated ? state.token : null;
+
+      if (!token) {
+        throw new Error("No token found, please log in again.");
+      }
+
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/ratings`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            anime_id: animeId,
+            rating: rating,
+          }),
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to send rating, status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Rating successfully sent:", data);
+    } catch (error) {
+      console.error("Error sending rating:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchAnimeDetails = async () => {
@@ -79,7 +149,7 @@ const AnimeDetail: React.FC = () => {
   const handleRating = useCallback(
     (currentRating: number) => {
       if (!state.isAuthenticated) {
-        setIsModalOpen(true); // 비로그인 상태에서는 로그인 모달을 띄움
+        setIsModalOpen(true);
         return;
       }
 
@@ -87,12 +157,14 @@ const AnimeDetail: React.FC = () => {
         setIsResetting(true);
         setRating(0);
         setHover(0);
+        sendRatingToServer(parseInt(id!), 0); // 서버에 평점 0으로 업데이트
         setTimeout(() => setIsResetting(false), 50);
       } else {
         setRating(currentRating);
+        sendRatingToServer(parseInt(id!), currentRating); // 서버에 평점 업데이트
       }
     },
-    [rating, state.isAuthenticated]
+    [rating, id, state.isAuthenticated]
   );
 
   const renderStars = () => {
@@ -161,10 +233,7 @@ const AnimeDetail: React.FC = () => {
         </div>
       ) : (
         <div className="relative h-[70vh] flex">
-          {/* 왼쪽 절반: 블랙박스 */}
           <div className="w-[40%] bg-black"></div>
-
-          {/* 오른쪽 절반: 썸네일 이미지 + 그라데이션 효과 */}
           <div
             className="w-[60%] bg-cover bg-center"
             style={{
@@ -172,8 +241,6 @@ const AnimeDetail: React.FC = () => {
               backgroundPosition: "center center",
             }}
           ></div>
-
-          {/* 텍스트 영역 */}
           <div className="absolute inset-0 flex flex-col justify-end px-4 md:px-8 lg:px-16 pb-8">
             <h1 className="text-white text-4xl font-bold">{anime?.title}</h1>
             <div className="flex items-center space-x-2 mt-2">
@@ -233,7 +300,7 @@ const AnimeDetail: React.FC = () => {
           </div>
         </div>
       </div>
-      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />{" "}
+      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };

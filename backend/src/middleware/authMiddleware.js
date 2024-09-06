@@ -1,10 +1,6 @@
-const jwt = require('jsonwebtoken');
-const { secret } = require('../config/jwtConfig');
-const authenticateToken = (req, res, next) => {
-const authHeader = req.headers['authorization'];
-const token = authHeader && authHeader.split(' ')[1];
-if (!token) { return res.sendStatus(401); }
-jwt.verify(token, secret, (err, user) => {
-if (err) { return res.sendStatus(403); }
-req.user = user; next(); }); };
-module.exports = authenticateToken;
+const passport = require("passport");
+
+// JWT를 사용한 인증 미들웨어
+const ensureAuthenticated = passport.authenticate("jwt", { session: false });
+
+module.exports = ensureAuthenticated;

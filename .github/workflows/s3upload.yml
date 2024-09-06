@@ -23,6 +23,8 @@ jobs:
           npm install
 
       - name: Build React app
+        env:
+          REACT_APP_BACKEND_URL: ${{ secrets.REACT_APP_BACKEND_URL }}
         run: |
           cd frontend
           CI=false npm run build

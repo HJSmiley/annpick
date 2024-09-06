@@ -38,25 +38,27 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      console.log("Origin attempting to access:", origin); // 요청의 출처 로그 출력
-
-      // origin이 허용된 목록에 있거나, origin이 없는 경우 (서버에서 직접 호출)
+      console.log("Origin attempting to access:", origin);
       if (allowedOrigins.includes(origin) || !origin) {
-        console.log("Origin allowed:", origin); // 허용된 경우
+        // origin이 없을 경우 허용
+        console.log(
+          "Origin allowed:",
+          origin || "undefined (server-side request)"
+        );
         callback(null, true);
       } else {
-        console.error("CORS Error: Not allowed by CORS, Origin:", origin); // 차단된 경우 로그 출력
-        callback(new Error("Not allowed by CORS")); // 허용되지 않은 경우 에러 발생
+        console.error("CORS Error: Not allowed by CORS, Origin:", origin);
+        callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true, // 인증 정보 허용 (쿠키 등)
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // 허용할 메소드
+    credentials: true, // 인증 정보를 허용 (쿠키, 헤더 등)
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // 허용할 HTTP 메서드
     allowedHeaders: ["Authorization", "Content-Type"], // 허용할 헤더
   })
 );
 
 // CORS 프리플라이트 요청 처리
-app.options("*", cors()); // 모든 경로에 대해 OPTIONS 요청 허용
+app.options("*", cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

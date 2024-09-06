@@ -31,29 +31,19 @@ const allowedOrigins = [
   process.env.FRONTEND_URL, // 배포된 프론트엔드 URL
   "http://localhost:3000", // 개발 환경 URL
   "http://127.0.0.1:3000", // 로컬 개발 환경 URL
-  "https://annpick.link",
-  "https://d2rj4857nnqxpf.cloudfront.net", // CloudFront 배포 도메인 (정확한 CloudFront 도메인을 추가)
 ];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      console.log("Origin attempting to access:", origin);
+      // origin이 허용된 목록에 있거나, origin이 없는 경우 (비어 있는 경우)
       if (allowedOrigins.includes(origin) || !origin) {
-        // origin이 없을 경우 허용
-        console.log(
-          "Origin allowed:",
-          origin || "undefined (server-side request)"
-        );
         callback(null, true);
       } else {
-        console.error("CORS Error: Not allowed by CORS, Origin:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true, // 인증 정보를 허용 (쿠키, 헤더 등)
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // 허용할 HTTP 메서드
-    allowedHeaders: ["Authorization", "Content-Type"], // 허용할 헤더
+    credentials: true,
   })
 );
 

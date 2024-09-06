@@ -258,7 +258,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
       </div>
       {/* 애니메이션 제목 */}
       <div className="mt-2">
-        <h3 className="text-lg font-semibold line-clamp-2 text-gray-800 dark:text-white">
+        <h3 className="text-lg font-semibold line-clamp-2 text-gray-800">
           {title}
         </h3>
       </div>

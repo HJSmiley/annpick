@@ -27,7 +27,6 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
   useEffect(() => {
     const newIsAnimeSearch = location.pathname === "/anime-search";
     setIsAnimeSearch(newIsAnimeSearch);
-    console.log("Path changed:", location.pathname, "isAnimeSearch:", newIsAnimeSearch);
   }, [location]);
 
   const isActive = (path: string) => location.pathname === path;
@@ -47,14 +46,16 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
     }
   };
 
-  console.log("Rendering Header. isAnimeSearch:", isAnimeSearch);
-
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-[72px]`}
       style={{
-        backgroundColor: isAnimeSearch ? "rgba(255, 255, 255, 1)" : `rgba(255, 255, 255, ${scrollProgress})`,
-        boxShadow: isAnimeSearch ? "0 2px 4px rgba(0, 0, 0, 0.1)" : `0 2px 4px rgba(0, 0, 0, ${scrollProgress * 0.1})`,
+        backgroundColor: isAnimeSearch
+          ? "rgba(255, 255, 255, 1)"
+          : `rgba(255, 255, 255, ${scrollProgress})`,
+        boxShadow: isAnimeSearch
+          ? "0 2px 4px rgba(0, 0, 0, 0.1)"
+          : `0 2px 4px rgba(0, 0, 0, ${scrollProgress * 0.1})`,
       }}
     >
       <div className="container mx-auto px-4 md:px-8 lg:px-16 h-full">

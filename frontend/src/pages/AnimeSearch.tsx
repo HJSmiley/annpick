@@ -10,9 +10,9 @@ const SearchGrid: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="flex-grow pt-16 px-4">
+      <div className="flex-grow pt-20 px-4">
         <div className="max-w-md mx-auto">
-          <h1 className="text-2xl font-bold mb-6 text-center">찜기능 사용중일 때 첫행에 추천 예외작품 정렬</h1>
+          <h1 className="text-2xl font-bold mb-6 text-center">평가한 작품들로,<br></br> 취향에 꼭 맞는 애니를 찾아드릴게요!</h1>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg

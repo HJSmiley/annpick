@@ -50,6 +50,9 @@ app.use(
   })
 );
 
+// CORS 프리플라이트 요청 처리
+app.options("*", cors()); // 모든 경로에 대해 OPTIONS 요청 허용
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());

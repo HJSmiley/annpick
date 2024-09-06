@@ -3,7 +3,7 @@ const { animeIndex } = require("../src/config/meiliConfig");
 
 const indexAnimeFromFile = async () => {
   try {
-    const data = fs.readFileSync("../data/anime_data.json", "utf-8");
+    const data = fs.readFileSync("./data/anime_data.json", "utf-8");
     const animes = JSON.parse(data);
 
     await animeIndex.addDocuments(animes);

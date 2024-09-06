@@ -10,6 +10,7 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
   const location = useLocation();
   const { state } = useAuth();
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isAnimeSearch, setIsAnimeSearch] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,12 +24,17 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const newIsAnimeSearch = location.pathname === "/anime-search";
+    setIsAnimeSearch(newIsAnimeSearch);
+    console.log("Path changed:", location.pathname, "isAnimeSearch:", newIsAnimeSearch);
+  }, [location]);
+
   const isActive = (path: string) => location.pathname === path;
-  const isAnimeSearch = location.pathname === "/anime-search";
 
   const getTextColor = (isActiveLink: boolean) => {
-    if (isActiveLink) return "text-orange-500";
-    if (isAnimeSearch) return "text-gray-500";
+    if (isActiveLink) return "rgb(249, 115, 22)"; // 오렌지색
+    if (isAnimeSearch) return "rgb(107, 114, 128)"; // 회색 (Tailwind의 gray-500)
     const colorValue = Math.round(255 - scrollProgress * 255);
     return `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
   };
@@ -40,6 +46,8 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
       return "/images/logo_annpick_white.svg";
     }
   };
+
+  console.log("Rendering Header. isAnimeSearch:", isAnimeSearch);
 
   return (
     <header
@@ -64,31 +72,23 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
                 <li>
                   <Link
                     to="/"
-                    className={`font-black text-xl transition-colors ${
-                      isActive("/") ? "text-orange-500" : ""
-                    }`}
+                    className={`font-black text-xl transition-colors hover:text-orange-500`}
                     style={{
-                      color: isActive("/")
-                        ? "rgb(249, 115, 22)"
-                        : getTextColor(false),
+                      color: getTextColor(isActive("/")),
                     }}
                   >
-                    <span className="hover:text-orange-500">홈</span>
+                    홈
                   </Link>
                 </li>
                 <li>
                   <Link
                     to="/anime-search"
-                    className={`font-bold text-xl transition-colors ${
-                      isActive("/anime-search") ? "text-orange-500" : ""
-                    }`}
+                    className={`font-bold text-xl transition-colors hover:text-orange-500`}
                     style={{
-                      color: isActive("/anime-search")
-                        ? "rgb(249, 115, 22)"
-                        : getTextColor(false),
+                      color: getTextColor(isActive("/anime-search")),
                     }}
                   >
-                    <span className="hover:text-orange-500">애니 검색</span>
+                    애니 검색
                   </Link>
                 </li>
               </ul>
@@ -98,18 +98,18 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
             {state.isAuthenticated ? (
               <Link
                 to="/profile"
-                className="font-bold text-xl transition-colors"
+                className="font-bold text-xl transition-colors hover:text-orange-500"
                 style={{ color: getTextColor(false) }}
               >
-                <span className="hover:text-orange-500">프로필</span>
+                프로필
               </Link>
             ) : (
               <button
                 onClick={openLoginModal}
-                className="font-bold text-xl transition-colors"
+                className="font-bold text-xl transition-colors hover:text-orange-500"
                 style={{ color: getTextColor(false) }}
               >
-                <span className="hover:text-orange-500">로그인/가입</span>
+                로그인/가입
               </button>
             )}
           </div>

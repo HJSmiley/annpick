@@ -225,7 +225,7 @@ const AnimeDetail: React.FC = () => {
             </div>
             <div className="flex items-center space-x-1 mt-2">
               {renderStars()}
-              <span className="text-white ml-2">{rating} / 10</span>
+              <span className="text-white ml-2">{rating} / 5</span>
             </div>
           </div>
         </div>

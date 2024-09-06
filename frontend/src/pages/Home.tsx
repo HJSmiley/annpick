@@ -65,7 +65,6 @@ const Home: React.FC = () => {
         });
 
         const fetchedSections = await Promise.all(responsePromises);
-        console.log("Fetched sections:", fetchedSections); // 최종 결과 확인
         setAnimeSections(fetchedSections);
       } catch (err) {
         console.error("Error fetching anime data:", err);

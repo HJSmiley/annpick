@@ -219,7 +219,9 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
                 </div>
               </div>
               {/* 장르 표시 - 구분자 제거 */}
-              <div className="text-[15px] mb-[15px] pl-[10px]">{genres.join(" ")}</div>
+              <div className="text-[15px] mb-[15px] pl-[10px]">
+                {genres.join(" ")}
+              </div>
               {/* 태그 표시 */}
               <div className="text-[13px] mb-[5px] pl-[10px] flex flex-wrap">
                 {tags.slice(0, 3).map((tag, index) => (
@@ -242,7 +244,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
                 {/* 상세보기 버튼 - 오른쪽 아래에 고정 */}
                 {/* 코드 리뷰: absolute와 bottom-0, right-0을 사용하여 오른쪽 아래에 고정했습니다. */}
                 <div className="absolute bottom-0 right-0 p-2 flex space-x-[9px]">
-                  <Link to={`/anime/${anime_id}`} className="text-white"> 
+                  <Link to={`/404`} className="text-white">
                     <AddIcon className="w-13 h-13" />
                   </Link>
                   <Link to={`/anime/${anime_id}`} className="text-white">

@@ -28,9 +28,9 @@ sequelize
 
 // 미들웨어 설정
 const allowedOrigins = [
-  process.env.FRONTEND_URL, // .env 파일에 설정된 배포 URL
-  "http://localhost:3000", // 만약 .env 파일을 통해 설정되지 않는 추가 URL이 있다면 여기 추가
-  "http://127.0.0.1:3000", // 개발 환경에서의 로컬 URL
+  process.env.FRONTEND_URL, // 배포된 프론트엔드 URL
+  "http://localhost:3000", // 개발 환경 URL
+  "http://127.0.0.1:3000", // 개발 환경 로컬 URL
 ];
 
 app.use(
@@ -43,7 +43,9 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true,
+    credentials: true, // 쿠키 및 인증 정보를 허용
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // 허용할 메소드 명시
+    allowedHeaders: ["Authorization", "Content-Type"], // 허용할 헤더 명시
   })
 );
 

@@ -14,7 +14,7 @@ interface AnimeDetails {
   anime_id: number;
   title: string;
   thumbnail_url: string;
-  banner_img_url: string;
+  banner_img_url: string | null;
   format: string;
   status: string;
   release_date: string;
@@ -36,8 +36,9 @@ const AnimeDetail: React.FC = () => {
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState<number>(0);
   const [isResetting, setIsResetting] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // 로그인 모달 상태 관리
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+  // 서버에서 평점 가져오기
   const fetchRatingFromServer = async (animeId: number) => {
     try {
       const token = state.isAuthenticated ? state.token : null;
@@ -71,6 +72,7 @@ const AnimeDetail: React.FC = () => {
     }
   };
 
+  // 서버에 평점 보내기
   const sendRatingToServer = async (animeId: number, rating: number) => {
     try {
       const token = state.isAuthenticated ? state.token : null;
@@ -147,7 +149,7 @@ const AnimeDetail: React.FC = () => {
   const handleRating = useCallback(
     (currentRating: number) => {
       if (!state.isAuthenticated) {
-        setIsModalOpen(true); // 비로그인 상태에서는 로그인 모달을 띄움
+        setIsModalOpen(true);
         return;
       }
 
@@ -155,11 +157,11 @@ const AnimeDetail: React.FC = () => {
         setIsResetting(true);
         setRating(0);
         setHover(0);
-        sendRatingToServer(parseInt(id!), 0);
+        sendRatingToServer(parseInt(id!), 0); // 서버에 평점 0으로 업데이트
         setTimeout(() => setIsResetting(false), 50);
       } else {
         setRating(currentRating);
-        sendRatingToServer(parseInt(id!), currentRating);
+        sendRatingToServer(parseInt(id!), currentRating); // 서버에 평점 업데이트
       }
     },
     [rating, id, state.isAuthenticated]
@@ -207,7 +209,7 @@ const AnimeDetail: React.FC = () => {
 
   return (
     <div className="relative">
-      {anime?.banner_img_url && (
+      {anime?.banner_img_url ? (
         <div
           className="relative h-[70vh] bg-cover bg-center"
           style={{ backgroundImage: `url(${anime.banner_img_url})` }}
@@ -226,6 +228,33 @@ const AnimeDetail: React.FC = () => {
             <div className="flex items-center space-x-1 mt-2">
               {renderStars()}
               <span className="text-white ml-2">{rating} / 5</span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="relative h-[70vh] flex">
+          <div className="w-[40%] bg-black"></div>
+          <div
+            className="w-[60%] bg-cover bg-center"
+            style={{
+              backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 50%), url(${anime?.thumbnail_url})`,
+              backgroundPosition: "center center",
+            }}
+          ></div>
+          <div className="absolute inset-0 flex flex-col justify-end px-4 md:px-8 lg:px-16 pb-8">
+            <h1 className="text-white text-4xl font-bold">{anime?.title}</h1>
+            <div className="flex items-center space-x-2 mt-2">
+              <span className="border border-white border-opacity-50 px-2 py-1 rounded-lg text-xs text-white">
+                {anime?.format}
+              </span>
+              <span className="bg-orange-500 px-2 py-1 rounded-lg text-xs text-white">
+                {anime?.status}
+              </span>
+              <span className="text-white">{anime?.genres.join(", ")}</span>
+            </div>
+            <div className="flex items-center space-x-1 mt-2">
+              {renderStars()}
+              <span className="text-white ml-2">{rating} / 10</span>
             </div>
           </div>
         </div>
@@ -271,8 +300,7 @@ const AnimeDetail: React.FC = () => {
           </div>
         </div>
       </div>
-      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />{" "}
-      {/* 로그인 모달 컴포넌트 추가 */}
+      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };

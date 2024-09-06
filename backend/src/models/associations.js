@@ -39,9 +39,23 @@ Genre.belongsToMany(Anime, { through: AniGenre, foreignKey: "genre_id" });
 Anime.belongsToMany(Staff, { through: AniStaff, foreignKey: "anime_id" });
 Staff.belongsToMany(Anime, { through: AniStaff, foreignKey: "staff_id" });
 
+// Anime과 AniStaff 간의 관계 설정
+Anime.hasMany(AniStaff, { foreignKey: "anime_id" });
+AniStaff.belongsTo(Anime, { foreignKey: "anime_id" });
+
+Staff.hasMany(AniStaff, { foreignKey: "staff_id" });
+AniStaff.belongsTo(Staff, { foreignKey: "staff_id" });
+
 // Anime과 Tag의 다대다 관계 설정
 Anime.belongsToMany(Tag, { through: AniTag, foreignKey: "anime_id" });
 Tag.belongsToMany(Anime, { through: AniTag, foreignKey: "tag_id" });
+
+// Anime과 AniTag 간의 관계 설정
+Anime.hasMany(AniTag, { foreignKey: "anime_id" });
+AniTag.belongsTo(Anime, { foreignKey: "anime_id" });
+
+Tag.hasMany(AniTag, { foreignKey: "tag_id" });
+AniTag.belongsTo(Tag, { foreignKey: "tag_id" });
 
 // Anime와 RecommendationCluster 간의 1대다 관계 설정
 Anime.hasMany(RecommendationCluster, { foreignKey: "anime_id" });

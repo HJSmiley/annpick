@@ -30,7 +30,8 @@ sequelize
 const allowedOrigins = [
   process.env.FRONTEND_URL, // 배포된 프론트엔드 URL
   "http://localhost:3000", // 개발 환경 URL
-  "http://127.0.0.1:3000", // 개발 환경 로컬 URL
+  "http://127.0.0.1:3000", // 로컬 개발 환경 URL
+  "https://d2rj4857nnqxpf.cloudfront.net", // CloudFront 배포 도메인 (정확한 CloudFront 도메인을 추가)
 ];
 
 app.use(

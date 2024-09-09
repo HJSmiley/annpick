@@ -303,39 +303,37 @@ const setSortableAttributes = async () => {
   }
 };
 
-// MeiliSearch에서 애니메이션을 검색하는 함수
 const searchMeiliAnimes = async (query, filters = {}) => {
   try {
     console.time("searchAnimes");
 
-    // SetSortableAttributes 호출은 한 번만 설정되도록 하는 것이 좋음
-    await setSortableAttributes();
-
     const searchQuery = typeof query === "string" ? query : query.toString();
 
-    const searchResults = await animeIndex.search(searchQuery, {
+    // 1. 완벽히 일치하는 결과 가져오기 (검색어와 정확히 일치하는 항목)
+    const exactMatchResults = await animeIndex.search(searchQuery, {
       filter: buildFilterString(filters),
-      sort: [], // 정렬 없음
-      limit: 10, // 원하는 개수로 제한
-      facetFilters: [["exact_match:true"]], // 완벽 일치 필터
+      limit: 100, // 원하는 개수로 제한
+      attributesToHighlight: [], // 하이라이트된 부분 제외
+      matchingStrategy: "all", // 완벽 일치
     });
 
-    // 나머지 검색 (완벽 일치 제외)
+    // 2. 완벽히 일치하지 않는 나머지 결과 가져오기 (인기도 순 정렬)
     const otherResults = await animeIndex.search(searchQuery, {
       filter: buildFilterString(filters),
+      limit: 100, // 원하는 개수로 제한
       sort: ["popularity:desc"], // 인기도 순으로 정렬
-      limit: 50, // 원하는 개수로 제한
-      facetFilters: [["exact_match:false"]], // 완벽 일치가 아닌 결과
+      attributesToHighlight: [], // 하이라이트된 부분 제외
+      matchingStrategy: "last", // 부분 일치
     });
 
     console.timeEnd("searchAnimes");
 
-    // 두 검색 결과를 합치고 반환
+    // 3. 완벽히 일치하는 결과를 먼저, 그 외 결과는 뒤에 결합
     const results = [...exactMatchResults.hits, ...otherResults.hits];
     return results;
   } catch (error) {
     console.error("Error searching animes:", error);
-    throw error; // 오류를 라우터로 전달하여 처리를 맡김
+    throw error;
   }
 };
 

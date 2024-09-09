@@ -315,7 +315,8 @@ const searchMeiliAnimes = async (query, filters = {}) => {
 
     const searchResults = await animeIndex.search(searchQuery, {
       filter: buildFilterString(filters),
-      sort: ["popularity:desc"],
+      sort: ["popularity:desc"], // 인기도 순으로 정렬
+      matchingStrategy: "all", // 완벽 일치 우선
     });
 
     console.timeEnd("searchAnimes");

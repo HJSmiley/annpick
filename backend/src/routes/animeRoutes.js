@@ -24,13 +24,13 @@ const router = express.Router();
  *           type: string
  *         required: true
  *       - in: query
- *         name: genre
+ *         name: genres
  *         schema:
  *           type: string
  *         required: false
  *         description: 장르 필터
  *       - in: query
- *         name: tag
+ *         name: tags
  *         schema:
  *           type: string
  *         required: false

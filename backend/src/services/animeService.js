@@ -273,10 +273,6 @@ const indexAnimeData = async () => {
             model: Tag,
             through: { model: AniTag },
           },
-          {
-            model: Staff,
-            through: { model: AniStaff },
-          },
         ],
       });
 
@@ -288,7 +284,6 @@ const indexAnimeData = async () => {
           ? anime.genres.map((genre) => genre.genre_name)
           : [],
         tags: anime.tags ? anime.tags.map((tag) => tag.tag_name) : [],
-        staff: anime.staff ? anime.staff.map((staff) => staff.staff_name) : [],
       }));
 
       await animeIndex.addDocuments(formattedAnimes);
@@ -336,7 +331,6 @@ const buildFilterString = (filters) => {
   const filterStrings = [];
   if (filters.genre) filterStrings.push(`genres = "${filters.genre}"`);
   if (filters.tag) filterStrings.push(`tags = "${filters.tag}"`);
-  if (filters.staff) filterStrings.push(`staff = "${filters.staff}"`);
   return filterStrings.join(" AND ");
 };
 

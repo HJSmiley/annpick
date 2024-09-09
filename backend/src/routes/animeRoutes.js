@@ -35,12 +35,6 @@ const router = express.Router();
  *           type: string
  *         required: false
  *         description: 태그 필터
- *       - in: query
- *         name: staff
- *         schema:
- *           type: string
- *         required: false
- *         description: 스태프 필터
  *     responses:
  *       200:
  *         description: 검색된 애니메이션 리스트

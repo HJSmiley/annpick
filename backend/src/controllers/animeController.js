@@ -243,21 +243,6 @@ const rateAnime = async (req, res) => {
   }
 };
 
-// const searchAnimes = async (req, res) => {
-//   try {
-//     // 올바른 매개변수 설정
-//     const query = req.query.query || ""; // 기본 값으로 빈 문자열 설정
-//     const filters = req.query; // 쿼리 전체를 필터로 전달
-
-//     // searchAnimes 호출
-//     const results = await searchMeiliAnimes(query, filters);
-//     res.json(results);
-//   } catch (error) {
-//     console.error("Error during search:", error);
-//     res.status(500).json({ error: "An error occurred while searching animes" });
-//   }
-// };
-
 const searchAnimes = async (req, res) => {
   try {
     const query = req.query.query || ""; // 검색어
@@ -298,15 +283,25 @@ const searchAnimes = async (req, res) => {
     });
 
     // 필요한 데이터만 정리해서 반환
-    const formattedResults = animeList.map((anime) => ({
-      anime_id: anime.anime_id,
-      title: anime.anime_title,
-      thumbnail_url: anime.thumbnail_url,
-      format: anime.format,
-      status: anime.is_completed ? "완결" : "방영중",
-      genres: anime.Genres.map((genre) => genre.genre_name).slice(0, 3),
-      tags: anime.AniTags.map((aniTag) => aniTag.Tag.tag_name).slice(0, 4),
-    }));
+    const formattedResults = animeList.map((anime) => {
+      // 장르
+      const genres = anime.Genres.map((genre) => genre.genre_name).slice(0, 3);
+
+      // 태그를 tag_score 기준으로 내림차순 정렬 후 상위 4개 태그만 선택
+      const topTags = anime.AniTags.sort((a, b) => b.tag_score - a.tag_score)
+        .slice(0, 4)
+        .map((aniTag) => aniTag.Tag.tag_name);
+
+      return {
+        anime_id: anime.anime_id,
+        title: anime.anime_title,
+        thumbnail_url: anime.thumbnail_url,
+        format: anime.format,
+        status: anime.is_completed ? "완결" : "방영중",
+        genres: genres,
+        tags: topTags,
+      };
+    });
 
     res.status(200).json(formattedResults);
   } catch (error) {

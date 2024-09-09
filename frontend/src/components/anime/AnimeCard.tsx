@@ -20,8 +20,8 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
   thumbnail_url,
   format,
   status,
-  genres,
-  tags,
+  genres =[],
+  tags = [],
   onRatingClick,
   isModalOpen,
 }) => {

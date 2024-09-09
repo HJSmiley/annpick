@@ -1,80 +1,156 @@
-// React와 useState를 가져옵니다. React는 웹 페이지를 만드는 도구이고, 
-// useState는 페이지의 상태를 관리하는 기능입니다.
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useAnime } from "../contexts/AnimeContext";
+import AnimeCard from "../components/anime/AnimeCard";
+import SearchSuggestions from "../components/search/SearchSuggestions";
+import SearchFilters from "./../components/search/SearchFilters";
+import RecentSearches from "./../components/search/RecentSearches";
 
-// SearchGrid라는 이름의 함수형 컴포넌트를 만듭니다. 
-// 이것은 웹 페이지의 한 부분을 나타냅니다.
 const SearchGrid: React.FC = () => {
-  // useState를 사용해 검색어와 버튼 텍스트의 상태를 관리합니다.
-  // 이 상태들은 사용자의 입력에 따라 변할 수 있습니다.
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [buttonText, setButtonText] = useState<string>("검색");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [activeFilter, setActiveFilter] = useState<string>("전체");
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  // 검색 버튼을 눌렀을 때 실행될 함수입니다.
-  const handleSearch = () => {
-    console.log("검색어:", searchTerm);
+  const { state } = useAuth();
+  const { animes, setAnimes, loading, setLoading, error, setError } = useAnime();
+
+  useEffect(() => {
+    const savedSearches = localStorage.getItem('recentSearches');
+    if (savedSearches) {
+      setRecentSearches(JSON.parse(savedSearches));
+    }
+  }, []);
+
+  const saveRecentSearch = (search: string) => {
+    const updatedSearches = [search, ...recentSearches.filter(s => s !== search)].slice(0, 5);
+    setRecentSearches(updatedSearches);
+    localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
   };
 
-  // 여기서부터 실제로 화면에 보이는 부분을 만듭니다.
+  const clearRecentSearches = () => {
+    setRecentSearches([]);
+    localStorage.removeItem('recentSearches');
+  };
+
+  const handleSearch = useCallback(async () => {
+    if (!searchTerm.trim()) {
+      setError("검색어를 입력해주세요.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/search?query=${encodeURIComponent(searchTerm)}&filter=${activeFilter}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(state.isAuthenticated ? { Authorization: `Bearer ${state.token}` } : {})
+        },
+        credentials: "include"
+      });
+      
+      if (!response.ok) {
+        throw new Error('검색 중 오류가 발생했습니다.');
+      }
+
+      const data = await response.json();
+      setAnimes(data);
+      saveRecentSearch(searchTerm);
+    } catch (error) {
+      console.error("검색 중 오류 발생:", error);
+      setError("검색 중 오류가 발생했습니다. 다시 시도해주세요.");
+    } finally {
+      setLoading(false);
+    }
+  }, [searchTerm, activeFilter, state.isAuthenticated, state.token, setAnimes, setError, setLoading]);
+
+  const handleSuggestionSearch = async (term: string) => {
+    setSearchTerm(term);
+    await handleSearch();
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    // 여기에 검색 제안을 위한 API 호출을 추가할 수 있습니다.
+    // 예: fetchSuggestions(value).then(setSuggestions);
+  };
+
+  const handleRatingClick = useCallback(() => {
+    setIsModalOpen(true);
+    // 여기에 로그인 모달을 열거나 로그인 페이지로 리다이렉트하는 로직을 추가할 수 있습니다.
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-grow pt-40 px-4">
         <div className="max-w-md mx-auto">
-          {/* 페이지 상단의 제목 부분입니다. */}
-          <h1 className="text-2xl font-bold mb-6 text-center">평가한 작품들로,<br></br> 취향에 꼭 맞는 애니를 찾아드릴게요!</h1>
-          <div className="relative">
-            {/* 검색 아이콘을 표시합니다. */}
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                className="h-4 w-4 text-[#F35815]"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            {/* 검색어를 입력하는 입력 필드입니다. */}
+          <h1 className="text-2xl font-bold mb-6 text-center">
+            평가한 작품들로,<br />
+            취향에 꼭 맞는 애니를 찾아드릴게요!
+          </h1>
+          <div className="relative mb-4">
             <input
               type="text"
-              className="w-full pl-10 pr-4 py-2 rounded-full border border-[#F7f7f7] focus:outline-none focus:ring-2 focus:ring-[#F35815] focus:border-transparent bg-[#F7f7f7] text-gray placeholder-white::placeholder"
-              placeholder="검색 필터를 설정해주세요"
+              className="w-full pl-10 pr-4 py-2 rounded-full border border-[#F7f7f7] focus:outline-none focus:ring-2 focus:ring-[#F35815] focus:border-transparent bg-[#F7f7f7] text-gray-700 placeholder-gray-400"
+              placeholder="제목, 태그, 장르로 검색해보세요"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleInputChange}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            />
+            <div className="absolute inset-y-0 left-3 flex items-center">
+              <svg className="h-5 w-5 text-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </div>
+            <SearchSuggestions
+              suggestions={suggestions}
+              onSuggestionClick={handleSuggestionSearch}
             />
           </div>
+          <SearchFilters
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+          />
+          <button
+            onClick={handleSearch}
+            className="w-full bg-[#F35815] text-white font-bold py-3 px-16 rounded-full shadow-lg hover:bg-[#D14704] transition duration-300 ease-in-out"
+          >
+            검색
+          </button>
+          <RecentSearches
+            recentSearches={recentSearches}
+            onRecentSearchClick={handleSuggestionSearch}
+            onClearRecentSearches={clearRecentSearches}
+          />
         </div>
 
-        {/* 검색 결과를 표시할 그리드 영역입니다. */}
-        <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {/* 여기에 검색 결과를 표시할 수 있습니다 */}
-        </div>
+        {error && (
+          <div className="text-red-500 text-center mt-4">{error}</div>
+        )}
+
+        {loading ? (
+          <div className="text-center mt-8">검색 중...</div>
+        ) : (
+          <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {animes.map((anime, index) => (
+              <AnimeCard
+                key={anime.anime_id}
+                {...anime}
+                index={index}
+                onRatingClick={handleRatingClick}
+                isModalOpen={isModalOpen}
+              />
+            ))}
+          </div>
+        )}
       </div>
-
-      {/* 화면 하단에 고정된 검색 버튼입니다. */}
-      <button
-        onClick={handleSearch}
-        className="fixed bottom-60 left-1/2 transform -translate-x-1/2 bg-[#F35815] text-white font-bold py-3 px-16 rounded-full shadow-lg hover:bg-[#D14704] transition duration-300 ease-in-out"
-      >
-        {/* 버튼의 텍스트를 변경할 수 있는 입력 필드입니다. */}
-        <input
-          type="text"
-          value={buttonText}
-          onChange={(e) => setButtonText(e.target.value)}
-          className="bg-transparent text-white text-center focus:outline-none w-full"
-          onClick={(e) => e.stopPropagation()}
-        />
-      </button>
-
-      {/* 페이지 하단의 풋터 영역입니다. */}
-      <footer/>
     </div>
   );
 };
 
-// 이 컴포넌트를 다른 곳에서 사용할 수 있도록 내보냅니다.
 export default SearchGrid;

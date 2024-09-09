@@ -243,15 +243,72 @@ const rateAnime = async (req, res) => {
   }
 };
 
+// const searchAnimes = async (req, res) => {
+//   try {
+//     // 올바른 매개변수 설정
+//     const query = req.query.query || ""; // 기본 값으로 빈 문자열 설정
+//     const filters = req.query; // 쿼리 전체를 필터로 전달
+
+//     // searchAnimes 호출
+//     const results = await searchMeiliAnimes(query, filters);
+//     res.json(results);
+//   } catch (error) {
+//     console.error("Error during search:", error);
+//     res.status(500).json({ error: "An error occurred while searching animes" });
+//   }
+// };
+
 const searchAnimes = async (req, res) => {
   try {
-    // 올바른 매개변수 설정
-    const query = req.query.query || ""; // 기본 값으로 빈 문자열 설정
-    const filters = req.query; // 쿼리 전체를 필터로 전달
+    const query = req.query.query || ""; // 검색어
+    const filters = req.query; // 필터
 
-    // searchAnimes 호출
-    const results = await searchMeiliAnimes(query, filters);
-    res.json(results);
+    // MeiliSearch에서 검색된 애니메이션 ID 리스트를 가져옴
+    const meiliResults = await searchMeiliAnimes(query, filters);
+    const animeIds = meiliResults.map((anime) => anime.id); // ID만 추출
+
+    if (animeIds.length === 0) {
+      return res.status(404).json({ message: "검색 결과가 없습니다." });
+    }
+
+    // 우리 DB에서 해당 애니메이션 ID에 대한 정보를 가져옴
+    const animeList = await Anime.findAll({
+      where: { anime_id: animeIds },
+      attributes: [
+        "anime_id",
+        "anime_title",
+        "thumbnail_url",
+        "format",
+        "is_completed",
+      ],
+      include: [
+        {
+          model: Genre,
+          attributes: ["genre_name"],
+        },
+        {
+          model: AniTag,
+          attributes: ["tag_score"],
+          include: {
+            model: Tag,
+            attributes: ["tag_name"],
+          },
+        },
+      ],
+    });
+
+    // 필요한 데이터만 정리해서 반환
+    const formattedResults = animeList.map((anime) => ({
+      anime_id: anime.anime_id,
+      title: anime.anime_title,
+      thumbnail_url: anime.thumbnail_url,
+      format: anime.format,
+      status: anime.is_completed ? "완결" : "방영중",
+      genres: anime.Genres.map((genre) => genre.genre_name).slice(0, 3),
+      tags: anime.AniTags.map((aniTag) => aniTag.Tag.tag_name).slice(0, 4),
+    }));
+
+    res.status(200).json(formattedResults);
   } catch (error) {
     console.error("Error during search:", error);
     res.status(500).json({ error: "An error occurred while searching animes" });

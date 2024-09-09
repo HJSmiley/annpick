@@ -315,12 +315,24 @@ const searchMeiliAnimes = async (query, filters = {}) => {
 
     const searchResults = await animeIndex.search(searchQuery, {
       filter: buildFilterString(filters),
+      sort: [], // 정렬 없음
+      limit: 10, // 원하는 개수로 제한
+      facetFilters: [["exact_match:true"]], // 완벽 일치 필터
+    });
+
+    // 나머지 검색 (완벽 일치 제외)
+    const otherResults = await animeIndex.search(searchQuery, {
+      filter: buildFilterString(filters),
       sort: ["popularity:desc"], // 인기도 순으로 정렬
-      matchingStrategy: "last", // 완벽 일치 우선, 그 외 결과도 포함
+      limit: 50, // 원하는 개수로 제한
+      facetFilters: [["exact_match:false"]], // 완벽 일치가 아닌 결과
     });
 
     console.timeEnd("searchAnimes");
-    return searchResults.hits;
+
+    // 두 검색 결과를 합치고 반환
+    const results = [...exactMatchResults.hits, ...otherResults.hits];
+    return results;
   } catch (error) {
     console.error("Error searching animes:", error);
     throw error; // 오류를 라우터로 전달하여 처리를 맡김

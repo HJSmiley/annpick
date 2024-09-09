@@ -14,7 +14,7 @@ const router = express.Router();
  * /api/v1/anime/search:
  *   get:
  *     summary: 애니메이션 검색
- *     description: 주어진 쿼리와 필터를 사용하여 애니메이션을 검색합니다.
+ *     description: MeiliSearch를 사용하여 애니메이션을 검색하고, 검색된 anime_id 리스트를 기반으로 DB에서 애니메이션 세부 정보를 가져옵니다.
  *     tags:
  *       - 애니메이션
  *     parameters:
@@ -23,21 +23,22 @@ const router = express.Router();
  *         schema:
  *           type: string
  *         required: true
+ *         description: 검색할 애니메이션 제목 또는 키워드
  *       - in: query
  *         name: genres
  *         schema:
  *           type: string
  *         required: false
- *         description: 장르 필터
+ *         description: 장르 필터 (선택 사항)
  *       - in: query
  *         name: tags
  *         schema:
  *           type: string
  *         required: false
- *         description: 태그 필터
+ *         description: 태그 필터 (선택 사항)
  *     responses:
  *       200:
- *         description: 검색된 애니메이션 리스트
+ *         description: 검색된 애니메이션 정보 리스트
  *         content:
  *           application/json:
  *             schema:
@@ -45,30 +46,40 @@ const router = express.Router();
  *               items:
  *                 type: object
  *                 properties:
- *                   id:
+ *                   anime_id:
  *                     type: integer
  *                     example: 12345
+ *                     description: 애니메이션의 고유 ID
  *                   title:
  *                     type: string
  *                     example: 원피스
- *                   popularity:
- *                     type: integer
- *                     example: 10000
+ *                     description: 애니메이션 제목
+ *                   thumbnail_url:
+ *                     type: string
+ *                     example: https://example.com/image.jpg
+ *                     description: 애니메이션 썸네일 이미지 URL
+ *                   format:
+ *                     type: string
+ *                     example: TV
+ *                     description: 애니메이션의 포맷 (TV, OVA 등)
+ *                   status:
+ *                     type: string
+ *                     example: 방영중
+ *                     description: 애니메이션의 상태 (방영중, 완결 등)
  *                   genres:
  *                     type: array
  *                     items:
  *                       type: string
  *                       example: Action
+ *                     description: 애니메이션의 장르 리스트 (최대 3개)
  *                   tags:
  *                     type: array
  *                     items:
  *                       type: string
  *                       example: Pirate
- *                   staff:
- *                     type: array
- *                     items:
- *                       type: string
- *                       example: Eiichiro Oda
+ *                     description: 애니메이션의 태그 리스트 (최대 4개)
+ *       404:
+ *         description: 검색 결과가 없습니다.
  *       500:
  *         description: 서버 오류
  */

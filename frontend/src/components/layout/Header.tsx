@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import AvatarDropdown from '../../components/mypage/AvatarDropdown';
+import AvatarDropdown from "../../components/mypage/AvatarDropdown";
 
 interface HeaderProps {
   openLoginModal: () => void;
@@ -12,6 +12,7 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
   const { state } = useAuth();
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isAnimeSearch, setIsAnimeSearch] = useState(false);
+  const [isProfilePage, setIsProfilePage] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,7 +28,10 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
 
   useEffect(() => {
     const newIsAnimeSearch = location.pathname === "/anime-search";
+    const newIsProfilePage = location.pathname === "/profile";
+
     setIsAnimeSearch(newIsAnimeSearch);
+    setIsProfilePage(newIsProfilePage);
   }, [location]);
 
   const isActive = (path: string) => location.pathname === path;
@@ -35,12 +39,13 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
   const getTextColor = (isActiveLink: boolean) => {
     if (isActiveLink) return "rgb(249, 115, 22)"; // 오렌지색
     if (isAnimeSearch) return "rgb(107, 114, 128)"; // 회색 (Tailwind의 gray-500)
+    if (isProfilePage) return "rgb(107, 114, 128)"; // 프로필 페이지일 때 검은색
     const colorValue = Math.round(255 - scrollProgress * 255);
     return `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
   };
 
   const getLogoImage = () => {
-    if (isAnimeSearch || scrollProgress >= 0.5) {
+    if (isAnimeSearch || isProfilePage || scrollProgress >= 0.5) {
       return "/images/logo_annpick_dk.svg";
     } else {
       return "/images/logo_annpick_white.svg";
@@ -98,7 +103,11 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
           </div>
           <div>
             {state.isAuthenticated ? (
-              <AvatarDropdown openLoginModal={openLoginModal} />
+              <AvatarDropdown
+                openLoginModal={openLoginModal}
+                isAnimeSearch={isAnimeSearch}
+                isProfilePage={isProfilePage}
+              />
             ) : (
               <button
                 onClick={openLoginModal}

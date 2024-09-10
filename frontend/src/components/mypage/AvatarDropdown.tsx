@@ -5,9 +5,15 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 
 interface AvatarDropdownProps {
   openLoginModal: () => void;
+  isAnimeSearch: boolean;
+  isProfilePage: boolean;
 }
 
-const AvatarDropdown: React.FC<AvatarDropdownProps> = ({ openLoginModal }) => {
+const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
+  openLoginModal,
+  isProfilePage,
+  isAnimeSearch,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const { state, logout } = useAuth();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -61,12 +67,21 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({ openLoginModal }) => {
             className="w-full h-full object-cover"
           />
         </div>
-        <span className="font-semibold text-sm mr-1">
+        <span
+          className="font-semibold text-sm mr-1"
+          style={{
+            color: isProfilePage
+              ? "rgb(249, 115, 22)"
+              : isAnimeSearch
+              ? "rgb(107, 114, 128)"
+              : "white",
+          }}
+        >
           {state.user?.nickname || "사용자"}
         </span>
         <ChevronDown
           size={16}
-          className={`transition-transform duration-300 ${
+          className={`text-white transition-transform duration-300 ${
             isOpen ? "transform rotate-180" : ""
           }`}
         />

@@ -246,7 +246,10 @@ const rateAnime = async (req, res) => {
 const searchAnimes = async (req, res) => {
   try {
     const query = req.query.query || ""; // 검색어
-    const filters = req.query; // 필터
+    const filters = {
+      genre: req.query.genre, // 장르 필터
+      tag: req.query.tag, // 태그 필터
+    };
 
     // MeiliSearch에서 검색된 애니메이션 ID 리스트를 가져옴
     const meiliResults = await searchMeiliAnimes(query, filters);

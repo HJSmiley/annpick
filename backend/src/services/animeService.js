@@ -254,75 +254,17 @@ const saveRating = async (user_id, anime_id, rating) => {
   }
 };
 
-// 데이터베이스에서 데이터를 가져와 MeiliSearch에 인덱싱하는 함수
-const batchSize = 500;
-
-const indexAnimeData = async () => {
+const initializeMeiliSearch = async () => {
   try {
-    const totalAnimes = await Anime.count();
-    for (let i = 0; i < totalAnimes; i += batchSize) {
-      const animes = await Anime.findAll({
-        offset: i,
-        limit: batchSize,
-        include: [
-          {
-            model: Genre,
-            through: { model: AniGenre },
-          },
-          {
-            model: Tag,
-            through: { model: AniTag },
-          },
-        ],
-      });
+    // 필터 가능한 속성 설정
+    await animeIndex.updateFilterableAttributes(["genres", "tags"]);
+    console.log("Filterable attributes updated successfully.");
 
-      const formattedAnimes = animes.map((anime) => ({
-        id: anime.anime_id,
-        title: anime.anime_title,
-        popularity: anime.popularity,
-        genres: anime.genres
-          ? anime.genres.map((genre) => genre.genre_name)
-          : [],
-        tags: anime.tags ? anime.tags.map((tag) => tag.tag_name) : [],
-      }));
-
-      await animeIndex.addDocuments(formattedAnimes);
-      console.log(`Batch ${i / batchSize + 1} indexed successfully`);
-    }
-  } catch (error) {
-    console.error("Error indexing anime data:", error);
-  }
-};
-
-const setSortableAttributes = async () => {
-  try {
+    // 정렬 가능한 속성 설정
     await animeIndex.updateSortableAttributes(["popularity"]);
     console.log("Sortable attributes updated successfully.");
   } catch (error) {
-    console.error("Error updating sortable attributes:", error);
-  }
-};
-
-const searchMeiliAnimes = async (query, filters = {}) => {
-  try {
-    console.time("searchAnimes");
-
-    // SetSortableAttributes 호출은 한 번만 설정되도록 하는 것이 좋음
-    await setSortableAttributes();
-
-    const searchQuery = typeof query === "string" ? query : query.toString();
-
-    const searchResults = await animeIndex.search(searchQuery, {
-      filter: buildFilterString(filters),
-      sort: ["popularity:asc"],
-      matchingStrategy: "frequency",
-    });
-
-    console.timeEnd("searchAnimes");
-    return searchResults.hits;
-  } catch (error) {
-    console.error("Error searching animes:", error);
-    throw error; // 오류를 라우터로 전달하여 처리를 맡김
+    console.error("Error initializing MeiliSearch attributes:", error);
   }
 };
 
@@ -334,11 +276,31 @@ const buildFilterString = (filters) => {
   return filterStrings.join(" AND ");
 };
 
+const searchMeiliAnimes = async (query, filters = {}) => {
+  try {
+    console.time("searchAnimes");
+
+    const searchQuery = typeof query === "string" ? query : query.toString();
+
+    const searchResults = await animeIndex.search(searchQuery, {
+      filter: buildFilterString(filters),
+      sort: ["popularity:asc"],
+      matchingStrategy: "last",
+    });
+
+    console.timeEnd("searchAnimes");
+    return searchResults.hits;
+  } catch (error) {
+    console.error("Error searching animes:", error);
+    throw error; // 오류를 라우터로 전달하여 처리를 맡김
+  }
+};
+
 module.exports = {
   fetchAnimeData,
   saveAnimeData,
   saveRating,
-  indexAnimeData,
-  searchMeiliAnimes,
+  initializeMeiliSearch,
   buildFilterString,
+  searchMeiliAnimes,
 };

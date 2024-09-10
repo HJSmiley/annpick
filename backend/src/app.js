@@ -1,6 +1,8 @@
 require("dotenv").config();
 require("./models/associations");
 
+const { initializeMeiliSearch } = require("./services/animeService");
+
 const {
   express,
   cors,
@@ -67,5 +69,12 @@ app.use("/api/v1/anime", animeRoutes);
 // MeiliSearch 클라이언트를 전역적으로 사용하기 위해 앱 객체에 추가
 app.set("meiliClient", meiliClient);
 app.set("animeIndex", animeIndex);
+
+// 서버 시작 시 MeiliSearch 초기화 실행
+initializeMeiliSearch().then(() => {
+  console.log(
+    "MeiliSearch initialized with filterable and sortable attributes."
+  );
+});
 
 module.exports = app;

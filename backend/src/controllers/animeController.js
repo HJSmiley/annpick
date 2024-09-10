@@ -247,8 +247,8 @@ const searchAnimes = async (req, res) => {
   try {
     const query = req.query.query || ""; // 검색어
     const filters = {
-      genre: req.query.genre, // 장르 필터
-      tag: req.query.tag, // 태그 필터
+      genre: req.query.genres, // 장르 필터
+      tag: req.query.tags, // 태그 필터
     };
 
     // MeiliSearch에서 검색된 애니메이션 ID 리스트를 가져옴

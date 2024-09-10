@@ -314,7 +314,7 @@ const searchMeiliAnimes = async (query, filters = {}) => {
 
     const searchResults = await animeIndex.search(searchQuery, {
       filter: buildFilterString(filters),
-      sort: ["popularity:desc"],
+      sort: ["popularity:asc"],
       matchingStrategy: "frequency",
     });
 

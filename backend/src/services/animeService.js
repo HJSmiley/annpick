@@ -303,7 +303,6 @@ const setSortableAttributes = async () => {
   }
 };
 
-// MeiliSearch에서 애니메이션을 검색하는 함수
 const searchMeiliAnimes = async (query, filters = {}) => {
   try {
     console.time("searchAnimes");
@@ -315,8 +314,8 @@ const searchMeiliAnimes = async (query, filters = {}) => {
 
     const searchResults = await animeIndex.search(searchQuery, {
       filter: buildFilterString(filters),
-      sort: ["popularity:asc"],
-      matchingStrategy: "all", // 완벽 일치 우선
+      sort: ["popularity:desc"],
+      matchingStrategy: "last", // 완벽 일치 우선
     });
 
     console.timeEnd("searchAnimes");

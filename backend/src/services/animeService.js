@@ -272,11 +272,19 @@ const initializeMeiliSearch = async () => {
 const buildFilterString = (filters) => {
   const filterStrings = [];
 
-  if (filters.genre) {
+  if (filters.genre && Array.isArray(filters.genre)) {
+    filterStrings.push(
+      `genre IN [${filters.genre.map((g) => `"${g}"`).join(", ")}]`
+    );
+  } else if (filters.genre) {
     filterStrings.push(`genre IN ["${filters.genre}"]`);
   }
 
-  if (filters.tag) {
+  if (filters.tag && Array.isArray(filters.tag)) {
+    filterStrings.push(
+      `tag IN [${filters.tag.map((t) => `"${t}"`).join(", ")}]`
+    );
+  } else if (filters.tag) {
     filterStrings.push(`tag IN ["${filters.tag}"]`);
   }
 

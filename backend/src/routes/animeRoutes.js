@@ -25,13 +25,13 @@ const router = express.Router();
  *         required: true
  *         description: 검색할 애니메이션 제목 또는 키워드
  *       - in: query
- *         name: genres
+ *         name: genre
  *         schema:
  *           type: string
  *         required: false
  *         description: 장르 필터 (선택 사항)
  *       - in: query
- *         name: tags
+ *         name: tag
  *         schema:
  *           type: string
  *         required: false
@@ -66,7 +66,7 @@ const router = express.Router();
  *                     type: string
  *                     example: 방영중
  *                     description: 애니메이션의 상태 (방영중, 완결 등)
- *                   genres:
+ *                   genre:
  *                     type: array
  *                     items:
  *                       type: string

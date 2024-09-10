@@ -257,7 +257,7 @@ const saveRating = async (user_id, anime_id, rating) => {
 const initializeMeiliSearch = async () => {
   try {
     // 필터 가능한 속성 설정
-    await animeIndex.updateFilterableAttributes(["genres", "tags"]);
+    await animeIndex.updateFilterableAttributes(["genre", "tag"]);
     console.log("Filterable attributes updated successfully.");
 
     // 정렬 가능한 속성 설정
@@ -275,22 +275,18 @@ const buildFilterString = (filters) => {
   // 장르 필터 추가
   if (filters.genre) {
     if (typeof filters.genre === "string") {
-      // 단일 문자열 처리
-      filterStrings.push(`genres = "${filters.genre}"`);
+      filterStrings.push(`genre = "${filters.genre}"`);
     } else if (Array.isArray(filters.genre)) {
-      // 배열 처리
-      filterStrings.push(`genres IN ["${filters.genre.join('", "')}"]`);
+      filterStrings.push(`genre IN ["${filters.genre.join('", "')}"]`);
     }
   }
 
   // 태그 필터 추가
   if (filters.tag) {
     if (typeof filters.tag === "string") {
-      // 단일 문자열 처리
-      filterStrings.push(`tags = "${filters.tag}"`);
+      filterStrings.push(`tag = "${filters.tag}"`);
     } else if (Array.isArray(filters.tag)) {
-      // 배열 처리
-      filterStrings.push(`tags IN ["${filters.tag.join('", "')}"]`);
+      filterStrings.push(`tag IN ["${filters.tag.join('", "')}"]`);
     }
   }
 

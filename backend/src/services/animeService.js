@@ -288,9 +288,12 @@ const searchMeiliAnimes = async (query, filters = {}) => {
     console.time("searchAnimes");
 
     const searchQuery = typeof query === "string" ? query : query.toString();
+    const filterString = buildFilterString(filters); // 필터링 문자열 생성
+
+    console.log("MeiliSearch로 전달되는 필터:", filterString); // 필터 로그 출력
 
     const searchResults = await animeIndex.search(searchQuery, {
-      filter: buildFilterString(filters),
+      filter: filterString,
       sort: ["popularity:asc"],
       matchingStrategy: "last",
     });
@@ -298,8 +301,8 @@ const searchMeiliAnimes = async (query, filters = {}) => {
     console.timeEnd("searchAnimes");
     return searchResults.hits;
   } catch (error) {
-    console.error("Error searching animes:", error);
-    throw error; // 오류를 라우터로 전달하여 처리를 맡김
+    console.error("MeiliSearch 검색 오류:", error);
+    throw error;
   }
 };
 

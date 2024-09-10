@@ -271,8 +271,29 @@ const initializeMeiliSearch = async () => {
 // 검색 필터 문자열을 구성하는 함수
 const buildFilterString = (filters) => {
   const filterStrings = [];
-  if (filters.genre) filterStrings.push(`genres = "${filters.genre}"`);
-  if (filters.tag) filterStrings.push(`tags = "${filters.tag}"`);
+
+  // 장르 필터 추가
+  if (filters.genre) {
+    if (typeof filters.genre === "string") {
+      // 단일 문자열 처리
+      filterStrings.push(`genres = "${filters.genre}"`);
+    } else if (Array.isArray(filters.genre)) {
+      // 배열 처리
+      filterStrings.push(`genres IN ["${filters.genre.join('", "')}"]`);
+    }
+  }
+
+  // 태그 필터 추가
+  if (filters.tag) {
+    if (typeof filters.tag === "string") {
+      // 단일 문자열 처리
+      filterStrings.push(`tags = "${filters.tag}"`);
+    } else if (Array.isArray(filters.tag)) {
+      // 배열 처리
+      filterStrings.push(`tags IN ["${filters.tag.join('", "')}"]`);
+    }
+  }
+
   return filterStrings.join(" AND ");
 };
 

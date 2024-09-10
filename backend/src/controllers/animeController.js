@@ -245,6 +245,8 @@ const rateAnime = async (req, res) => {
 
 const searchAnimes = async (req, res) => {
   try {
+    console.log("쿼리 파라미터:", req.query); // 쿼리 파라미터 로그 출력
+
     const query = req.query.query || ""; // 검색어
     const genre = req.query.genre || ""; // 장르 필터
     const tag = req.query.tag || ""; // 태그 필터

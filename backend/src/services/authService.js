@@ -5,6 +5,7 @@ const axios = require("axios");
 const findOrCreateUser = async (profileData) => {
   const userData = {
     email: profileData.email || null,
+    profile_img: profileData.profile_image || null,
     nickname: profileData.nickname || null,
     user_name: profileData.name || null,
     phone: profileData.mobile ? profileData.mobile.replace(/-/g, "") : null,
@@ -32,6 +33,7 @@ const generateToken = (user) => {
   const token = jwt.sign(
     {
       id: user.user_id,
+      profile_img: user.profile_img,
       email: user.email, // 이메일 포함
       nickname: user.nickname, // 닉네임 포함
     },

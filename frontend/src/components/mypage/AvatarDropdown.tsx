@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { ChevronDown, ChevronRight } from "lucide-react";
 
 interface AvatarDropdownProps {
   openLoginModal: () => void;
@@ -31,7 +31,7 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({ openLoginModal }) => {
   }, []);
 
   const handleProfileClick = () => {
-    navigate('/profile');
+    navigate("/profile");
     setIsOpen(false);
   };
 
@@ -47,43 +47,51 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({ openLoginModal }) => {
   }
 
   return (
-    <div 
-      className="relative inline-block text-left" 
+    <div
+      className="relative inline-block text-left"
       ref={dropdownRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <div className="flex items-center cursor-pointer">
         <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center mr-2 overflow-hidden">
-          <img 
-            src={state.user?.profileImage || "/default-profile.png"} 
-            alt="프로필" 
+          <img
+            src={state.user?.profile_img || "/default-profile.png"}
+            alt="프로필"
             className="w-full h-full object-cover"
           />
         </div>
-        <span className="font-semibold text-sm mr-1">{state.user?.nickname || '사용자'}</span>
-        <ChevronDown 
-          size={16} 
-          className={`transition-transform duration-300 ${isOpen ? 'transform rotate-180' : ''}`}
+        <span className="font-semibold text-sm mr-1">
+          {state.user?.nickname || "사용자"}
+        </span>
+        <ChevronDown
+          size={16}
+          className={`transition-transform duration-300 ${
+            isOpen ? "transform rotate-180" : ""
+          }`}
         />
       </div>
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg py-1 z-10">
-          <div 
+          <div
             className="px-4 py-3 border-b border-gray-200 flex items-center cursor-pointer hover:bg-gray-50"
             onClick={handleProfileClick}
           >
             <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center mr-3 overflow-hidden">
-              <img 
-                src={state.user?.profileImage || "/default-profile.png"} 
-                alt="프로필" 
+              <img
+                src={state.user?.profile_img || "/default-profile.png"}
+                alt="프로필"
                 className="w-full h-full object-cover"
               />
             </div>
             <div className="flex-grow">
-              <p className="text-sm font-semibold">{state.user?.nickname || '사용자'}</p>
-              <p className="text-xs text-gray-500">{state.user?.email || 'email@example.com'}</p>
+              <p className="text-sm font-semibold">
+                {state.user?.nickname || "사용자"}
+              </p>
+              <p className="text-xs text-gray-500">
+                {state.user?.email || "email@example.com"}
+              </p>
             </div>
             <ChevronRight size={16} className="text-gray-400" />
           </div>

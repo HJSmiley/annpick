@@ -4,8 +4,8 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
 interface User {
-  name: string;
   email: string;
+  profile_img: string;
   nickname: string;
 }
 
@@ -27,8 +27,8 @@ const TOKEN_KEY = "auth_token";
 
 interface JwtPayload {
   exp: number; // 토큰 만료 시간
-  name: string; // 사용자 이름
-  email: string; // 사용자 이메일
+  email: string;
+  profile_img: string;
   nickname: string;
 }
 
@@ -52,8 +52,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         if (decoded.exp * 1000 > Date.now()) {
           setIsAuthenticated(true);
           setUser({
-            name: decoded.name,
             email: decoded.email,
+            profile_img: decoded.profile_img,
             nickname: decoded.nickname,
           });
           setToken(storedToken); // 토큰 설정
@@ -77,8 +77,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         localStorage.setItem(TOKEN_KEY, newToken);
         setIsAuthenticated(true);
         setUser({
-          name: decoded.name,
           email: decoded.email,
+          profile_img: decoded.profile_img,
           nickname: decoded.nickname,
         });
         setToken(newToken); // 토큰 설정

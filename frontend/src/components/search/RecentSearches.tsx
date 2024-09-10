@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface RecentSearchesProps {
   recentSearches: string[];
@@ -9,7 +9,7 @@ interface RecentSearchesProps {
 const RecentSearches: React.FC<RecentSearchesProps> = ({
   recentSearches,
   onRecentSearchClick,
-  onClearRecentSearches
+  onClearRecentSearches,
 }) => {
   if (recentSearches.length === 0) return null;
 

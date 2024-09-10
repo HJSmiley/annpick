@@ -253,13 +253,9 @@ const searchAnimes = async (req, res) => {
     if (genre.length > 0) filters.genre = genre;
     if (tag.length > 0) filters.tag = tag;
 
-    console.log("서버로 전달된 쿼리 파라미터:", { query, genre, tag });
-
     // MeiliSearch에서 검색된 애니메이션 ID 리스트를 가져옴
     const meiliResults = await searchMeiliAnimes(query, filters);
     const animeIds = meiliResults.map((anime) => anime.id); // ID만 추출
-
-    console.log("MeiliSearch 결과에서 추출한 ID 목록:", animeIds);
 
     if (animeIds.length === 0) {
       return res.status(404).json({ message: "검색 결과가 없습니다." });
@@ -290,8 +286,6 @@ const searchAnimes = async (req, res) => {
         },
       ],
     });
-
-    console.log("DB에서 추출된 애니메이션 목록:", animeList);
 
     // 필요한 데이터만 정리해서 반환
     const formattedResults = animeList.map((anime) => {

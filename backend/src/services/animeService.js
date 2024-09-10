@@ -305,17 +305,12 @@ const searchMeiliAnimes = async (query, filters = {}) => {
     const searchQuery = typeof query === "string" ? query : query.toString();
     const filterString = buildFilterString(filters); // 필터링 문자열 생성
 
-    console.log("MeiliSearch로 전달되는 쿼리:", searchQuery);
-    console.log("MeiliSearch로 전달되는 필터:", filterString);
-
     const searchResults = await animeIndex.search(searchQuery, {
       filter: filterString,
-      sort: ["popularity:asc"], // 인기도 오름차순 정렬
-      matchingStrategy: "last", // 마지막으로 일치하는 검색 전략
+      sort: ["popularity:desc"], // 인기도순 정렬
+      matchingStrategy: "last",
       attributesToRetrieve: ["id", "anime_title"], // ID와 애니메이션 제목 필드를 반환하도록 지정
     });
-
-    console.log("MeiliSearch로부터 받은 결과:", searchResults.hits);
 
     console.timeEnd("searchAnimes");
     return searchResults.hits;

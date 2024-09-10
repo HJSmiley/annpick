@@ -272,16 +272,29 @@ const initializeMeiliSearch = async () => {
 const buildFilterString = (filters) => {
   const filterStrings = [];
 
+  // genre 필터: 배열 내 값이므로 IN 연산자로 처리
   if (filters.genre) {
-    // 큰따옴표를 이스케이프 처리
-    filterStrings.push(`genre IN [\\"${filters.genre}\"]`);
+    if (Array.isArray(filters.genre)) {
+      filterStrings.push(
+        `genre IN [${filters.genre.map((g) => `"${g}"`).join(", ")}]`
+      );
+    } else {
+      filterStrings.push(`genre IN ["${filters.genre}"]`);
+    }
   }
 
+  // tag 필터: 배열 내 값이므로 IN 연산자로 처리
   if (filters.tag) {
-    // 큰따옴표를 이스케이프 처리
-    filterStrings.push(`tag IN [\\"${filters.tag}\"]`);
+    if (Array.isArray(filters.tag)) {
+      filterStrings.push(
+        `tag IN [${filters.tag.map((t) => `"${t}"`).join(", ")}]`
+      );
+    } else {
+      filterStrings.push(`tag IN ["${filters.tag}"]`);
+    }
   }
 
+  // 필터가 있을 경우 "AND"로 필터들을 연결해서 반환
   return filterStrings.length ? filterStrings.join(" AND ") : "";
 };
 
@@ -292,13 +305,17 @@ const searchMeiliAnimes = async (query, filters = {}) => {
     const searchQuery = typeof query === "string" ? query : query.toString();
     const filterString = buildFilterString(filters); // 필터링 문자열 생성
 
-    console.log("MeiliSearch로 전달되는 필터:", filterString); // 필터 로그 출력
+    console.log("MeiliSearch로 전달되는 쿼리:", searchQuery);
+    console.log("MeiliSearch로 전달되는 필터:", filterString);
 
     const searchResults = await animeIndex.search(searchQuery, {
       filter: filterString,
-      sort: ["popularity:asc"],
-      matchingStrategy: "last",
+      sort: ["popularity:asc"], // 인기도 오름차순 정렬
+      matchingStrategy: "last", // 마지막으로 일치하는 검색 전략
+      attributesToRetrieve: ["id", "anime_title"], // ID와 애니메이션 제목 필드를 반환하도록 지정
     });
+
+    console.log("MeiliSearch로부터 받은 결과:", searchResults.hits);
 
     console.timeEnd("searchAnimes");
     return searchResults.hits;

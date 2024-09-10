@@ -245,19 +245,21 @@ const rateAnime = async (req, res) => {
 
 const searchAnimes = async (req, res) => {
   try {
-    console.log("쿼리 파라미터:", req.query); // 쿼리 파라미터 로그 출력
-
     const query = req.query.query || ""; // 검색어
-    const genre = req.query.genre || ""; // 장르 필터
-    const tag = req.query.tag || ""; // 태그 필터
+    const genre = req.query.genre ? req.query.genre.split(",") : []; // 장르 필터 배열로 처리
+    const tag = req.query.tag ? req.query.tag.split(",") : []; // 태그 필터 배열로 처리
 
     const filters = {};
-    if (genre) filters.genre = genre;
-    if (tag) filters.tag = tag;
+    if (genre.length > 0) filters.genre = genre;
+    if (tag.length > 0) filters.tag = tag;
+
+    console.log("서버로 전달된 쿼리 파라미터:", { query, genre, tag });
 
     // MeiliSearch에서 검색된 애니메이션 ID 리스트를 가져옴
     const meiliResults = await searchMeiliAnimes(query, filters);
     const animeIds = meiliResults.map((anime) => anime.id); // ID만 추출
+
+    console.log("MeiliSearch 결과에서 추출한 ID 목록:", animeIds);
 
     if (animeIds.length === 0) {
       return res.status(404).json({ message: "검색 결과가 없습니다." });
@@ -289,12 +291,11 @@ const searchAnimes = async (req, res) => {
       ],
     });
 
+    console.log("DB에서 추출된 애니메이션 목록:", animeList);
+
     // 필요한 데이터만 정리해서 반환
     const formattedResults = animeList.map((anime) => {
-      // 장르
       const genres = anime.Genres.map((genre) => genre.genre_name).slice(0, 3);
-
-      // 태그를 tag_score 기준으로 내림차순 정렬 후 상위 4개 태그만 선택
       const topTags = anime.AniTags.sort((a, b) => b.tag_score - a.tag_score)
         .slice(0, 4)
         .map((aniTag) => aniTag.Tag.tag_name);

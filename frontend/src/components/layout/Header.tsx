@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import AvatarDropdown from '../../components/mypage/AvatarDropdown';
 
 interface HeaderProps {
   openLoginModal: () => void;
@@ -97,13 +98,7 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
           </div>
           <div>
             {state.isAuthenticated ? (
-              <Link
-                to="/profile"
-                className="font-bold text-xl transition-colors hover:text-orange-500"
-                style={{ color: getTextColor(false) }}
-              >
-                프로필
-              </Link>
+              <AvatarDropdown openLoginModal={openLoginModal} />
             ) : (
               <button
                 onClick={openLoginModal}

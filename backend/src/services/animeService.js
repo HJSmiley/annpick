@@ -272,25 +272,15 @@ const initializeMeiliSearch = async () => {
 const buildFilterString = (filters) => {
   const filterStrings = [];
 
-  // 장르 필터 추가
   if (filters.genre) {
-    if (typeof filters.genre === "string") {
-      filterStrings.push(`genre = "${filters.genre}"`);
-    } else if (Array.isArray(filters.genre)) {
-      filterStrings.push(`genre IN ["${filters.genre.join('", "')}"]`);
-    }
+    filterStrings.push(`genre IN ["${filters.genre}"]`);
   }
 
-  // 태그 필터 추가
   if (filters.tag) {
-    if (typeof filters.tag === "string") {
-      filterStrings.push(`tag = "${filters.tag}"`);
-    } else if (Array.isArray(filters.tag)) {
-      filterStrings.push(`tag IN ["${filters.tag.join('", "')}"]`);
-    }
+    filterStrings.push(`tag IN ["${filters.tag}"]`);
   }
 
-  return filterStrings.join(" AND ");
+  return filterStrings.length ? filterStrings.join(" AND ") : "";
 };
 
 const searchMeiliAnimes = async (query, filters = {}) => {

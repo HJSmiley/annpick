@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useAnime } from "../contexts/AnimeContext";
 import AnimeCard from "../components/anime/AnimeCard";
@@ -14,15 +14,16 @@ const SearchGrid: React.FC = () => {
   const [genreFilter, setGenreFilter] = useState<string[]>([]);
   const [tagFilter, setTagFilter] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [showRecentSearches, setShowRecentSearches] = useState<boolean>(false);
 
   const { state } = useAuth();
-  const { animes, setAnimes, loading, setLoading, error, setError } =
-    useAnime();
+  const { animes, setAnimes, loading, setLoading, error, setError } = useAnime();
+  const recentSearchesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setSearchTerm("");
     setError(null);
-    setAnimes([]); // 검색 결과 초기화
+    setAnimes([]);
   }, [setAnimes]);
 
   useEffect(() => {
@@ -30,6 +31,19 @@ const SearchGrid: React.FC = () => {
     if (savedSearches) {
       setRecentSearches(JSON.parse(savedSearches));
     }
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (recentSearchesRef.current && !recentSearchesRef.current.contains(event.target as Node)) {
+        setShowRecentSearches(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const saveRecentSearch = (search: string) => {
@@ -46,6 +60,12 @@ const SearchGrid: React.FC = () => {
     localStorage.removeItem("recentSearches");
   };
 
+  const handleRemoveRecentSearch = (searchTerm: string) => {
+    const updatedSearches = recentSearches.filter(search => search !== searchTerm);
+    setRecentSearches(updatedSearches);
+    localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
+  };
+
   const handleSearch = useCallback(
     async (term: string) => {
       if (!term.trim()) {
@@ -55,26 +75,21 @@ const SearchGrid: React.FC = () => {
 
       setLoading(true);
       setError(null);
-      setAnimes([]); // 검색 시작 전에 기존 검색 결과를 초기화
+      setAnimes([]);
 
       try {
         let filterParam = "";
 
-        // 장르 필터 추가
         if (genreFilter.length > 0) {
           filterParam += `&genre=${encodeURIComponent(genreFilter.join(","))}`;
         }
 
-        // 태그 필터 추가
         if (tagFilter.length > 0) {
           filterParam += `&tag=${encodeURIComponent(tagFilter.join(","))}`;
         }
 
-        // 전체 필터와 쿼리 결합하여 백엔드로 요청
         const response = await fetch(
-          `${
-            process.env.REACT_APP_BACKEND_URL
-          }/api/v1/anime/search?query=${encodeURIComponent(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/search?query=${encodeURIComponent(
             term
           )}${filterParam}`,
           {
@@ -108,25 +123,19 @@ const SearchGrid: React.FC = () => {
         setLoading(false);
       }
     },
-    [
-      genreFilter,
-      tagFilter,
-      state.isAuthenticated,
-      state.token,
-      setAnimes,
-      setError,
-      setLoading,
-    ]
+    [genreFilter, tagFilter, state.isAuthenticated, state.token, setAnimes, setError, setLoading]
   );
 
   const handleSearchButtonClick = () => {
     handleSearch(searchTerm);
-    saveRecentSearch(searchTerm); // 검색어를 최근 검색어에 저장
+    saveRecentSearch(searchTerm);
+    setShowRecentSearches(false);
   };
 
   const handleRecentSearchClick = (term: string) => {
-    setSearchTerm(term); // 상태 업데이트
-    handleSearch(term); // 검색 실행
+    setSearchTerm(term);
+    handleSearch(term);
+    setShowRecentSearches(false);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,15 +145,18 @@ const SearchGrid: React.FC = () => {
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handleSearchButtonClick(); // 엔터 키를 눌렀을 때 검색 실행
+      handleSearchButtonClick();
     }
+  };
+
+  const handleInputFocus = () => {
+    setShowRecentSearches(true);
   };
 
   return (
     <div className="min-h-screen flex flex-col mb-10">
       <div className="flex-grow pt-40 px-4">
         <div className="max-w-6xl lg:max-w-screen-2xl mx-auto flex flex-col md:flex-row">
-          {/* 왼쪽에 필터 배치 (md 이상에서만 표시) */}
           <div className="hidden md:block w-1/4 pr-4 pt-10">
             <SearchFilters
               activeFilter={activeFilter}
@@ -154,12 +166,8 @@ const SearchGrid: React.FC = () => {
             />
           </div>
 
-          {/* 오른쪽 나머지 요소 배치 */}
           <div className="w-full md:w-3/4 flex flex-col gap-4 items-center">
-            {/* 검색 입력 및 버튼 */}
             <div className="max-w-md w-full mr-28 lg:mr-10 sm:mr-0">
-              {" "}
-              {/* 왼쪽 여백 추가 */}
               <h1 className="text-2xl font-bold mb-6 text-center">
                 평가한 작품들로,
                 <br />
@@ -172,7 +180,8 @@ const SearchGrid: React.FC = () => {
                   placeholder="제목, 태그, 장르로 검색해보세요"
                   value={searchTerm}
                   onChange={handleInputChange}
-                  onKeyPress={handleKeyPress} // 엔터 키를 누를 때 검색 실행
+                  onKeyPress={handleKeyPress}
+                  onFocus={handleInputFocus}
                 />
                 <div className="absolute inset-y-0 left-3 flex items-center">
                   <svg
@@ -183,7 +192,7 @@ const SearchGrid: React.FC = () => {
                     strokeWidth="2"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    onClick={handleSearchButtonClick} // 돋보기 아이콘 클릭 시 검색 실행
+                    onClick={handleSearchButtonClick}
                   >
                     <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                   </svg>
@@ -193,20 +202,24 @@ const SearchGrid: React.FC = () => {
                   onSuggestionClick={handleRecentSearchClick}
                 />
               </div>
+              {showRecentSearches && (
+                <div ref={recentSearchesRef}>
+                  <RecentSearches
+                    recentSearches={recentSearches}
+                    onRecentSearchClick={handleRecentSearchClick}
+                    onClearRecentSearches={clearRecentSearches}
+                    onRemoveRecentSearch={handleRemoveRecentSearch}
+                  />
+                </div>
+              )}
               <button
                 onClick={handleSearchButtonClick}
                 className="w-full bg-[#F35815] text-white font-bold py-3 px-16 rounded-full shadow-lg hover:bg-[#D14704] transition duration-300 ease-in-out"
               >
                 검색
               </button>
-              <RecentSearches
-                recentSearches={recentSearches}
-                onRecentSearchClick={handleRecentSearchClick}
-                onClearRecentSearches={clearRecentSearches}
-              />
             </div>
 
-            {/* 검색 결과 부분 */}
             <div className="flex-grow flex flex-wrap gap-4">
               {error && (
                 <div className="text-red-500 text-center mt-4 w-full">
@@ -220,7 +233,7 @@ const SearchGrid: React.FC = () => {
                 animes.map((anime, index) => (
                   <div
                     key={anime.anime_id}
-                    className="flex-shrink-0 w-[265px]" // AnimeCard의 고정 너비 설정
+                    className="flex-shrink-0 w-[265px]"
                   >
                     <AnimeCard
                       {...anime}

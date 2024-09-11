@@ -13,15 +13,19 @@ const EvalSearchGrid: React.FC = () => {
   const [genreFilter, setGenreFilter] = useState<string[]>([]);
   const [tagFilter, setTagFilter] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [showRecentSearches, setShowRecentSearches] = useState<boolean>(false);
 
   const { state } = useAuth();
-  const { animes, setAnimes, loading, setLoading, error, setError } =
-    useAnime();
-
+  const { animes, setAnimes, loading, setLoading, error, setError } = useAnime();
+  const handleRemoveRecentSearch = (searchTerm: string) => {
+    const updatedSearches = recentSearches.filter(search => search !== searchTerm);
+    setRecentSearches(updatedSearches);
+    localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
+  };
   useEffect(() => {
     setSearchTerm("");
     setError(null);
-    setAnimes([]); // 검색 결과 초기화
+    setAnimes([]);
   }, [setAnimes]);
 
   useEffect(() => {
@@ -54,26 +58,21 @@ const EvalSearchGrid: React.FC = () => {
 
       setLoading(true);
       setError(null);
-      setAnimes([]); // 검색 시작 전에 기존 검색 결과를 초기화
+      setAnimes([]);
 
       try {
         let filterParam = "";
 
-        // 장르 필터 추가
         if (genreFilter.length > 0) {
           filterParam += `&genre=${encodeURIComponent(genreFilter.join(","))}`;
         }
 
-        // 태그 필터 추가
         if (tagFilter.length > 0) {
           filterParam += `&tag=${encodeURIComponent(tagFilter.join(","))}`;
         }
 
-        // 전체 필터와 쿼리 결합하여 백엔드로 요청
         const response = await fetch(
-          `${
-            process.env.REACT_APP_BACKEND_URL
-          }/api/v1/anime/search?query=${encodeURIComponent(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/search?query=${encodeURIComponent(
             term
           )}${filterParam}`,
           {
@@ -107,39 +106,37 @@ const EvalSearchGrid: React.FC = () => {
         setLoading(false);
       }
     },
-    [
-      genreFilter,
-      tagFilter,
-      state.isAuthenticated,
-      state.token,
-      setAnimes,
-      setError,
-      setLoading,
-    ]
+    [genreFilter, tagFilter, state.isAuthenticated, state.token, setAnimes, setError, setLoading]
   );
 
   const handleSearchButtonClick = () => {
     handleSearch(searchTerm);
-    saveRecentSearch(searchTerm); // 검색어를 최근 검색어에 저장
+    saveRecentSearch(searchTerm);
+    setShowRecentSearches(false);
   };
 
   const handleRecentSearchClick = (term: string) => {
-    setSearchTerm(term); // 상태 업데이트
-    handleSearch(term); // 검색 실행
+    setSearchTerm(term);
+    handleSearch(term);
+    setShowRecentSearches(false);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
+    setShowRecentSearches(value.length === 0);
+  };
+
+  const handleInputFocus = () => {
+    setShowRecentSearches(searchTerm.length === 0);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handleSearchButtonClick(); // 엔터 키를 눌렀을 때 검색 실행
+      handleSearchButtonClick();
     }
   };
 
-  // 별점 클릭 이벤트 핸들러 추가
   const handleRatingClick = () => {
     setIsModalOpen(true);
   };
@@ -160,11 +157,12 @@ const EvalSearchGrid: React.FC = () => {
               placeholder="제목, 태그, 장르로 검색해보세요"
               value={searchTerm}
               onChange={handleInputChange}
-              onKeyPress={handleKeyPress} // 엔터 키를 누를 때 검색 실행
+              onKeyPress={handleKeyPress}
+              onFocus={handleInputFocus}
             />
             <div className="absolute inset-y-0 left-3 flex items-center">
               <svg
-                onClick={handleSearchButtonClick} // 돋보기 클릭 시 검색 실행
+                onClick={handleSearchButtonClick}
                 className="h-5 w-5 text-gray-400 cursor-pointer"
                 fill="none"
                 strokeLinecap="round"
@@ -176,16 +174,15 @@ const EvalSearchGrid: React.FC = () => {
                 <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
               </svg>
             </div>
-            <SearchSuggestions
-              suggestions={suggestions}
-              onSuggestionClick={handleRecentSearchClick}
-            />
+            {showRecentSearches && (
+              <RecentSearches
+                recentSearches={recentSearches}
+                onRecentSearchClick={handleRecentSearchClick}
+                onClearRecentSearches={clearRecentSearches}
+                onRemoveRecentSearch={handleRemoveRecentSearch} 
+              />
+            )}
           </div>
-          <RecentSearches
-            recentSearches={recentSearches}
-            onRecentSearchClick={handleRecentSearchClick}
-            onClearRecentSearches={clearRecentSearches}
-          />
         </div>
 
         {error && <div className="text-red-500 text-center mt-4">{error}</div>}
@@ -199,7 +196,7 @@ const EvalSearchGrid: React.FC = () => {
                 key={anime.anime_id}
                 {...anime}
                 index={index}
-                onRatingClick={handleRatingClick} // 별점 클릭 핸들러 추가
+                onRatingClick={handleRatingClick}
                 isModalOpen={isModalOpen}
               />
             ))}

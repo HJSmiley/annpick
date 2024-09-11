@@ -2,39 +2,61 @@ import React from "react";
 
 interface RecentSearchesProps {
   recentSearches: string[];
-  onRecentSearchClick: (search: string) => void;
+  onRecentSearchClick: (term: string) => void;
   onClearRecentSearches: () => void;
+  onRemoveRecentSearch: (term: string) => void;
 }
 
 const RecentSearches: React.FC<RecentSearchesProps> = ({
   recentSearches,
   onRecentSearchClick,
   onClearRecentSearches,
+  onRemoveRecentSearch,
 }) => {
   if (recentSearches.length === 0) return null;
 
   return (
-    <div className="mt-4">
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="text-lg font-semibold">최근 검색어</h3>
+    <div className="bg-white rounded-lg shadow-md mt-2 w-full max-w-md">
+      <div className="flex justify-between items-center p-3 border-b">
+        <span className="text-sm font-semibold text-gray-700">최근검색어</span>
         <button
-          className="text-sm text-gray-500 hover:text-gray-700"
           onClick={onClearRecentSearches}
+          className="text-xs text-gray-500 hover:text-gray-700"
         >
-          모두 지우기
+          전체삭제
         </button>
       </div>
-      <div className="flex flex-wrap gap-2">
-        {recentSearches.map((search, index) => (
-          <button
+      <ul>
+        {recentSearches.map((term, index) => (
+          <li
             key={index}
-            className="px-3 py-1 bg-gray-200 rounded-full text-sm text-gray-700 hover:bg-gray-300"
-            onClick={() => onRecentSearchClick(search)}
+            className="px-3 py-2 hover:bg-gray-100 flex items-center justify-between"
           >
-            {search}
-          </button>
+            <div className="flex items-center cursor-pointer" onClick={() => onRecentSearchClick(term)}>
+              <svg
+                className="h-4 w-4 mr-2 text-gray-400"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+              <span className="text-sm text-gray-700">{term}</span>
+            </div>
+            <div className="flex items-center">
+              <button
+                onClick={() => onRemoveRecentSearch(term)}
+                className="text-xs text-gray-400 hover:text-gray-600"
+              >
+                ×
+              </button>
+            </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 };

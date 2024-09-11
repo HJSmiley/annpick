@@ -30,9 +30,10 @@ const RecentSearches: React.FC<RecentSearchesProps> = ({
         {recentSearches.map((term, index) => (
           <li
             key={index}
-            className="px-3 py-2 hover:bg-gray-100 flex items-center justify-between"
+            className="px-3 py-2 hover:bg-gray-100 flex items-center justify-between cursor-pointer"
+            onClick={() => onRecentSearchClick(term)}
           >
-            <div className="flex items-center cursor-pointer" onClick={() => onRecentSearchClick(term)}>
+            <div className="flex items-center flex-grow">
               <svg
                 className="h-4 w-4 mr-2 text-gray-400"
                 fill="none"
@@ -46,14 +47,15 @@ const RecentSearches: React.FC<RecentSearchesProps> = ({
               </svg>
               <span className="text-sm text-gray-700">{term}</span>
             </div>
-            <div className="flex items-center">
-              <button
-                onClick={() => onRemoveRecentSearch(term)}
-                className="text-xs text-gray-400 hover:text-gray-600"
-              >
-                ×
-              </button>
-            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemoveRecentSearch(term);
+              }}
+              className="text-xs text-gray-400 hover:text-gray-600 ml-2"
+            >
+              ×
+            </button>
           </li>
         ))}
       </ul>

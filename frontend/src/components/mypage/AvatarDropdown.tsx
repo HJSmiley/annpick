@@ -7,12 +7,14 @@ interface AvatarDropdownProps {
   openLoginModal: () => void;
   isAnimeSearch: boolean;
   isProfilePage: boolean;
+  isEvaluationPage: boolean;
 }
 
 const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
   openLoginModal,
   isProfilePage,
   isAnimeSearch,
+  isEvaluationPage,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { state, logout } = useAuth();
@@ -74,6 +76,8 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
               ? "rgb(249, 115, 22)"
               : isAnimeSearch
               ? "rgb(107, 114, 128)"
+              : isEvaluationPage
+              ? "rgb(0, 0, 0"
               : "white",
           }}
         >

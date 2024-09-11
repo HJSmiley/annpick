@@ -4,6 +4,7 @@ import {
   Route,
   Routes,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Header from "./components/layout/Header";
@@ -27,15 +28,17 @@ const Layout: React.FC<{
   children: React.ReactNode;
   openLoginModal: () => void;
 }> = ({ children, openLoginModal }) => {
+  const location = useLocation(); // 현재 경로를 가져옴
+
   return (
     <>
       <Header openLoginModal={openLoginModal} />
       <main>{children}</main>
-      <Footer />
+      {/* /evaluation 경로가 아닐 때만 푸터를 렌더링 */}
+      {location.pathname !== "/evaluation" && <Footer />}
     </>
   );
 };
-
 // Protected Route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   children,

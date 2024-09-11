@@ -19,7 +19,6 @@ const SearchGrid: React.FC = () => {
   const { animes, setAnimes, loading, setLoading, error, setError } =
     useAnime();
 
-  // 페이지가 처음 로드될 때 상태 초기화
   useEffect(() => {
     setSearchTerm("");
     setError(null);
@@ -120,13 +119,11 @@ const SearchGrid: React.FC = () => {
     ]
   );
 
-  // 검색 버튼을 클릭했을 때만 최근 검색어에 저장하고 검색 실행
   const handleSearchButtonClick = () => {
     handleSearch(searchTerm);
     saveRecentSearch(searchTerm); // 검색어를 최근 검색어에 저장
   };
 
-  // 최근 검색어 클릭 시 검색어 업데이트 후 바로 검색 실행
   const handleRecentSearchClick = (term: string) => {
     setSearchTerm(term); // 상태 업데이트
     handleSearch(term); // 검색 실행
@@ -135,6 +132,12 @@ const SearchGrid: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearchButtonClick(); // 엔터 키를 눌렀을 때 검색 실행
+    }
   };
 
   return (
@@ -169,6 +172,7 @@ const SearchGrid: React.FC = () => {
                   placeholder="제목, 태그, 장르로 검색해보세요"
                   value={searchTerm}
                   onChange={handleInputChange}
+                  onKeyPress={handleKeyPress} // 엔터 키를 누를 때 검색 실행
                 />
                 <div className="absolute inset-y-0 left-3 flex items-center">
                   <svg
@@ -179,6 +183,7 @@ const SearchGrid: React.FC = () => {
                     strokeWidth="2"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    onClick={handleSearchButtonClick} // 돋보기 아이콘 클릭 시 검색 실행
                   >
                     <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                   </svg>

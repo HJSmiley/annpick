@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
@@ -21,6 +21,7 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -42,6 +43,8 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
     navigate("/profile");
     setIsOpen(false);
   };
+
+  const isHomePage = location.pathname === "/";
 
   if (!state.isAuthenticated) {
     return (
@@ -77,7 +80,7 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
               : isAnimeSearch
               ? "rgb(107, 114, 128)"
               : isEvaluationPage
-              ? "rgb(0, 0, 0"
+              ? "rgb(0, 0, 0)"
               : "white",
           }}
         >
@@ -85,9 +88,10 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
         </span>
         <ChevronDown
           size={16}
-          className={`text-white transition-transform duration-300 ${
+          className={`transition-transform duration-300 ${
             isOpen ? "transform rotate-180" : ""
           }`}
+          style={{ color: isHomePage ? "white" : "rgb(107, 114, 128)" }}
         />
       </div>
 

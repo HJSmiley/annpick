@@ -27,7 +27,7 @@ passport.use(
         // JWT 토큰 생성
         const token = generateToken(user);
 
-        return done(null, { user, token });
+        return done(null, { user_id: user.user_id, token });
       } catch (err) {
         console.error("Failed to authenticate using Naver:", err);
         return done(err, false);

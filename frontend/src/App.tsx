@@ -13,7 +13,7 @@ import LoadingSpinner from "./components/common/LoadingSpinner";
 import ErrorBoundary from "./components/error/ErrorBoundary";
 import MyRatings from "./pages/MyRatings";
 import MyPicks from "./pages/MyPicks";
-
+import EvaluationPage from "./pages/EvaluationPage";
 
 // Lazy-loaded components
 const Home = lazy(() => import("./pages/Home"));
@@ -75,7 +75,7 @@ const App: React.FC = () => {
                 <Route path="/anime/:id" element={<AnimeDetail />} />{" "}
                 <Route path="/my-ratings" element={<MyRatings />} />
                 <Route path="/my-picks" element={<MyPicks />} />
-                {/* 애니메이션 상세 페이지 라우트 */}
+                <Route path="/evaluation" element={<EvaluationPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

@@ -83,7 +83,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         });
         setToken(newToken); // 토큰 설정
         setError(null);
-        navigate("/");
+
+        // 현재 URL 확인 (evaluation 페이지면 평가 페이지로 이동)
+        if (window.location.pathname.includes("/evaluation")) {
+          navigate("/evaluation"); // 별점 정보가 없으면 평가 페이지로 이동
+        } else {
+          navigate("/"); // 별점 정보가 있으면 메인 페이지로 이동
+        }
       } else {
         setError("Token has expired");
       }

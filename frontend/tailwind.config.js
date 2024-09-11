@@ -15,7 +15,6 @@ module.exports = {
       // 예: colors, spacing, fontSize 등
     },
   },
-  plugins: [
-    // 필요한 Tailwind 플러그인을 여기에 추가할 수 있습니다.
-  ],
+  plugins: 
+    [require("daisyui")],
 }

@@ -292,7 +292,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
                 </div>
                 {/* Pick 아이콘 및 상세보기 버튼 - 개별 위치 조정 가능 */}
                 <div className="absolute bottom-0 right-0 p-2 flex space-x-2">
-                  <div className="relative bottom-2 right-0"> {/* Pick 아이콘 위치 조정 */}
+                  <div className="relative bottom-2 right-0 group"> {/* Pick 아이콘 위치 조정 */}
                     <button onClick={handlePickClick} className="text-white">
                       {isPicked ? (
                         <PickedIcon className="w-13 h-13" />
@@ -300,11 +300,17 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
                         <AddIcon className="w-13 h-13" />
                       )}
                     </button>
+                    <span className="absolute bottom-full left-5 -translate-y-1 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                      {isPicked ? "픽 취소" : "픽 하기"}
+                    </span>
                   </div>
-                  <div className="relative bottom-2 left-1"> {/* Arrow 아이콘 위치 조정 */}
+                  <div className="relative bottom-2 left-1 group"> {/* Arrow 아이콘 위치 조정 */}
                     <Link to={`/anime/${anime_id}`} className="text-white">
                       <ArrowIcon className="w-13 h-13" />
                     </Link>
+                    <span className="absolute bottom-full left-5 -translate-y-1 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                      상세보기
+                    </span>
                   </div>
                 </div>
               </div>

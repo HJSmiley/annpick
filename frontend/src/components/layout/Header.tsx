@@ -26,7 +26,13 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
   }, []);
 
   useEffect(() => {
-    const fixedHeaderRoutes = ["/anime-search", "/profile", "/evaluation", "/my-ratings", "/my-picks"];
+    const fixedHeaderRoutes = [
+      "/anime-search",
+      "/profile",
+      "/evaluation",
+      "/my-ratings",
+      "/my-picks",
+    ];
     setIsFixedHeader(fixedHeaderRoutes.includes(location.pathname));
   }, [location]);
 
@@ -97,22 +103,23 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
             </nav>
           </div>
           <div>
-          {state.isAuthenticated ? (
-  <AvatarDropdown
-    openLoginModal={openLoginModal}
-    isAnimeSearch={isFixedHeader}
-    isProfilePage={location.pathname === '/profile'}
-    isEvaluationPage={location.pathname === '/evaluation'}
-  />
-) : (
-  <button
-    onClick={openLoginModal}
-    className="font-bold text-xl transition-colors hover:text-orange-500"
-    style={{ color: getTextColor(false) }}
-  >
-    로그인/가입
-  </button>
-)}
+            {state.isAuthenticated ? (
+              <AvatarDropdown
+                openLoginModal={openLoginModal}
+                isAnimeSearch={isFixedHeader}
+                isProfilePage={location.pathname === "/profile"}
+                isEvaluationPage={location.pathname === "/evaluation"}
+                scrollProgress={scrollProgress}
+              />
+            ) : (
+              <button
+                onClick={openLoginModal}
+                className="font-bold text-xl transition-colors hover:text-orange-500"
+                style={{ color: getTextColor(false) }}
+              >
+                로그인/가입
+              </button>
+            )}
           </div>
         </div>
       </div>

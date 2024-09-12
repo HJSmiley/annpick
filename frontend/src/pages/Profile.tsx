@@ -30,7 +30,7 @@ const ProfileForm = () => {
     state.user?.nickname || ""
   );
   const [profileImage, setProfileImage] = useState(
-    state.user?.profile_img || "/api/placeholder/100/100"
+    state.user?.profile_img || "/images/default-profile.png"
   );
   const [withdrawalReason, setWithdrawalReason] = useState("");
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);

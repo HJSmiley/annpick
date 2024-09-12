@@ -8,6 +8,7 @@ interface AvatarDropdownProps {
   isAnimeSearch: boolean;
   isProfilePage: boolean;
   isEvaluationPage: boolean;
+  scrollProgress: number;
 }
 
 const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
@@ -15,6 +16,7 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
   isProfilePage,
   isAnimeSearch,
   isEvaluationPage,
+  scrollProgress,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { state, logout } = useAuth();
@@ -46,6 +48,14 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
 
   const isHomePage = location.pathname === "/";
 
+  const getTextColor = () => {
+    if (isProfilePage) return "rgb(249, 115, 22)";
+    if (isAnimeSearch) return "rgb(107, 114, 128)";
+    if (isEvaluationPage) return "rgb(0, 0, 0)";
+    if (scrollProgress >= 0.5) return "rgb(0, 0, 0)";
+    return "white";
+  };
+
   if (!state.isAuthenticated) {
     return (
       <button
@@ -67,7 +77,7 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
       <div className="flex items-center cursor-pointer">
         <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center mr-2 overflow-hidden">
           <img
-            src={state.user?.profile_img || "/default-profile.png"}
+            src={state.user?.profile_img || "/images/default-profile.png"}
             alt="프로필"
             className="w-full h-full object-cover"
           />
@@ -75,13 +85,7 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
         <span
           className="font-semibold text-sm mr-1"
           style={{
-            color: isProfilePage
-              ? "rgb(249, 115, 22)"
-              : isAnimeSearch
-              ? "rgb(107, 114, 128)"
-              : isEvaluationPage
-              ? "rgb(0, 0, 0)"
-              : "white",
+            color: getTextColor(),
           }}
         >
           {state.user?.nickname || "사용자"}
@@ -103,7 +107,7 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
           >
             <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center mr-3 overflow-hidden">
               <img
-                src={state.user?.profile_img || "/default-profile.png"}
+                src={state.user?.profile_img || "/images/default-profile.png"}
                 alt="프로필"
                 className="w-full h-full object-cover"
               />

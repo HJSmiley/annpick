@@ -6,4 +6,5 @@ export interface AnimeData {
   status: string;
   genres: string[];
   tags: string[];
+  rating?: number | null; // rating 속성을 선택적으로 추가
 }

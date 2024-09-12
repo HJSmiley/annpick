@@ -3,6 +3,7 @@ const {
   getAnimeByIds,
   getAnimeDetails,
   rateAnime,
+  getRatedAnimes,
 } = require("../controllers/animeController");
 const ensureAuthenticated = require("../middleware/authMiddleware");
 const { searchAnimes } = require("../controllers/animeController");
@@ -29,13 +30,13 @@ const router = express.Router();
  *         schema:
  *           type: string
  *         required: false
- *         description: 장르 필터 (선택 사항)
+ *         description: 장르 필터 (쉼표로 구분된 여러 개의 장르 가능)
  *       - in: query
  *         name: tag
  *         schema:
  *           type: string
  *         required: false
- *         description: 태그 필터 (선택 사항)
+ *         description: 태그 필터 (쉼표로 구분된 여러 개의 태그 가능)
  *     responses:
  *       200:
  *         description: 검색된 애니메이션 정보 리스트
@@ -66,18 +67,18 @@ const router = express.Router();
  *                     type: string
  *                     example: 방영중
  *                     description: 애니메이션의 상태 (방영중, 완결 등)
- *                   genre:
+ *                   genres:
  *                     type: array
  *                     items:
  *                       type: string
  *                       example: Action
- *                     description: 애니메이션의 장르 리스트 (최대 3개)
+ *                     description: 애니메이션의 장르 리스트
  *                   tags:
  *                     type: array
  *                     items:
  *                       type: string
  *                       example: Pirate
- *                     description: 애니메이션의 태그 리스트 (최대 4개)
+ *                     description: 애니메이션의 태그 리스트
  *       404:
  *         description: 검색 결과가 없습니다.
  *       500:
@@ -382,5 +383,61 @@ router.get("/details/:id", ensureAuthenticated, getAnimeDetails);
  *                   example: Internal server error
  */
 router.post("/ratings", ensureAuthenticated, rateAnime);
+
+/**
+ * @swagger
+ * /api/v1/anime/ratings:
+ *   get:
+ *     summary: 사용자가 평가한 애니메이션 목록 조회
+ *     description: 인증된 사용자가 평가한 애니메이션 목록을 평점별로 조회할 수 있습니다. 평점 필터와 페이지네이션 기능을 제공합니다.
+ *     tags:
+ *       - 애니메이션
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         required: false
+ *         description: 페이지 번호 (기본값: 1)
+ *       - in: query
+ *         name: rating
+ *         schema:
+ *           type: number
+ *           format: float
+ *         required: false
+ *         description: 필터할 평점 (선택 사항)
+ *     responses:
+ *       200:
+ *         description: 평가된 애니메이션 정보 리스트
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   anime_id:
+ *                     type: integer
+ *                     example: 12345
+ *                   title:
+ *                     type: string
+ *                     example: 원피스
+ *                   thumbnail_url:
+ *                     type: string
+ *                     example: https://example.com/image.jpg
+ *                   format:
+ *                     type: string
+ *                     example: TV
+ *                   rating:
+ *                     type: number
+ *                     format: float
+ *                     example: 4.5
+ *       404:
+ *         description: 평가된 애니메이션이 없습니다.
+ *       500:
+ *         description: 서버 오류
+ */
+router.get("/ratings", ensureAuthenticated, getRatedAnimes);
 
 module.exports = router;

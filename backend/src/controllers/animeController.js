@@ -243,6 +243,53 @@ const rateAnime = async (req, res) => {
   }
 };
 
+const getRatedAnimes = async (req, res) => {
+  const { user_id } = req.user; // 인증된 사용자의 ID를 가져옵니다.
+  const { page = 1, rating = null } = req.query; // 평점과 페이지 정보를 쿼리에서 가져옴.
+  const limit = 20; // 한 페이지당 가져올 애니메이션 수.
+
+  try {
+    const whereClause = { user_id }; // 사용자 필터
+    if (rating) {
+      whereClause.rating = rating; // 평점 필터 적용
+    }
+
+    // UserRatedAnime 모델에서 사용자 ID와 평점을 기준으로 애니메이션을 조회
+    const ratedAnimes = await UserRatedAnime.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: Anime, // 애니메이션 정보를 포함시킴
+          attributes: ["anime_id", "anime_title", "thumbnail_url", "format"],
+        },
+      ],
+      limit,
+      offset: (page - 1) * limit,
+    });
+
+    // 데이터가 없으면 빈 배열 반환하여 404 방지
+    if (!ratedAnimes || ratedAnimes.length === 0) {
+      return res.status(200).json([]); // 빈 배열을 반환해 더 이상의 데이터가 없음을 알림
+    }
+
+    // 응답으로 보낼 데이터를 구성
+    const response = ratedAnimes.map((entry) => ({
+      anime_id: entry.Anime.anime_id,
+      title: entry.Anime.anime_title,
+      thumbnail_url: entry.Anime.thumbnail_url,
+      format: entry.Anime.format,
+      rating: entry.rating, // 평점 정보를 포함
+    }));
+
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error("애니메이션 조회 중 오류 발생:", error);
+    return res
+      .status(500)
+      .json({ message: "평가된 애니메이션 조회 중 오류가 발생했습니다." });
+  }
+};
+
 const searchAnimes = async (req, res) => {
   try {
     const query = req.query.query || ""; // 검색어
@@ -312,4 +359,10 @@ const searchAnimes = async (req, res) => {
   }
 };
 
-module.exports = { getAnimeByIds, getAnimeDetails, rateAnime, searchAnimes };
+module.exports = {
+  getAnimeByIds,
+  getAnimeDetails,
+  rateAnime,
+  getRatedAnimes,
+  searchAnimes,
+};

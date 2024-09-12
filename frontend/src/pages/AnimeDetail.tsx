@@ -38,40 +38,6 @@ const AnimeDetail: React.FC = () => {
   const [isResetting, setIsResetting] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  // 서버에서 평점 가져오기
-  const fetchRatingFromServer = async (animeId: number) => {
-    try {
-      const token = state.isAuthenticated ? state.token : null;
-      const headers: HeadersInit = {
-        "Content-Type": "application/json",
-      };
-
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/details/${animeId}`,
-        {
-          method: "GET",
-          headers: headers,
-          credentials: "include",
-        }
-      );
-
-      if (response.status === 401) {
-        console.error("Unauthorized: Invalid or expired token.");
-        return null;
-      }
-
-      const data = await response.json();
-      return data.user_rating;
-    } catch (error) {
-      console.error("Error fetching rating:", error);
-      return null;
-    }
-  };
-
   // 서버에 평점 보내기
   const sendRatingToServer = async (animeId: number, rating: number) => {
     try {
@@ -91,7 +57,7 @@ const AnimeDetail: React.FC = () => {
           },
           body: JSON.stringify({
             anime_id: animeId,
-            rating: rating,
+            rating: rating, // 5점 만점으로 값을 전달
           }),
           credentials: "include",
         }
@@ -157,11 +123,11 @@ const AnimeDetail: React.FC = () => {
         setIsResetting(true);
         setRating(0);
         setHover(0);
-        sendRatingToServer(parseInt(id!), 0); // 서버에 평점 0으로 업데이트
+        sendRatingToServer(parseInt(id!), 0); // 평점 0으로 설정
         setTimeout(() => setIsResetting(false), 50);
       } else {
         setRating(currentRating);
-        sendRatingToServer(parseInt(id!), currentRating); // 서버에 평점 업데이트
+        sendRatingToServer(parseInt(id!), currentRating); // 선택한 평점으로 서버 업데이트
       }
     },
     [rating, id, state.isAuthenticated]
@@ -169,29 +135,29 @@ const AnimeDetail: React.FC = () => {
 
   const renderStars = () => {
     return [...Array(5)].map((_, index) => {
-      const leftHalfValue = index * 2 + 1;
-      const fullStarValue = (index + 1) * 2;
+      const fullStarValue = index + 1; // 한 개 별은 1, 2, 3, 4, 5로 처리
+      const halfStarValue = index + 0.5; // 반 개 별은 0.5, 1.5, 2.5, 3.5, 4.5로 처리
       const currentValue = isResetting ? 0 : hover || rating;
 
       return (
         <div key={index} className="inline-block">
-          <span className="relative inline-block w-6 h-6">
+          <span className="relative inline-block w-8 h-8 mx-0.5 sm:w-10 sm:h-10">
             {currentValue >= fullStarValue ? (
-              <FaStar className="w-6 h-6 text-yellow-400" />
-            ) : currentValue >= leftHalfValue ? (
-              <FaStarHalfAlt className="w-6 h-6 text-yellow-400" />
+              <FaStar className="w-full h-full text-yellow-400" />
+            ) : currentValue >= halfStarValue ? (
+              <FaStarHalfAlt className="w-full h-full text-yellow-400" />
             ) : (
-              <FaStar className="w-6 h-6 text-gray-300" />
+              <FaStar className="w-full h-full text-gray-200" />
             )}
             <div
               className="absolute top-0 left-0 w-1/2 h-full cursor-pointer"
-              onClick={() => handleRating(leftHalfValue)}
-              onMouseEnter={() => !isResetting && setHover(leftHalfValue)}
+              onClick={() => handleRating(halfStarValue)} // 반 개 별 클릭
+              onMouseEnter={() => !isResetting && setHover(halfStarValue)}
               onMouseLeave={() => !isResetting && setHover(rating)}
             />
             <div
               className="absolute top-0 right-0 w-1/2 h-full cursor-pointer"
-              onClick={() => handleRating(fullStarValue)}
+              onClick={() => handleRating(fullStarValue)} // 한 개 별 클릭
               onMouseEnter={() => !isResetting && setHover(fullStarValue)}
               onMouseLeave={() => !isResetting && setHover(rating)}
             />

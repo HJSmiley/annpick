@@ -1,111 +1,112 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import AnimeCard from '../components/anime/AnimeCard';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useAuth } from "../contexts/AuthContext";
+import AnimeList from "../components/anime/AnimeList";
 import { AnimeData } from "../types/anime";
+import LoginModal from "../components/auth/LoginModal";
 
-const ratingOptions = [5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5];
+interface RatingData {
+  anime_id: number;
+  rating: number;
+}
 
-const AnimeList: React.FC = () => {
-  const [animeList, setAnimeList] = useState<AnimeData[]>([]);
-  const [visibleAnime, setVisibleAnime] = useState<AnimeData[]>([]);
-  const [selectedRating, setSelectedRating] = useState<number | null>(null);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const observer = useRef<IntersectionObserver | null>(null);
-
-  const fetchAnime = useCallback(async () => {
-    setLoading(true);
-    try {
-      // Replace this with your actual API call
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/anime?page=${page}&rating=${selectedRating || ''}`);
-      const data = await response.json();
-      
-      if (data.length === 0) {
-        setHasMore(false);
-      } else {
-        setAnimeList(prevList => [...prevList, ...data]);
-        setVisibleAnime(prevVisible => {
-          const newVisible = [...prevVisible, ...data];
-          return newVisible.slice(0, Math.min(newVisible.length, page * 20));
-        });
-        setPage(prevPage => prevPage + 1);
-      }
-    } catch (error) {
-      console.error('Error fetching anime:', error);
-    }
-    setLoading(false);
-  }, [page, selectedRating]);
+const MyRatings: React.FC = () => {
+  const { state } = useAuth();
+  const [animeSections, setAnimeSections] = useState<
+    { rating: number; animes: AnimeData[] }[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    fetchAnime();
-  }, [fetchAnime]);
+    const fetchRatedAnimeData = async () => {
+      try {
+        setIsLoading(true);
 
-  const lastAnimeElementRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (loading) return;
-      if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver(entries => {
-        if (entries[0].isIntersecting && hasMore) {
-          fetchAnime();
-        }
-      });
-      if (node) observer.current.observe(node);
-    },
-    [loading, hasMore, fetchAnime]
-  );
+        // 로그인된 사용자일 경우 토큰 포함
+        const headers = state.isAuthenticated
+          ? { Authorization: `Bearer ${state.token}` }
+          : {};
 
-  const handleRatingFilter = (rating: number) => {
-    setSelectedRating(rating);
-    setAnimeList([]);
-    setVisibleAnime([]);
-    setPage(1);
-    setHasMore(true);
+        // 1. 별점 데이터를 가져옴
+        const ratingsResponse = await axios.get<RatingData[]>(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/ratings`,
+          { headers }
+        );
+
+        const ratingData = ratingsResponse.data;
+
+        // 2. 각 별점에 해당하는 애니메이션 카드 데이터를 가져옴
+        const animeIds = ratingData.map((rating) => rating.anime_id).join(",");
+        const animeResponse = await axios.get<AnimeData[]>(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/cards?ids=${animeIds}`,
+          { headers }
+        );
+
+        const animeData = animeResponse.data;
+
+        // 3. 별점 정보를 애니메이션 정보와 합침
+        const groupedByRating = ratingData.reduce(
+          (sections, { anime_id, rating }) => {
+            const anime = animeData.find(
+              (anime) => anime.anime_id === anime_id
+            );
+            if (!anime) return sections;
+
+            let section = sections.find((s) => s.rating === rating);
+            if (!section) {
+              section = { rating, animes: [] };
+              sections.push(section);
+            }
+            section.animes.push(anime);
+            return sections;
+          },
+          [] as { rating: number; animes: AnimeData[] }[]
+        );
+
+        setAnimeSections(groupedByRating);
+      } catch (err) {
+        console.error("Error fetching anime data:", err);
+        setError(
+          err instanceof Error ? err.message : "Unknown error occurred."
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (state.isAuthenticated) {
+      fetchRatedAnimeData();
+    }
+  }, [state.isAuthenticated, state.token]);
+
+  const handleRatingClick = () => {
+    if (!state.isAuthenticated) {
+      setIsModalOpen(true);
+    }
   };
 
-  const handleShowMore = () => {
-    const nextBatch = animeList.slice(visibleAnime.length, visibleAnime.length + 20);
-    setVisibleAnime(prevVisible => [...prevVisible, ...nextBatch]);
-  };
+  if (isLoading)
+    return <div className="mt-28 mb-8 text-center">로딩 중...</div>;
+  if (error) return <div className="mt-28 mb-8 text-center">에러: {error}</div>;
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 mt-28">
       <h1 className="text-2xl font-bold mb-4">내 평가</h1>
-      <div className="flex flex-wrap gap-2 mb-4">
-        {ratingOptions.map(rating => (
-          <button
-            key={rating}
-            onClick={() => handleRatingFilter(rating)}
-            className={`px-3 py-1 rounded ${selectedRating === rating ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-          >
-            {rating}점
-          </button>
-        ))}
-      </div>
-      {visibleAnime.length === 0 && !loading ? (
-        <p className="text-center text-gray-500">평가한 애니메이션이 없습니다.</p>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {visibleAnime.map((anime, index) => (
-            <div
-              key={anime.anime_id}
-              ref={index === visibleAnime.length - 1 ? lastAnimeElementRef : null}
-            >
-              <AnimeCard {...anime} index={index} />
-            </div>
-          ))}
+      {animeSections.map((section) => (
+        <div key={section.rating} className="mb-12">
+          <h2 className="text-xl font-semibold mb-4">{section.rating}점</h2>
+          <AnimeList
+            animes={section.animes}
+            onRatingClick={handleRatingClick}
+            isModalOpen={isModalOpen}
+          />
         </div>
-      )}
-      {loading && <p className="text-center mt-4">Loading...</p>}
-      {!loading && visibleAnime.length < animeList.length && (
-        <button
-          onClick={handleShowMore}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-300 mx-auto block"
-        >
-          더보기
-        </button>
-      )}
+      ))}
+      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };
 
-export default AnimeList;
+export default MyRatings;

@@ -325,6 +325,62 @@ router.get("/details/:id", ensureAuthenticated, getAnimeDetails);
 /**
  * @swagger
  * /api/v1/anime/ratings:
+ *   get:
+ *     summary: 사용자가 평가한 애니메이션 목록 조회
+ *     description: 인증된 사용자가 평가한 애니메이션 목록을 평점별로 조회할 수 있습니다. 평점 필터와 페이지네이션 기능을 제공합니다.
+ *     tags:
+ *       - 애니메이션
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         required: false
+ *         description: 페이지 번호, 기본값 1
+ *       - in: query
+ *         name: rating
+ *         schema:
+ *           type: number
+ *           format: float
+ *         required: false
+ *         description: 필터할 평점, 선택 사항
+ *     responses:
+ *       200:
+ *         description: 평가된 애니메이션 정보 리스트
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   anime_id:
+ *                     type: integer
+ *                     example: 12345
+ *                   title:
+ *                     type: string
+ *                     example: 원피스
+ *                   thumbnail_url:
+ *                     type: string
+ *                     example: https://example.com/image.jpg
+ *                   format:
+ *                     type: string
+ *                     example: TV
+ *                   rating:
+ *                     type: number
+ *                     format: float
+ *                     example: 4.5
+ *       404:
+ *         description: 평가된 애니메이션이 없습니다.
+ *       500:
+ *         description: 서버 오류
+ */
+router.get("/ratings", ensureAuthenticated, getRatedAnimes);
+
+/**
+ * @swagger
+ * /api/v1/anime/ratings:
  *   post:
  *     summary: 애니메이션에 별점 부여
  *     description: 사용자가 애니메이션에 별점을 부여할 수 있습니다. 사용자가 이미 별점을 부여한 경우, 별점이 업데이트됩니다.
@@ -383,61 +439,5 @@ router.get("/details/:id", ensureAuthenticated, getAnimeDetails);
  *                   example: Internal server error
  */
 router.post("/ratings", ensureAuthenticated, rateAnime);
-
-/**
- * @swagger
- * /api/v1/anime/ratings:
- *   get:
- *     summary: 사용자가 평가한 애니메이션 목록 조회
- *     description: 인증된 사용자가 평가한 애니메이션 목록을 평점별로 조회할 수 있습니다. 평점 필터와 페이지네이션 기능을 제공합니다.
- *     tags:
- *       - 애니메이션
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         required: false
- *         description: 페이지 번호 (기본값: 1)
- *       - in: query
- *         name: rating
- *         schema:
- *           type: number
- *           format: float
- *         required: false
- *         description: 필터할 평점 (선택 사항)
- *     responses:
- *       200:
- *         description: 평가된 애니메이션 정보 리스트
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   anime_id:
- *                     type: integer
- *                     example: 12345
- *                   title:
- *                     type: string
- *                     example: 원피스
- *                   thumbnail_url:
- *                     type: string
- *                     example: https://example.com/image.jpg
- *                   format:
- *                     type: string
- *                     example: TV
- *                   rating:
- *                     type: number
- *                     format: float
- *                     example: 4.5
- *       404:
- *         description: 평가된 애니메이션이 없습니다.
- *       500:
- *         description: 서버 오류
- */
-router.get("/ratings", ensureAuthenticated, getRatedAnimes);
 
 module.exports = router;

@@ -8,6 +8,7 @@ const { swaggerUi, swaggerSpec } = require("./swaggerConfig");
 const authRoutes = require("../routes/authRoutes");
 const animeRoutes = require("../routes/animeRoutes");
 const recommendRoutes = require("../routes/recommendRoutes");
+const userRoutes = require("../routes/userRoutes");
 const { meiliClient, animeIndex } = require("../config/meiliConfig");
 const models = require("../models");
 
@@ -22,6 +23,7 @@ module.exports = {
   authRoutes,
   animeRoutes,
   recommendRoutes,
+  userRoutes,
   meiliClient,
   animeIndex,
   models,

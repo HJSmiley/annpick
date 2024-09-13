@@ -96,6 +96,10 @@ const MyRatings: React.FC = () => {
     // 여기에 픽 상태 변경에 대한 추가 로직을 구현할 수 있습니다.
   }, []);
 
+  const formatRating = (rating: number) => {
+    return Number.isInteger(rating) ? `${rating}점` : `${rating.toFixed(1)}점`;
+  };
+
   if (isLoading)
     return <div className="mt-28 mb-8 text-center">로딩 중...</div>;
   if (error) return <div className="mt-28 mb-8 text-center">에러: {error}</div>;
@@ -106,11 +110,11 @@ const MyRatings: React.FC = () => {
       {animeSections.map((section, sectionIndex) => (
         <div key={section.rating} className="mb-12">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">{section.rating.toFixed(1)}점</h2>
+          <h2 className="text-2xl font-semibold">{formatRating(section.rating)}</h2>
             {section.animes.length > 0 && (
               <button
                 onClick={() => toggleExpand(sectionIndex)}
-                className="text-orange-500 font-bold py-1 px-3 rounded text-m hover:text-orange-700 mr-5"
+                className="text-orange-500 font-bold py-1 px-3 rounded text-lg hover:text-orange-700 mr-5"
               >
                 {section.isExpanded ? "접기" : "더보기"}
               </button>

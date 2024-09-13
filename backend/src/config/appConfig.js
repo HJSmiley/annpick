@@ -9,6 +9,7 @@ const authRoutes = require("../routes/authRoutes");
 const animeRoutes = require("../routes/animeRoutes");
 const recommendRoutes = require("../routes/recommendRoutes");
 const userRoutes = require("../routes/userRoutes");
+const pickRoutes = require("../routes/pickRoutes");
 const { meiliClient, animeIndex } = require("../config/meiliConfig");
 const models = require("../models");
 
@@ -24,6 +25,7 @@ module.exports = {
   animeRoutes,
   recommendRoutes,
   userRoutes,
+  pickRoutes,
   meiliClient,
   animeIndex,
   models,

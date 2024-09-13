@@ -31,6 +31,11 @@ const UserRatedAnime = sequelize.define(
       type: DataTypes.FLOAT,
       comment: "5점 만점, 0.5점 간격으로 평가",
     },
+    is_picked: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false, // 기본값은 false로 설정
+      comment: "사용자가 픽한 애니메이션 여부",
+    },
   },
   {
     sequelize,

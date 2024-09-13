@@ -163,7 +163,7 @@ const getAnimeDetails = async (req, res) => {
     const userRating = userId
       ? await UserRatedAnime.findOne({
           where: { user_id: userId, anime_id: animeId },
-          attributes: ["rating"],
+          attributes: ["rating", "is_picked"], // is_picked 필드 추가
         })
       : null;
 
@@ -182,6 +182,7 @@ const getAnimeDetails = async (req, res) => {
       tags: topTags,
       staff: translatedStaff,
       user_rating: userRating ? userRating.rating : 0,
+      is_picked: userRating ? userRating.is_picked : false, // 픽하기 정보 추가
     };
 
     res.status(200).json(response);

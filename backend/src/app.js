@@ -15,6 +15,7 @@ const {
   animeRoutes,
   recommendRoutes,
   userRoutes,
+  pickRoutes,
   meiliClient,
   animeIndex,
 } = require("./config/appConfig");
@@ -69,6 +70,7 @@ app.use("/api/v1", authRoutes);
 app.use("/api/v1/anime", animeRoutes);
 app.use("/api/v1", recommendRoutes);
 app.use("/api/v1/profile", userRoutes);
+app.use("/api/v1", pickRoutes);
 
 // MeiliSearch 클라이언트를 전역적으로 사용하기 위해 앱 객체에 추가
 app.set("meiliClient", meiliClient);

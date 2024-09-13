@@ -193,7 +193,7 @@ const ProfileForm = () => {
             name="nickname"
             value={nickname}
             onChange={handleNicknameChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 caret-[#3c3b3b]"
           />
           <p className="mt-1 text-sm text-gray-500">2자 이상 입력해 주세요.</p>
         </div>

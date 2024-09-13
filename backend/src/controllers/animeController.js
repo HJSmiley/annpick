@@ -6,6 +6,7 @@ const {
   AniTag,
   UserRatedAnime,
 } = require("../models");
+const { Op } = require("sequelize");
 const { formatReleaseDate, formatSeason } = require("../utils/animeFormatting");
 const { searchMeiliAnimes } = require("../services/animeService");
 
@@ -250,9 +251,13 @@ const getRatedAnimes = async (req, res) => {
   const limit = 20; // 한 페이지당 가져올 애니메이션 수.
 
   try {
-    const whereClause = { user_id }; // 사용자 필터
+    const whereClause = {
+      user_id,
+      rating: { [Op.ne]: null }, // rating이 null이 아닌 값만 필터링
+    };
+
     if (rating) {
-      whereClause.rating = rating; // 평점 필터 적용
+      whereClause.rating = rating; // 특정 평점 필터 적용
     }
 
     // UserRatedAnime 모델에서 사용자 ID와 평점을 기준으로 애니메이션을 조회

@@ -1,4 +1,3 @@
-// MyPicks.tsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
@@ -35,6 +34,11 @@ const MyPicks: React.FC = () => {
         );
 
         const pickData = picksResponse.data;
+
+        if (pickData.length === 0) {
+          setPickedAnimes([]);
+          return;
+        }
 
         // 2. 픽한 애니메이션의 ID로 애니메이션 카드 데이터를 가져옴
         const animeIds = pickData.map((pick) => pick.anime_id).join(",");
@@ -73,11 +77,17 @@ const MyPicks: React.FC = () => {
   return (
     <div className="container mx-auto px-4 mt-28 mb-12">
       <h1 className="text-2xl font-bold mb-4">픽한 애니메이션</h1>
-      <AnimeList
-        animes={pickedAnimes}
-        onRatingClick={handlePickClick}
-        isModalOpen={isModalOpen}
-      />
+      {pickedAnimes.length > 0 ? (
+        <AnimeList
+          animes={pickedAnimes}
+          onRatingClick={handlePickClick}
+          isModalOpen={isModalOpen}
+        />
+      ) : (
+        <div className="mt-8 text-center text-lg text-gray-600">
+          픽한 애니메이션이 없어요
+        </div>
+      )}
       <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );

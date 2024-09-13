@@ -3,22 +3,24 @@ const { UserRatedAnime, Anime } = require("../models");
 // 애니메이션 북마크 상태 업데이트 서비스
 const updatePickStatus = async (userId, animeId, isPicked) => {
   try {
-    // 기존에 북마크한 기록이 있는지 확인
     let pickRecord = await UserRatedAnime.findOne({
       where: { user_id: userId, anime_id: animeId },
     });
 
     if (pickRecord) {
-      // 기존 기록 업데이트
       pickRecord.is_picked = isPicked;
       await pickRecord.save();
     } else {
-      // 새 기록 생성
       pickRecord = await UserRatedAnime.create({
         user_id: userId,
         anime_id: animeId,
         is_picked: isPicked,
+        rating: null,
       });
+    }
+
+    if (pickRecord.is_picked === false && pickRecord.rating === null) {
+      await pickRecord.destroy();
     }
 
     return pickRecord;

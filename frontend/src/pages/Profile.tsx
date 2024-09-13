@@ -52,17 +52,26 @@ const ProfileForm = () => {
   // 프로필 업데이트 처리
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (nickname.length < 2) {
       setErrorMessage("닉네임은 2자 이상 입력해주세요.");
       setIsErrorModalOpen(true);
       return;
     }
-    if (nickname !== originalNickname) {
+
+    // 닉네임이 변경되었거나 프로필 이미지가 변경된 경우에만 요청 전송
+    if (nickname !== originalNickname || fileInputRef.current?.files?.[0]) {
       try {
         const formData = new FormData();
-        formData.append("nickname", nickname); // 닉네임 추가
+
+        // 닉네임이 변경된 경우 닉네임 추가
+        if (nickname !== originalNickname) {
+          formData.append("nickname", nickname);
+        }
+
+        // 프로필 이미지가 변경된 경우 이미지 파일 추가
         if (fileInputRef.current?.files?.[0]) {
-          formData.append("profileImage", fileInputRef.current.files[0]); // 프로필 이미지 파일 추가
+          formData.append("profileImage", fileInputRef.current.files[0]);
         }
 
         const response = await fetch(
@@ -78,8 +87,17 @@ const ProfileForm = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setOriginalNickname(nickname);
-          setProfileImage(data.profile_img); // 새로운 프로필 이미지 설정
+
+          // 닉네임이 변경된 경우에만 원래 닉네임 업데이트
+          if (nickname !== originalNickname) {
+            setOriginalNickname(nickname);
+          }
+
+          // 프로필 이미지가 변경된 경우에만 새로운 프로필 이미지 설정
+          if (fileInputRef.current?.files?.[0]) {
+            setProfileImage(data.profile_img);
+          }
+
           setErrorMessage("프로필이 성공적으로 업데이트되었습니다.");
           login(data.token); // 새로운 JWT 토큰 업데이트
           setIsErrorModalOpen(true);
@@ -91,6 +109,9 @@ const ProfileForm = () => {
         setErrorMessage("프로필 업데이트에 실패했습니다. 다시 시도해 주세요.");
         setIsErrorModalOpen(true);
       }
+    } else {
+      setErrorMessage("변경 사항이 없습니다.");
+      setIsErrorModalOpen(true);
     }
   };
 

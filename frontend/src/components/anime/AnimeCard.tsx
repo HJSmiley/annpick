@@ -7,6 +7,7 @@ import { ReactComponent as PickedIcon } from "../../assets/icons/Boolean=picked.
 import { AnimeData } from "../../types/anime";
 import { useAuth } from "../../contexts/AuthContext";
 
+// AnimeCard 컴포넌트의 props 인터페이스 정의
 interface AnimeCardProps extends AnimeData {
   index: number;
   onRatingClick?: () => void;
@@ -14,6 +15,7 @@ interface AnimeCardProps extends AnimeData {
   onPickStatusChange?: (animeId: number, isPicked: boolean) => void;
 }
 
+// AnimeCard 컴포넌트 정의
 const AnimeCard: React.FC<AnimeCardProps> = ({
   anime_id,
   title,
@@ -26,13 +28,17 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
   isModalOpen,
   onPickStatusChange,
 }) => {
+  // 상태 변수들 정의
   const [isHovered, setIsHovered] = useState(false);
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [isResetting, setIsResetting] = useState(false);
   const [isPicked, setIsPicked] = useState(false);
+
+  // 인증 상태 가져오기
   const { state } = useAuth();
 
+  // 서버에서 애니메이션 평점과 pick 상태를 가져오는 함수
   const fetchAnimeDataFromServer = async (animeId: number) => {
     try {
       if (!state.isAuthenticated) {
@@ -60,23 +66,21 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
       }
 
       const data = await response.json();
-      return {
-        userRating: data.user_rating,
-        isPicked: data.is_picked, // 픽하기 정보 추가
-      };
+      return { userRating: data.user_rating, isPicked: data.is_picked };
     } catch (error) {
       console.error("Error fetching anime data:", error);
       return null;
     }
   };
 
+  // 서버에 평점을 보내는 함수
   const sendRatingToServer = async (animeId: number, rating: number) => {
     try {
-      const token = state.isAuthenticated ? state.token : null;
-
-      if (!token) {
+      if (!state.isAuthenticated) {
         throw new Error("No token found, please log in again.");
       }
+
+      const token = state.token;
 
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/ratings`,
@@ -97,13 +101,15 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
       if (!response.ok) {
         throw new Error(`Failed to send rating, status: ${response.status}`);
       }
+
       const data = await response.json();
+      console.log("Rating successfully sent:", data);
     } catch (error) {
       console.error("Error sending rating:", error);
     }
   };
 
-  // Pick 상태 변경을 처리하는 함수 (경로 변경됨)
+  // 서버에 pick 상태를 보내는 함수
   const sendPickStatusToServer = async (animeId: number, isPicked: boolean) => {
     try {
       if (!state.isAuthenticated) {
@@ -113,7 +119,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
       const token = state.token;
 
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/picks`, // 경로 수정
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/pick`,
         {
           method: "POST",
           headers: {
@@ -129,17 +135,17 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
       );
 
       if (!response.ok) {
-        throw new Error(
-          `Failed to send pick status, status: ${response.status}`
-        );
+        throw new Error(`Failed to send pick status, status: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log("Pick status successfully sent:", data);
     } catch (error) {
       console.error("Error sending pick status:", error);
     }
   };
 
+  // 컴포넌트 마운트 시 데이터 가져오기
   useEffect(() => {
     const fetchAndSetData = async () => {
       try {
@@ -156,12 +162,14 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
     fetchAndSetData();
   }, [anime_id]);
 
+  // hover 상태 관리
   useEffect(() => {
     if (!isHovered) {
       setHover(0);
     }
   }, [isHovered]);
 
+  // 평점 처리 함수
   const handleRating = useCallback(
     (currentRating: number) => {
       if (!state.isAuthenticated) {
@@ -183,9 +191,10 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
     [rating, anime_id, state.isAuthenticated, onRatingClick]
   );
 
+  // Pick 아이콘 클릭 처리 함수
   const handlePickClick = useCallback(() => {
     if (!state.isAuthenticated) {
-      onRatingClick?.();
+      onRatingClick?.(); // 로그인 모달을 띄우는 함수
       return;
     }
 
@@ -193,18 +202,13 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
     setIsPicked(newPickStatus);
     sendPickStatusToServer(anime_id, newPickStatus);
     onPickStatusChange?.(anime_id, newPickStatus);
-  }, [
-    state.isAuthenticated,
-    isPicked,
-    anime_id,
-    onRatingClick,
-    onPickStatusChange,
-  ]);
+  }, [state.isAuthenticated, isPicked, anime_id, onRatingClick, onPickStatusChange]);
 
+  // 별점 렌더링 함수
   const renderStars = () => {
     return [...Array(5)].map((_, index) => {
-      const fullStarValue = index + 1;
-      const halfStarValue = index + 0.5;
+      const leftHalfValue = index * 2 + 1;
+      const fullStarValue = (index + 1) * 2;
       const currentValue = isResetting ? 0 : hover || rating;
 
       return (
@@ -212,15 +216,15 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
           <span className="relative inline-block w-8 h-8 mx-0.5 sm:w-10 sm:h-10">
             {currentValue >= fullStarValue ? (
               <FaStar className="w-full h-full text-yellow-400" />
-            ) : currentValue >= halfStarValue ? (
+            ) : currentValue >= leftHalfValue ? (
               <FaStarHalfAlt className="w-full h-full text-yellow-400" />
             ) : (
               <FaStar className="w-full h-full text-gray-200" />
             )}
             <div
               className="absolute top-0 left-0 w-1/2 h-full cursor-pointer"
-              onClick={() => handleRating(halfStarValue)}
-              onMouseEnter={() => !isResetting && setHover(halfStarValue)}
+              onClick={() => handleRating(leftHalfValue)}
+              onMouseEnter={() => !isResetting && setHover(leftHalfValue)}
               onMouseLeave={() => !isResetting && setHover(rating)}
             />
             <div
@@ -235,6 +239,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
     });
   };
 
+  // 컴포넌트 렌더링
   return (
     <div className="relative">
       <div
@@ -242,14 +247,17 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => !isModalOpen && setIsHovered(false)}
       >
+        {/* 썸네일 이미지 */}
         <img
           src={thumbnail_url}
           alt={title}
           className="w-full h-full object-cover"
         />
+        {/* 호버 시 나타나는 상세 정보 */}
         {isHovered && (
           <div className="absolute inset-0 bg-black bg-opacity-80 text-white pt-3 pl-3 flex flex-col">
             <div className="flex flex-col h-full">
+              {/* 포맷 및 상태 표시 */}
               <div className="flex justify-between items-center mb-3 pt-[35px] pl-[10px]">
                 <div className="flex space-x-2">
                   <span className="border border-white border-opacity-80 px-2 py-1 rounded-[9px] text-[14px]">
@@ -260,9 +268,11 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
                   </span>
                 </div>
               </div>
+              {/* 장르 표시 */}
               <div className="text-[15px] mb-[15px] pl-[10px]">
                 {genres.join(" ")}
               </div>
+              {/* 태그 표시 */}
               <div className="text-[13px] mb-[5px] pl-[10px] flex flex-wrap">
                 {tags.slice(0, 3).map((tag, index) => (
                   <span
@@ -274,12 +284,15 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
                 ))}
               </div>
               <div className="flex-grow-[0.8]"></div>
+              {/* 별점 및 상세 페이지 링크 */}
               <div className="flex flex-col items-start justify-between pb-2">
+                {/* 별점 왼쪽 정렬 */}
                 <div className="flex items-start w-full mb-20 pl-[10px]">
                   {renderStars()}
                 </div>
+                {/* Pick 아이콘 및 상세보기 버튼 - 개별 위치 조정 가능 */}
                 <div className="absolute bottom-0 right-0 p-2 flex space-x-2">
-                  <div className="relative bottom-2 right-0 group">
+                  <div className="relative bottom-2 right-0 group"> {/* Pick 아이콘 위치 조정 */}
                     <button onClick={handlePickClick} className="text-white">
                       {isPicked ? (
                         <PickedIcon className="w-13 h-13" />
@@ -287,15 +300,15 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
                         <AddIcon className="w-13 h-13" />
                       )}
                     </button>
-                    <span className="absolute bottom-full left-5 -translate-y-1 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                    <span className="absolute bottom-full left-5 translate-y-5 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
                       {isPicked ? "픽 취소" : "픽 하기"}
                     </span>
                   </div>
-                  <div className="relative bottom-2 left-1 group">
+                  <div className="relative bottom-2 left-1 group"> {/* Arrow 아이콘 위치 조정 */}
                     <Link to={`/anime/${anime_id}`} className="text-white">
                       <ArrowIcon className="w-13 h-13" />
                     </Link>
-                    <span className="absolute bottom-full left-5 -translate-y-1 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                    <span className="absolute bottom-full left-5 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
                       상세보기
                     </span>
                   </div>
@@ -305,6 +318,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
           </div>
         )}
       </div>
+      {/* 애니메이션 제목 */}
       <div className="mt-2">
         <h3 className="text-lg font-semibold line-clamp-2 text-gray-800">
           {title}

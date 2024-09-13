@@ -5,6 +5,7 @@ import AnimeList from "../components/anime/AnimeList";
 import AnimeCard from "../components/anime/AnimeCard";
 import { AnimeData } from "../types/anime";
 import LoginModal from "../components/auth/LoginModal";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface RatingData {
   anime_id: number;
@@ -24,7 +25,7 @@ const MyRatings: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const ratingOrder = [5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1];
+  const ratingOrder = [5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5];
 
   useEffect(() => {
     const fetchRatedAnimeData = async () => {
@@ -100,43 +101,57 @@ const MyRatings: React.FC = () => {
   if (error) return <div className="mt-28 mb-8 text-center">에러: {error}</div>;
 
   return (
-    <div className="container mx-auto px-4 mt-28">
+    <div className="container mx-auto px-16 mt-28">
       <h1 className="text-2xl font-bold mb-4">내 평가</h1>
       {animeSections.map((section, sectionIndex) => (
         <div key={section.rating} className="mb-12">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">{section.rating}점</h2>
+            <h2 className="text-xl font-semibold">{section.rating.toFixed(1)}점</h2>
             {section.animes.length > 0 && (
               <button
                 onClick={() => toggleExpand(sectionIndex)}
-                className="text-orange-500 font-bold py-1 px-3 rounded text-sm hover:text-orange-700 mr-5"
+                className="text-orange-500 font-bold py-1 px-3 rounded text-m hover:text-orange-700 mr-5"
               >
                 {section.isExpanded ? "접기" : "더보기"}
               </button>
             )}
           </div>
           {section.animes.length > 0 ? (
-            section.isExpanded ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                {section.animes.map((anime, index) => (
-                  <AnimeCard
-                    key={anime.anime_id}
-                    {...anime}
-                    index={index + 1}
-                    onRatingClick={handleRatingClick}
-                    isModalOpen={isModalOpen}
-                    onPickStatusChange={handlePickStatusChange}
-                  />
-                ))}
-              </div>
-            ) : (
-              <AnimeList
-                animes={section.animes}
-                onRatingClick={handleRatingClick}
-                isModalOpen={isModalOpen}
-                showSwipeButtons={true}
-              />
-            )
+            <AnimatePresence>
+              {section.isExpanded ? (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+                >
+                  {section.animes.map((anime, index) => (
+                    <motion.div
+                      key={anime.anime_id}
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: index * 0.05 }}
+                    >
+                      <AnimeCard
+                        {...anime}
+                        index={index + 1}
+                        onRatingClick={handleRatingClick}
+                        isModalOpen={isModalOpen}
+                        onPickStatusChange={handlePickStatusChange}
+                      />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              ) : (
+                <AnimeList
+                  animes={section.animes}
+                  onRatingClick={handleRatingClick}
+                  isModalOpen={isModalOpen}
+                  showSwipeButtons={true}
+                />
+              )}
+            </AnimatePresence>
           ) : (
             <div className="h-48 flex items-center justify-center bg-gray-100 rounded-lg">
               <p className="text-gray-500">평가한 애니메이션이 없어요</p>

@@ -1,4 +1,5 @@
 const User = require("./User");
+const WithdrawnUser = require("./WithdrawnUser");
 const Anime = require("./Anime");
 const Staff = require("./Staff");
 const Genre = require("./Genre");
@@ -15,6 +16,7 @@ const AnilistAnime = require("./AnilistAnime");
 // 모델 내보내기
 module.exports = {
   User,
+  WithdrawnUser,
   Anime,
   Staff,
   Genre,

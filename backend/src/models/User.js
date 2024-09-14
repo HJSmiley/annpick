@@ -34,9 +34,13 @@ const User = sequelize.define(
       type: DataTypes.CHAR(1),
       comment: "남성: M, 여성: F",
     },
-    user_status: {
-      type: DataTypes.CHAR(1),
-      comment: "활성: A(ctivated), 휴면: H(ibernated), 탈퇴: D(eleted)",
+    naver_access_token: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    naver_refresh_token: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
   {

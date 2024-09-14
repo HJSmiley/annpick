@@ -91,10 +91,12 @@ const MyRatings: React.FC = () => {
     );
   };
 
-  const handlePickStatusChange = useCallback((animeId: number, isPicked: boolean) => {
-    console.log(`Anime ${animeId} pick status changed to ${isPicked}`);
-    // 여기에 픽 상태 변경에 대한 추가 로직을 구현할 수 있습니다.
-  }, []);
+  const handlePickStatusChange = useCallback(
+    (animeId: number, isPicked: boolean) => {
+      // 여기에 픽 상태 변경에 대한 추가 로직을 구현할 수 있습니다.
+    },
+    []
+  );
 
   const formatRating = (rating: number) => {
     return Number.isInteger(rating) ? `${rating}점` : `${rating.toFixed(1)}점`;
@@ -110,7 +112,9 @@ const MyRatings: React.FC = () => {
       {animeSections.map((section, sectionIndex) => (
         <div key={section.rating} className="mb-12">
           <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold">{formatRating(section.rating)}</h2>
+            <h2 className="text-2xl font-semibold">
+              {formatRating(section.rating)}
+            </h2>
             {section.animes.length > 0 && (
               <button
                 onClick={() => toggleExpand(sectionIndex)}

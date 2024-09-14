@@ -18,7 +18,6 @@ const findOrCreateUser = async (profileData) => {
         : profileData.gender === "F"
         ? "F"
         : null,
-    user_status: "A",
   };
 
   const [user, created] = await User.findOrCreate({
@@ -29,20 +28,25 @@ const findOrCreateUser = async (profileData) => {
   return user;
 };
 
-const generateToken = (user) => {
-  const token = jwt.sign(
+const generateAccessToken = (user) => {
+  return jwt.sign(
     {
       id: user.user_id,
+      email: user.email,
+      nickname: user.nickname,
       profile_img: user.profile_img,
-      email: user.email, // 이메일 포함
-      nickname: user.nickname, // 닉네임 포함
     },
     process.env.JWT_SECRET,
-    {
-      expiresIn: "1h",
-    }
+    { expiresIn: "15m" } // Access Token 유효 기간 설정 (예: 15분)
   );
-  return token;
+};
+
+const generateRefreshToken = (user) => {
+  return jwt.sign(
+    { id: user.user_id },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" } // Refresh Token 유효 기간 설정 (예: 7일)
+  );
 };
 
 const fetchNaverProfile = async (accessToken) => {
@@ -58,4 +62,9 @@ const fetchNaverProfile = async (accessToken) => {
   }
 };
 
-module.exports = { findOrCreateUser, generateToken, fetchNaverProfile };
+module.exports = {
+  findOrCreateUser,
+  generateAccessToken,
+  generateRefreshToken,
+  fetchNaverProfile,
+};

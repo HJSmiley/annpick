@@ -103,7 +103,6 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
       }
 
       const data = await response.json();
-      console.log("Rating successfully sent:", data);
     } catch (error) {
       console.error("Error sending rating:", error);
     }
@@ -119,7 +118,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
       const token = state.token;
 
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/pick`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/picks`,
         {
           method: "POST",
           headers: {
@@ -135,11 +134,12 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
       );
 
       if (!response.ok) {
-        throw new Error(`Failed to send pick status, status: ${response.status}`);
+        throw new Error(
+          `Failed to send pick status, status: ${response.status}`
+        );
       }
 
       const data = await response.json();
-      console.log("Pick status successfully sent:", data);
     } catch (error) {
       console.error("Error sending pick status:", error);
     }
@@ -202,13 +202,19 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
     setIsPicked(newPickStatus);
     sendPickStatusToServer(anime_id, newPickStatus);
     onPickStatusChange?.(anime_id, newPickStatus);
-  }, [state.isAuthenticated, isPicked, anime_id, onRatingClick, onPickStatusChange]);
+  }, [
+    state.isAuthenticated,
+    isPicked,
+    anime_id,
+    onRatingClick,
+    onPickStatusChange,
+  ]);
 
   // 별점 렌더링 함수
   const renderStars = () => {
     return [...Array(5)].map((_, index) => {
-      const leftHalfValue = index * 2 + 1;
-      const fullStarValue = (index + 1) * 2;
+      const leftHalfValue = (index + 1) * 0.5;
+      const fullStarValue = index + 1;
       const currentValue = isResetting ? 0 : hover || rating;
 
       return (
@@ -292,7 +298,9 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
                 </div>
                 {/* Pick 아이콘 및 상세보기 버튼 - 개별 위치 조정 가능 */}
                 <div className="absolute bottom-0 right-0 p-2 flex space-x-2">
-                  <div className="relative bottom-2 right-0 group"> {/* Pick 아이콘 위치 조정 */}
+                  <div className="relative bottom-2 right-0 group">
+                    {" "}
+                    {/* Pick 아이콘 위치 조정 */}
                     <button onClick={handlePickClick} className="text-white">
                       {isPicked ? (
                         <PickedIcon className="w-13 h-13" />
@@ -304,7 +312,9 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
                       {isPicked ? "픽 취소" : "픽 하기"}
                     </span>
                   </div>
-                  <div className="relative bottom-2 left-1 group"> {/* Arrow 아이콘 위치 조정 */}
+                  <div className="relative bottom-2 left-1 group">
+                    {" "}
+                    {/* Arrow 아이콘 위치 조정 */}
                     <Link to={`/anime/${anime_id}`} className="text-white">
                       <ArrowIcon className="w-13 h-13" />
                     </Link>

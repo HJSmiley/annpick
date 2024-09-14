@@ -39,17 +39,25 @@ const Layout: React.FC<{
     </>
   );
 };
+
 // Protected Route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { state } = useAuth();
 
+  // 인증 로딩 중일 때는 로딩 스피너를 보여줍니다.
   if (state.loading) {
     return <LoadingSpinner />;
   }
 
-  return state.isAuthenticated ? <>{children}</> : <Navigate to="/" replace />;
+  // 인증되지 않은 경우에는 리다이렉트
+  if (!state.isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  // 인증된 경우에만 해당 페이지 렌더링
+  return <>{children}</>;
 };
 
 const App: React.FC = () => {
@@ -74,10 +82,24 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
+                <Route
+                  path="/my-ratings"
+                  element={
+                    <ProtectedRoute>
+                      <MyRatings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/my-picks"
+                  element={
+                    <ProtectedRoute>
+                      <MyPicks />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="/anime-search" element={<AnimeSearch />} />
-                <Route path="/anime/:id" element={<AnimeDetail />} />{" "}
-                <Route path="/my-ratings" element={<MyRatings />} />
-                <Route path="/my-picks" element={<MyPicks />} />
+                <Route path="/anime/:id" element={<AnimeDetail />} />
                 <Route path="/evaluation" element={<EvaluationPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

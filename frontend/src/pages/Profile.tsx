@@ -1,6 +1,8 @@
-import React, { useState, useRef, useEffect, ReactNode } from "react";
+// src/pages/Profile.tsx
+import React, { useState, useRef, ReactNode } from "react";
 import { Camera } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 
 interface ModalProps {
   isOpen: boolean;
@@ -24,7 +26,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
 };
 
 const ProfileForm = () => {
-  const { state, login, logout } = useAuth(); // login 함수 추가
+  const { state, login, logout, refreshAccessToken } = useAuth();
   const [nickname, setNickname] = useState(state.user?.nickname || "");
   const [originalNickname, setOriginalNickname] = useState(
     state.user?.nickname || ""
@@ -38,18 +40,23 @@ const ProfileForm = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (state.user?.nickname) {
-      setNickname(state.user.nickname);
-      setOriginalNickname(state.user.nickname);
-    }
-  }, [state.user]);
-
+  // 닉네임 변경 핸들러
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(e.target.value);
   };
 
-  // 프로필 업데이트 처리
+  // Access Token 유효성 검사 함수
+  const isTokenValid = (token: string): boolean => {
+    try {
+      const decoded: JwtPayload = jwtDecode<JwtPayload>(token);
+      // decoded.exp가 정의되지 않은 경우 false를 반환하도록 처리
+      return decoded.exp !== undefined && decoded.exp * 1000 > Date.now();
+    } catch (e) {
+      return false;
+    }
+  };
+
+  // 프로필 업데이트 처리 함수
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -59,17 +66,17 @@ const ProfileForm = () => {
       return;
     }
 
-    // 닉네임이 변경되었거나 프로필 이미지가 변경된 경우에만 요청 전송
+    // 닉네임 또는 프로필 이미지 변경 여부 확인
     if (nickname !== originalNickname || fileInputRef.current?.files?.[0]) {
       try {
         const formData = new FormData();
 
-        // 닉네임이 변경된 경우 닉네임 추가
+        // 닉네임 변경 시 추가
         if (nickname !== originalNickname) {
           formData.append("nickname", nickname);
         }
 
-        // 프로필 이미지가 변경된 경우 이미지 파일 추가
+        // 프로필 이미지 변경 시 추가
         if (fileInputRef.current?.files?.[0]) {
           formData.append("profileImage", fileInputRef.current.files[0]);
         }
@@ -88,19 +95,14 @@ const ProfileForm = () => {
         if (response.ok) {
           const data = await response.json();
 
-          // 닉네임이 변경된 경우에만 원래 닉네임 업데이트
-          if (nickname !== originalNickname) {
-            setOriginalNickname(nickname);
-          }
+          // 새로운 JWT 토큰을 AuthContext에 업데이트
+          login(data.token); // 새로운 JWT 토큰으로 상태 업데이트
 
-          // 프로필 이미지가 변경된 경우에만 새로운 프로필 이미지 설정
-          if (fileInputRef.current?.files?.[0]) {
-            setProfileImage(data.profile_img);
-          }
-
-          setErrorMessage("프로필이 성공적으로 업데이트되었습니다.");
-          login(data.token); // 새로운 JWT 토큰 업데이트
-          setIsErrorModalOpen(true);
+          // 페이지 새로고침
+          window.location.reload();
+        } else if (response.status === 401) {
+          // Access Token 만료 시 갱신
+          await refreshAccessToken();
         } else {
           throw new Error("프로필 업데이트에 실패했습니다.");
         }
@@ -115,23 +117,35 @@ const ProfileForm = () => {
     }
   };
 
-  // 회원 탈퇴 처리
+  // 회원 탈퇴 처리 함수
   const handleWithdraw = async () => {
     try {
-      const response = await fetch("/api/withdraw", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${state.token}`, // JWT 토큰 포함
-        },
-        body: JSON.stringify({ reason: withdrawalReason }),
-      });
+      if (!state.token || !isTokenValid(state.token)) {
+        await refreshAccessToken();
+      }
+
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/profile/withdraw`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${state.token}`,
+          },
+          body: JSON.stringify({ reason: withdrawalReason }),
+          credentials: "include",
+        }
+      );
+
       if (response.ok) {
         setErrorMessage("회원 탈퇴가 완료되었습니다.");
         setIsErrorModalOpen(true);
-        logout(); // 로그아웃 처리
+        logout();
+      } else if (response.status === 401) {
+        await refreshAccessToken();
       } else {
-        throw new Error("회원 탈퇴에 실패했습니다.");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "회원 탈퇴에 실패했습니다.");
       }
     } catch (error) {
       console.error("회원 탈퇴 중 오류 발생:", error);
@@ -141,10 +155,12 @@ const ProfileForm = () => {
     setIsWithdrawModalOpen(false);
   };
 
+  // 프로필 이미지 클릭 시 파일 선택기 열기
   const handleImageClick = () => {
     fileInputRef.current?.click();
   };
 
+  // 프로필 이미지 변경 핸들러
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -158,6 +174,7 @@ const ProfileForm = () => {
 
   return (
     <div className="flex flex-col items-center w-full max-w-md mx-auto p-6 bg-white rounded-lg shadow mt-48 mb-80 border border-gray-200">
+      {/* 프로필 이미지 */}
       <div
         className="relative w-24 h-24 mb-6 rounded-full overflow-hidden cursor-pointer border border-gray-200"
         onClick={handleImageClick}
@@ -179,7 +196,9 @@ const ProfileForm = () => {
         accept="image/*"
       />
 
+      {/* 프로필 업데이트 폼 */}
       <form onSubmit={handleSubmit} className="w-full space-y-4">
+        {/* 닉네임 입력 */}
         <div>
           <label
             htmlFor="nickname"
@@ -193,11 +212,12 @@ const ProfileForm = () => {
             name="nickname"
             value={nickname}
             onChange={handleNicknameChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 caret-[#3c3b3b]"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
           <p className="mt-1 text-sm text-gray-500">2자 이상 입력해 주세요.</p>
         </div>
 
+        {/* 이메일 표시 */}
         <div>
           <label
             htmlFor="email"
@@ -218,6 +238,7 @@ const ProfileForm = () => {
           </p>
         </div>
 
+        {/* 저장 버튼 */}
         <button
           type="submit"
           className="w-full py-2 px-4 bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold rounded-md hover:from-red-600 hover:to-orange-600 transition duration-300"
@@ -226,6 +247,7 @@ const ProfileForm = () => {
         </button>
       </form>
 
+      {/* 탈퇴하기 버튼 */}
       <div className="w-full mt-8 flex justify-end">
         <button
           onClick={() => setIsWithdrawModalOpen(true)}
@@ -244,7 +266,7 @@ const ProfileForm = () => {
         <div className="px-5 pt-50 ">
           <p className="mb-2 mt-2">
             탈퇴하시면 그동안 등록하신 애니메이션 평가를 비롯한
-            <br />{" "}
+            <br />
             <span className="text-orange-500 font-bold text-base">
               모든 활동 정보가 사라지며 복구할 수 없어요.
             </span>

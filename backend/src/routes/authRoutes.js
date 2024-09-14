@@ -1,5 +1,9 @@
 const express = require("express");
-const naverCallback = require("../controllers/authController");
+const {
+  naverCallback,
+  refreshAccessToken,
+  logout,
+} = require("../controllers/authController");
 const passport = require("../config/authConfig");
 
 const router = express.Router();
@@ -34,5 +38,9 @@ router.get(
   passport.authenticate("naver", { session: false }),
   naverCallback
 );
+
+router.post("/auth/token", refreshAccessToken);
+
+router.post("/auth/logout", logout);
 
 module.exports = router;

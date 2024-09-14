@@ -7,6 +7,7 @@ const {
   express,
   cors,
   bodyParser,
+  cookieParser,
   passport,
   sequelize,
   swaggerUi,
@@ -59,6 +60,7 @@ app.options("*", cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(passport.initialize());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

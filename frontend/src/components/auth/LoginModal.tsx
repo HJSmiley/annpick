@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -8,18 +9,32 @@ interface LoginModalProps {
 
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const { login, state } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [hasRedirected, setHasRedirected] = useState(false);
 
-  // 컴포넌트가 처음 렌더링될 때 한 번만 쿼리에서 토큰을 가져옴
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const token = queryParams.get("token");
 
-    if (token) {
+    if (token && !state.isAuthenticated) {
       login(token); // 로그인 처리
     }
-  }, [login]); // login 함수만 의존성 배열에 넣어서 한 번만 실행
+  }, [login, state.isAuthenticated]);
 
-  // 모달이 열릴 때마다 이미지 프리로드
+  useEffect(() => {
+    if (state.isAuthenticated && !hasRedirected) {
+      setHasRedirected(true);
+
+      // 사용자가 원래 있던 경로로 리다이렉트 (기본값은 현재 경로 유지)
+      const redirectTo = location.state?.from?.pathname || location.pathname;
+
+      setTimeout(() => {
+        navigate(redirectTo, { replace: true }); // replace 옵션 추가
+      }, 500);
+    }
+  }, [state.isAuthenticated, hasRedirected, navigate, location]);
+
   useEffect(() => {
     if (isOpen) {
       const images = [
@@ -35,7 +50,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
-  if (!isOpen) return null; // 모달이 열리지 않으면 렌더링하지 않음
+  if (!isOpen) return null;
 
   const handleClose = () => {
     onClose();

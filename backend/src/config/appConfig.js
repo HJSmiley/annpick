@@ -2,6 +2,7 @@ require("dotenv").config(); // 환경 변수 로드
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const sequelize = require("./dbConfig");
 const { swaggerUi, swaggerSpec } = require("./swaggerConfig");
@@ -17,6 +18,7 @@ module.exports = {
   express,
   cors,
   bodyParser,
+  cookieParser,
   passport,
   sequelize,
   swaggerUi,

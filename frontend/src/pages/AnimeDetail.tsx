@@ -68,7 +68,6 @@ const AnimeDetail: React.FC = () => {
       }
 
       const data = await response.json();
-      console.log("Rating successfully sent:", data);
     } catch (error) {
       console.error("Error sending rating:", error);
     }

@@ -42,8 +42,10 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
   }, []);
 
   const handleProfileClick = () => {
-    navigate("/profile");
     setIsOpen(false);
+    setTimeout(() => {
+      navigate("/profile");
+    }, 0);
   };
 
   const isHomePage = location.pathname === "/";

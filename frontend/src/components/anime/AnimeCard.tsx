@@ -213,30 +213,29 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
   // 별점 렌더링 함수
   const renderStars = () => {
     return [...Array(5)].map((_, index) => {
-      const leftHalfValue = (index + 1) * 0.5;
-      const fullStarValue = index + 1;
+      const starValue = index + 1;
       const currentValue = isResetting ? 0 : hover || rating;
 
       return (
         <div key={index} className="inline-block">
           <span className="relative inline-block w-8 h-8 mx-0.5 sm:w-10 sm:h-10">
-            {currentValue >= fullStarValue ? (
+            {currentValue >= starValue ? (
               <FaStar className="w-full h-full text-yellow-400" />
-            ) : currentValue >= leftHalfValue ? (
+            ) : currentValue >= starValue - 0.5 ? (
               <FaStarHalfAlt className="w-full h-full text-yellow-400" />
             ) : (
               <FaStar className="w-full h-full text-gray-200" />
             )}
             <div
               className="absolute top-0 left-0 w-1/2 h-full cursor-pointer"
-              onClick={() => handleRating(leftHalfValue)}
-              onMouseEnter={() => !isResetting && setHover(leftHalfValue)}
+              onClick={() => handleRating(starValue - 0.5)}
+              onMouseEnter={() => !isResetting && setHover(starValue - 0.5)}
               onMouseLeave={() => !isResetting && setHover(rating)}
             />
             <div
               className="absolute top-0 right-0 w-1/2 h-full cursor-pointer"
-              onClick={() => handleRating(fullStarValue)}
-              onMouseEnter={() => !isResetting && setHover(fullStarValue)}
+              onClick={() => handleRating(starValue)}
+              onMouseEnter={() => !isResetting && setHover(starValue)}
               onMouseLeave={() => !isResetting && setHover(rating)}
             />
           </span>

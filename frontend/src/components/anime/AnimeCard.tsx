@@ -177,7 +177,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
         return;
       }
 
-      if (rating === currentRating || currentRating <= rating) {
+      if (rating === currentRating) {
         setIsResetting(true);
         setRating(0);
         setHover(0);
@@ -190,6 +190,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
     },
     [rating, anime_id, state.isAuthenticated, onRatingClick]
   );
+
 
   // Pick 아이콘 클릭 처리 함수
   const handlePickClick = useCallback(() => {
@@ -211,7 +212,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
   ]);
 
   // 별점 렌더링 함수
-  const renderStars = () => {
+ const renderStars = () => {
     return [...Array(5)].map((_, index) => {
       const starValue = index + 1;
       const currentValue = isResetting ? 0 : hover || rating;

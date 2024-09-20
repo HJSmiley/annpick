@@ -64,9 +64,17 @@ const MyRatings: React.FC = () => {
         setAnimeSections(groupedByRating);
       } catch (err) {
         console.error("애니메이션 데이터 불러오기 오류:", err);
-        setError(
-          err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다."
-        );
+
+        // 400 에러일 경우 메시지를 설정
+        if (axios.isAxiosError(err) && err.response?.status === 400) {
+          setError("평가한 애니메이션이 없어요");
+        } else {
+          setError(
+            err instanceof Error
+              ? err.message
+              : "알 수 없는 오류가 발생했습니다."
+          );
+        }
       } finally {
         setIsLoading(false);
       }
@@ -104,7 +112,13 @@ const MyRatings: React.FC = () => {
 
   if (isLoading)
     return <div className="mt-28 mb-8 text-center">로딩 중...</div>;
-  if (error) return <div className="mt-28 mb-8 text-center">에러: {error}</div>;
+  if (error)
+    return (
+      <div className="container mx-auto px-16 mt-28">
+        <h1 className="text-2xl font-bold mb-4">내 평가</h1>
+        <p className="text-gray-500 text-center mb-10">{error}</p>
+      </div>
+    );
 
   return (
     <div className="container mx-auto px-16 mt-28">

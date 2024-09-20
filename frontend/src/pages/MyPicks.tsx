@@ -75,7 +75,7 @@ const MyPicks: React.FC = () => {
   if (error) return <div className="mt-28 mb-8 text-center">에러: {error}</div>;
 
   return (
-    <div className="container mx-auto px-4 mt-28 mb-12">
+    <div className="container mx-auto px-16 mt-28 mb-12">
       <h1 className="text-2xl font-bold mb-4">픽한 애니메이션</h1>
       {pickedAnimes.length > 0 ? (
         <AnimeList
@@ -84,7 +84,7 @@ const MyPicks: React.FC = () => {
           isModalOpen={isModalOpen}
         />
       ) : (
-        <div className="mt-8 text-center text-lg text-gray-600">
+        <div className="text-gray-500 text-center mb-10">
           픽한 애니메이션이 없어요
         </div>
       )}

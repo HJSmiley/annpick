@@ -37,6 +37,7 @@ const getAnimeByIds = async (req, res) => {
       attributes: [
         "anime_id",
         "anime_title",
+        "anime_title_ko",
         "thumbnail_url",
         "format",
         "is_completed",
@@ -87,7 +88,7 @@ const getAnimeByIds = async (req, res) => {
       return {
         anime_id: anime.anime_id,
         thumbnail_url: anime.thumbnail_url,
-        title: anime.anime_title,
+        title: anime.anime_title_ko || anime.anime_title,
         format: anime.format,
         status: anime.is_completed ? "완결" : "방영중",
         genres,
@@ -134,12 +135,14 @@ const getAnimeDetails = async (req, res) => {
       attributes: [
         "anime_id",
         "anime_title",
+        "anime_title_ko",
         "thumbnail_url",
         "banner_img_url",
         "format",
         "is_completed",
         "release_date",
         "description",
+        "description_ko",
         "season",
         "studio",
       ],
@@ -166,13 +169,13 @@ const getAnimeDetails = async (req, res) => {
 
     const response = {
       anime_id: anime.anime_id,
-      title: anime.anime_title,
+      title: anime.anime_title_ko || anime.anime_title,
       thumbnail_url: anime.thumbnail_url,
       banner_img_url: anime.banner_img_url,
       format: anime.format,
       status: anime.is_completed ? "완결" : "방영중",
       release_date: formatReleaseDate(anime.release_date),
-      description: anime.description,
+      description: anime.description_ko || anime.description,
       season: formatSeason(anime.season),
       studio: anime.studio,
       genres: anime.Genres.map((genre) => genre.genre_name).slice(0, 3),

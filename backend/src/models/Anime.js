@@ -14,6 +14,10 @@ Anime.init(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
+    anime_title_ko: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
     thumbnail_url: {
       type: DataTypes.STRING(255),
     },
@@ -32,6 +36,10 @@ Anime.init(
     },
     description: {
       type: DataTypes.TEXT,
+    },
+    description_ko: {
+      type: DataTypes.TEXT,
+      allowNull: true,
     },
     season: {
       type: DataTypes.INTEGER,

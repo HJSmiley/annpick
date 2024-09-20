@@ -105,44 +105,34 @@ const PromotionBanner: React.FC = () => {
           {/* 이미지 위에 그라데이션 효과 */}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-50"></div>
           {/* '바로가기' 버튼 */}
-          {slide.title !== "프로모션 1" && (
-            <div
-              className={`
-                absolute 
-                /* 기본 위치 (모바일) */
-                bottom-[20%] left-1/2 -translate-x-1/2 translate-y-1/2
-                /* 태블릿 */
-                sm:bottom-[20%] sm:left-1/2 sm:-translate-x-1/2 sm:translate-y-0
-                /* 작은 데스크탑 */
-                md:bottom-[15%] md:left-[20%] md:translate-x-0
-                /* 큰 데스크탑 */
-                lg:bottom-[15%] lg:left-[10.5%]
-                z-20
-              `}
-            >
-              {/* SVG 이미지를 사용한 '바로가기' 버튼 */}
-              <button
-                onClick={() => handleLinkClick(slide.link)}
-                className={`
-                  relative group
-                  /* 기본 크기 (모바일) */
-                  w-24 h-8
-                  /* 태블릿 */
-                  sm:w-32 sm:h-10
-                  /* 작은 데스크탑 */
-                  md:w-40 md:h-12
-                  /* 큰 데스크탑 */
-                  lg:w-48 lg:h-14
-                `}
+          {index === currentSlide &&
+            slide.title !== "프로모션 1" && ( // index가 currentSlide일 때만 렌더링, "프로모션 1"은 제외
+              <div
+                className={`absolute 
+      bottom-[20%] left-1/2 -translate-x-1/2 translate-y-1/2
+      sm:bottom-[20%] sm:left-1/2 sm:-translate-x-1/2 sm:translate-y-0
+      md:bottom-[15%] md:left-[20%] md:translate-x-0
+      lg:bottom-[15%] lg:left-[10.5%]
+      z-20`}
               >
-                <img
-                  src="/images/banner_Btn.svg"
-                  alt="바로가기"
-                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                />
-              </button>
-            </div>
-          )}
+                <button
+                  onClick={() => handleLinkClick(slide.link)}
+                  className={`
+        relative group
+        w-24 h-8
+        sm:w-32 sm:h-10
+        md:w-40 md:h-12
+        lg:w-48 lg:h-14
+      `}
+                >
+                  <img
+                    src="/images/banner_Btn.svg"
+                    alt="바로가기"
+                    className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                  />
+                </button>
+              </div>
+            )}
         </div>
       ))}
       {/* 이전 슬라이드 버튼 */}

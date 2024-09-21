@@ -5,8 +5,10 @@ const {
   Tag,
   AniTag,
   UserRatedAnime,
+  UserClusterPreference,
+  RecommendationCluster,
 } = require("../models");
-const { Op } = require("sequelize"); // Sequelize의 Op 연산자를 불러옴
+const { Sequelize, Op } = require("sequelize");
 const { formatReleaseDate, formatSeason } = require("../utils/animeFormatting");
 const { searchMeiliAnimes } = require("../services/animeService");
 
@@ -351,10 +353,104 @@ const searchAnimes = async (req, res) => {
   }
 };
 
+const getRecommendedAnimeSections = async (req, res) => {
+  try {
+    const userId = req.user ? req.user.user_id : null;
+
+    if (!userId) {
+      return res.status(401).json({ error: "인증된 사용자가 아닙니다." });
+    }
+
+    // UserClusterPreference에서 사용자 선호 조합 3개 랜덤 선택
+    const userPreferences = await UserClusterPreference.findAll({
+      where: { user_id: userId },
+      order: Sequelize.literal("RAND()"),
+      limit: 3,
+      include: [{ model: Genre }, { model: Tag }],
+    });
+
+    if (userPreferences.length === 0) {
+      // 선호 조합이 없을 경우 빈 배열 반환
+      return res.status(200).json([]);
+    }
+
+    // 사용자가 이미 평가한 애니메이션 ID 목록 조회
+    const ratedAnimes = await UserRatedAnime.findAll({
+      where: { user_id: userId },
+      attributes: ["anime_id"],
+    });
+    const ratedAnimeIds = ratedAnimes.map((ra) => ra.anime_id); // 평가한 애니메이션 ID 배열
+
+    const sections = [];
+
+    for (const preference of userPreferences) {
+      const {
+        genre_id,
+        tag_id,
+        preference_score,
+        Genre: genre,
+        Tag: tag,
+      } = preference;
+
+      // RecommendationCluster에서 해당 장르+태그의 애니메이션 ID 가져오기
+      const recommendations = await RecommendationCluster.findAll({
+        where: { genre_id, tag_id },
+        attributes: ["anime_id", "recommendation_phrase"],
+      });
+
+      let animeIds = recommendations
+        .map((rec) => rec.anime_id)
+        .filter((id) => !ratedAnimeIds.includes(id)); // 평가한 애니메이션 제외
+
+      const recommendationPhrase =
+        recommendations[0]?.recommendation_phrase ||
+        `${genre.genre_name} + ${tag.tag_name}`;
+
+      // 애니메이션 ID 배열을 섞는다 (최대 15개 선택)
+      animeIds = shuffleArray(animeIds).slice(0, 15);
+
+      // 섹션 구성
+      if (animeIds.length > 0) {
+        sections.push({
+          title: recommendationPhrase,
+          preference_score,
+          ids: animeIds, // 평가한 애니메이션 제외된 ID 배열 반환
+        });
+      }
+    }
+
+    res.status(200).json(sections);
+  } catch (error) {
+    console.error("추천 섹션을 가져오는 중 오류 발생:", error);
+    res.status(500).json({ error: "추천 섹션을 가져오는 데 실패했습니다." });
+  }
+};
+
+// 배열을 섞는 함수 (Fisher-Yates 알고리즘)
+function shuffleArray(array) {
+  let currentIndex = array.length,
+    randomIndex;
+
+  // 남은 요소가 없을 때까지 반복
+  while (currentIndex !== 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // 현재 요소와 선택한 무작위 요소를 교환
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+
+  return array;
+}
+
 module.exports = {
   getAnimeByIds,
   getAnimeDetails,
   rateAnime,
   getRatedAnimes,
   searchAnimes,
+  getRecommendedAnimeSections,
 };

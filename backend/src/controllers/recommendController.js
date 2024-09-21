@@ -1,9 +1,7 @@
-const {
-  getRecommendations, // getRecommendations 추가
-} = require("../services/recommendService");
+const { getRecommendations } = require("../services/recommendService");
 
 const triggerRecommendation = async (req, res) => {
-  const userId = req.user ? req.user.user_id : null; // JWT 토큰에서 사용자 ID 추출
+  const userId = req.user ? req.user.user_id : null;
 
   if (!userId) {
     console.error("추천 생성 중 오류: 유효한 사용자 ID가 없습니다.");
@@ -11,7 +9,7 @@ const triggerRecommendation = async (req, res) => {
   }
 
   try {
-    const recommendedAnimes = await getRecommendations(userId); // 올바르게 함수 호출
+    const recommendedAnimes = await getRecommendations(userId);
     return res.status(200).json({ recommendedAnimes });
   } catch (error) {
     console.error("추천 생성 중 오류:", error);

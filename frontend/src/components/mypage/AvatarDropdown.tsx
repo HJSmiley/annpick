@@ -48,6 +48,39 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
     }, 0);
   };
 
+  const handleRecommendClick = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/recommend`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${state.token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.recommendedAnimes && data.recommendedAnimes.length > 0) {
+          alert("새로운 추천이 생성되었습니다.");
+          if (location.pathname === "/") {
+            window.location.reload(); // 메인 페이지에서 새로고침
+          } else {
+            navigate("/"); // 메인 페이지로 리다이렉트
+          }
+        } else {
+          alert("평가한 작품이 없어 추천을 생성할 수 없습니다.");
+        }
+      } else {
+        console.error("추천 생성에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("추천 생성 중 오류 발생:", error);
+    }
+  };
+
   const isHomePage = location.pathname === "/";
 
   const getTextColor = () => {
@@ -136,6 +169,12 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
           >
             픽한 애니메이션
           </Link>
+          <button
+            onClick={handleRecommendClick}
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          >
+            새로 추천받기
+          </button>
           <div className="px-4 py-2">
             <button
               onClick={logout}

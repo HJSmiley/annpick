@@ -4,9 +4,10 @@ const {
   getAnimeDetails,
   rateAnime,
   getRatedAnimes,
+  searchAnimes,
+  getRecommendedAnimeSections,
 } = require("../controllers/animeController");
 const ensureAuthenticated = require("../middleware/authMiddleware");
-const { searchAnimes } = require("../controllers/animeController");
 
 const router = express.Router();
 
@@ -252,7 +253,15 @@ router.get("/public/details/:id", getAnimeDetails);
  *       500:
  *         description: 서버 에러
  */
-router.get("/cards", ensureAuthenticated, getAnimeByIds);
+// 애니메이션 데이터를 IDs로 가져오기
+router.get("/cards", getAnimeByIds);
+
+// 인증된 사용자의 추천 섹션 가져오기
+router.get(
+  "/recommendations",
+  ensureAuthenticated,
+  getRecommendedAnimeSections
+);
 
 /**
  * @swagger

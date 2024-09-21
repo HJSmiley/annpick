@@ -1,11 +1,13 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/dbConfig");
 const Anime = require("./Anime");
+const Genre = require("./Genre");
+const Tag = require("./Tag");
 
 const RecommendationCluster = sequelize.define(
   "RecommendationCluster",
   {
-    cluster_id: {
+    recommendation_id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
@@ -18,9 +20,26 @@ const RecommendationCluster = sequelize.define(
       },
       allowNull: false,
     },
-    cluster_group: {
+    genre_id: {
       type: DataTypes.INTEGER,
-      comment: "군집화된 그룹 번호",
+      references: {
+        model: Genre, // Genre 테이블을 참조
+        key: "genre_id",
+      },
+      allowNull: false,
+    },
+    tag_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: Tag, // Tag 테이블을 참조
+        key: "tag_id",
+      },
+      allowNull: false,
+    },
+    recommendation_phrase: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      comment: "추천 문구 (예: 우주에서 피어나는 사랑)",
     },
   },
   {

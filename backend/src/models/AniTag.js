@@ -1,5 +1,7 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/dbConfig");
+const Anime = require("./Anime"); // Anime 모델 불러오기
+const Tag = require("./Tag"); // Tag 모델 불러오기
 
 class AniTag extends Model {}
 
@@ -13,7 +15,7 @@ AniTag.init(
     anime_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Anime",
+        model: Anime,
         key: "anime_id",
       },
       allowNull: false,
@@ -21,7 +23,7 @@ AniTag.init(
     tag_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Tag",
+        model: Tag,
         key: "tag_id",
       },
       allowNull: false,

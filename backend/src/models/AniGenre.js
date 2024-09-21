@@ -1,4 +1,3 @@
-// models/AnimeGenre.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/dbConfig");
 const Anime = require("./Anime");
@@ -6,7 +5,7 @@ const Genre = require("./Genre");
 
 // Anime-Genre 중간 테이블 정의
 const AniGenre = sequelize.define(
-  "AnimeGenre",
+  "AniGenre",
   {
     anigenre_id: {
       type: DataTypes.INTEGER,

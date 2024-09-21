@@ -1,7 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/dbConfig");
 const User = require("./User");
-const RecommendationCluster = require("./RecommendationCluster");
 
 const UserClusterPreference = sequelize.define(
   "UserClusterPreference",
@@ -19,12 +18,14 @@ const UserClusterPreference = sequelize.define(
       },
       allowNull: false,
     },
-    cluster_group: {
+    genre_id: {
+      // 기존의 genre -> genre_id로 수정
       type: DataTypes.INTEGER,
-      references: {
-        model: RecommendationCluster,
-        key: "cluster_group",
-      },
+      allowNull: false,
+    },
+    tag_id: {
+      // 기존의 tag -> tag_id로 수정
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     preference_score: {

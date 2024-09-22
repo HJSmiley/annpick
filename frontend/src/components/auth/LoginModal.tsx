@@ -86,7 +86,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             src="/images/kakao-login.svg"
             alt="카카오 로그인"
             className="w-full max-w-[250px] mb-3 cursor-pointer"
-            onClick={() => handleSocialLogin("kakao")}
+            // onClick={() => handleSocialLogin("kakao")}
+            onClick={() => alert("추후 지원 예정입니다.")}
           />
           <img
             src="/images/naver-login.svg"
@@ -98,7 +99,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             src="/images/google-login.svg"
             alt="구글 로그인"
             className="w-full max-w-[250px] cursor-pointer"
-            onClick={() => handleSocialLogin("google")}
+            // onClick={() => handleSocialLogin("google")}
+            onClick={() => alert("추후 지원 예정입니다.")}
           />
         </div>
         {state.error && (

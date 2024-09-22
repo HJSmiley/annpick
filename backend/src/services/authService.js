@@ -37,7 +37,7 @@ const generateAccessToken = (user) => {
       profile_img: user.profile_img,
     },
     process.env.JWT_SECRET,
-    { expiresIn: "15m" } // Access Token 유효 기간 설정 (예: 15분)
+    { expiresIn: "1h" } // Access Token 유효 기간 설정
   );
 };
 

@@ -309,7 +309,7 @@ const searchMeiliAnimes = async (query, filters = {}) => {
       filter: filterString,
       sort: ["popularity:desc"], // 인기도순 정렬
       matchingStrategy: "last",
-      attributesToRetrieve: ["id", "anime_title"], // ID와 애니메이션 제목 필드를 반환하도록 지정
+      attributesToRetrieve: ["id", "anime_title", "anime_title_ko"], // ID와 애니메이션 제목 및 한글 제목 필드를 반환하도록 지정
     });
 
     console.timeEnd("searchAnimes");

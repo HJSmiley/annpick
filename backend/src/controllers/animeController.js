@@ -303,18 +303,23 @@ const searchAnimes = async (req, res) => {
     if (genre.length > 0) filters.genre = genre;
     if (tag.length > 0) filters.tag = tag;
 
+    // MeiliSearch에서 검색 결과를 가져옴
     const meiliResults = await searchMeiliAnimes(query, filters);
+
+    // MeiliSearch 결과의 'id'를 'anime_id'로 변환
     const animeIds = meiliResults.map((anime) => anime.id);
 
     if (animeIds.length === 0) {
       return res.status(404).json({ message: "검색 결과가 없습니다." });
     }
 
+    // 여기에서 애니메이션 ID로 DB에서 조회
     const animeList = await Anime.findAll({
       where: { anime_id: animeIds },
       attributes: [
         "anime_id",
         "anime_title",
+        "anime_title_ko",
         "thumbnail_url",
         "format",
         "is_completed",
@@ -337,7 +342,7 @@ const searchAnimes = async (req, res) => {
 
       return {
         anime_id: anime.anime_id,
-        title: anime.anime_title,
+        title: anime.anime_title_ko || anime.anime_title, // anime_title_ko를 우선 반환
         thumbnail_url: anime.thumbnail_url,
         format: anime.format,
         status: anime.is_completed ? "완결" : "방영중",

@@ -313,9 +313,12 @@ const searchAnimes = async (req, res) => {
       return res.status(404).json({ message: "검색 결과가 없습니다." });
     }
 
-    // 여기에서 애니메이션 ID로 DB에서 조회
+    // DB에서 anime_id로 조회하고 MeiliSearch 결과의 순서를 유지
     const animeList = await Anime.findAll({
       where: { anime_id: animeIds },
+      order: [
+        [Sequelize.literal(`FIELD(Anime.anime_id, ${animeIds.join(",")})`)], // ID 순서대로 정렬
+      ],
       attributes: [
         "anime_id",
         "anime_title",

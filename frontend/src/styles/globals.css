@@ -18,3 +18,8 @@ body {
   font-family: 'Pretendard', sans-serif;
   caret-color: transparent
 }
+
+.checkbox:checked {
+  background-color: #f97316; /* 주황색 (Tailwind의 orange-500에 해당) */
+  border-color: #f97316;
+}

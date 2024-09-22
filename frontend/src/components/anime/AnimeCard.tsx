@@ -191,7 +191,6 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
     [rating, anime_id, state.isAuthenticated, onRatingClick]
   );
 
-
   // Pick 아이콘 클릭 처리 함수
   const handlePickClick = useCallback(() => {
     if (!state.isAuthenticated) {
@@ -212,7 +211,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
   ]);
 
   // 별점 렌더링 함수
- const renderStars = () => {
+  const renderStars = () => {
     return [...Array(5)].map((_, index) => {
       const starValue = index + 1;
       const currentValue = isResetting ? 0 : hover || rating;
@@ -315,7 +314,11 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
                   <div className="relative bottom-2 left-1 group">
                     {" "}
                     {/* Arrow 아이콘 위치 조정 */}
-                    <Link to={`/anime/${anime_id}`} className="text-white">
+                    <Link
+                      to={`/anime/${anime_id}`}
+                      className="text-white"
+                      target="_blank"
+                    >
                       <ArrowIcon className="w-13 h-13" />
                     </Link>
                     <span className="absolute bottom-full left-5 -translate-y-1 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">

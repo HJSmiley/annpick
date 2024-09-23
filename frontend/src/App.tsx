@@ -9,6 +9,9 @@ import {
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
+import TermsOfService from "./pages/terms/TermsOfService";
+import PrivacyPolicy from "./pages/terms/PrivacyPolicy";
+import MarketingAgreement from "./pages/terms/MarketingAgreement";
 import LoginModal from "./components/auth/LoginModal";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 import ErrorBoundary from "./components/error/ErrorBoundary";
@@ -74,6 +77,12 @@ const App: React.FC = () => {
             <Suspense fallback={<LoadingSpinner />}>
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route
+                  path="/marketing-agreement"
+                  element={<MarketingAgreement />}
+                />
                 <Route
                   path="/profile"
                   element={

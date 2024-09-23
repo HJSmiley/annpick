@@ -82,8 +82,16 @@ const AvatarDropdown: React.FC<AvatarDropdownProps> = ({
   };
 
   const isHomePage = location.pathname === "/";
+  const isPolicyPage = [
+    "/terms-of-service",
+    "/privacy-policy",
+    "/marketing-agreement",
+  ].includes(location.pathname);
+  const isNotFound = location.pathname !== "/";
 
   const getTextColor = () => {
+    if (isNotFound) return "rgb(0, 0, 0)";
+    if (isPolicyPage) return "rgb(0, 0, 0)";
     if (isProfilePage) return "rgb(249, 115, 22)";
     if (isAnimeSearch) return "rgb(107, 114, 128)";
     if (isEvaluationPage) return "rgb(0, 0, 0)";

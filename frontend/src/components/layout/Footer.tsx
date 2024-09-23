@@ -69,13 +69,27 @@ const Footer = () => {
               <h3 className="font-semibold mb-4">서비스</h3>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-gray-600 hover:text-gray-900">
+                  <a
+                    href="/terms-of-service"
+                    className="text-gray-600 hover:text-gray-900"
+                  >
                     이용 약관
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:text-gray-900">
+                  <a
+                    href="/privacy-policy"
+                    className="text-gray-600 hover:text-gray-900"
+                  >
                     개인정보 처리방침
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/marketing-agreement"
+                    className="text-gray-600 hover:text-gray-900"
+                  >
+                    마케팅 및 알림 수신 동의
                   </a>
                 </li>
               </ul>

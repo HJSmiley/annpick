@@ -47,6 +47,7 @@ const EvaluationPage: React.FC = () => {
           navigate("/");
         } else {
           alert("평가한 작품이 없어 추천을 생성할 수 없습니다.");
+          navigate("/");
         }
       } else {
         console.error("추천 생성에 실패했습니다.");

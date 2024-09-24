@@ -1,0 +1,11 @@
+[Unit]
+Description=Meilisearch
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/ec2-user/meilisearch --master-key="@nnpickSecretKey1324" --http-addr="0.0.0.0:7700"
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

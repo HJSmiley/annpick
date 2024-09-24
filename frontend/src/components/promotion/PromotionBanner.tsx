@@ -14,8 +14,8 @@ const PromotionBanner: React.FC = () => {
   // 슬라이드 데이터 배열
   const slides: Slide[] = [
     {
-      imageUrl: "/images/banner-img-ayakashi.png",
-      link: "/anime/318",
+      imageUrl: "/images/Banner.png",
+      link: "/promo1",
       title: "프로모션 1",
     },
     {
@@ -23,26 +23,20 @@ const PromotionBanner: React.FC = () => {
       link: "/anime/3391",
       title: "프로모션 2",
     },
-    { imageUrl: "/images/Banner.jpg", link: "/promo3", title: "프로모션 3" },
     {
-      imageUrl: "/images/banner-img-horimia.png",
+      imageUrl: "/images/banner-img-ayakashi.png",
+      link: "/anime/318",
+      title: "프로모션 3",
+    },
+    {
+      imageUrl: "/images/banner-img-horimiya.png",
       link: "/anime/2915",
       title: "프로모션 4",
     },
     {
-      imageUrl: "/images/지브리7.jpg",
-      link: "https://laftel.net/search?keyword=%ED%95%98%EC%9A%B8&modal=15454",
-      title: "프로모션 5",
-    },
-    {
-      imageUrl: "/images/지브리10.jpg",
-      link: "https://laftel.net/search?keyword=%ED%82%A4%ED%82%A4&modal=14995",
-      title: "프로모션 6",
-    },
-    {
       imageUrl: "/images/지브리16.jpg",
       link: "https://laftel.net/search?keyword=%ED%86%A0%ED%86%A0%EB%A1%9C&modal=14943",
-      title: "프로모션 7",
+      title: "프로모션 5",
     },
   ];
 
@@ -106,7 +100,7 @@ const PromotionBanner: React.FC = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-50"></div>
           {/* '바로가기' 버튼 */}
           {index === currentSlide &&
-            slide.title !== "프로모션 3" && ( // index가 currentSlide일 때만 렌더링, "프로모션 1"은 제외
+            slide.title !== "프로모션 1" && ( // index가 currentSlide일 때만 렌더링, "프로모션 1"은 제외
               <div
                 className={`absolute 
       bottom-[20%] left-1/2 -translate-x-1/2 translate-y-1/2

@@ -36,7 +36,7 @@ const SearchGrid: React.FC = () => {
   const recentSearchesRef = useRef<HTMLDivElement>(null);
   const [filteredAnimes, setFilteredAnimes] = useState<AnimeData[]>([]);
   const [randomAnimes, setRandomAnimes] = useState<AnimeData[]>([]);
-  const genres = ['액션', '모험', '미스터리', '드라마', '일상', '판타지', '코미디', '미래소년', '메카', '음악', '추리', '스포츠', 'SF', '성인', '초자연적인', '스릴러'];
+  const genres = ['액션', '모험', '미스터리', '드라마', '일상', '로맨스','공포','마법소녀','판타지', '코미디', '메카', '음악', '추리', '스포츠', 'SF', '성인', '초자연적인', '스릴러'];
   const tags = ['인물', '캐릭터', '관계', '직업', '진행/에선', '배경'];
 
   
@@ -45,7 +45,8 @@ const SearchGrid: React.FC = () => {
     setSearchTerm("");
     setError(null);
     setAnimes([]);
-  }, [setAnimes]);
+    fetchRandomAnimes();
+  }, [setAnimes, setError]);
 
   useEffect(() => {
     const savedSearches = localStorage.getItem("recentSearches");
@@ -54,28 +55,6 @@ const SearchGrid: React.FC = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (animes.length > 0 && selectedFilters.length > 0) {
-  //     const filtered = animes.filter(anime => 
-  //       selectedFilters.some(filter => anime.genres.includes(filter))
-  //     );
-  //     setFilteredAnimes(filtered);
-  //   } else {
-  //     setFilteredAnimes(animes);
-  //   }
-  // }, [animes, selectedFilters]);
-  
-  // 필터링 로직을 AND 개념으로 수정
-  // useEffect(() => {
-  //   if (animes.length > 0 && selectedFilters.length > 0) {
-  //     const filtered = animes.filter(anime => 
-  //       selectedFilters.every(filter => anime.genres.includes(filter))
-  //     );
-  //     setFilteredAnimes(filtered);
-  //   } else {
-  //     setFilteredAnimes(animes);
-  //   }
-  // }, [animes, selectedFilters]);
 
     useEffect(() => {
     if (animes.length > 0 && (selectedFilters.length > 0 || checkedTags.length > 0)) {
@@ -102,6 +81,8 @@ const SearchGrid: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+
 
   const saveRecentSearch = (search: string) => {
     const updatedSearches = [
@@ -198,8 +179,32 @@ const SearchGrid: React.FC = () => {
     }
   };
 
+  const fetchRandomAnimes = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/random?limit=10`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(state.isAuthenticated ? { Authorization: `Bearer ${state.token}` } : {}),
+        },
+        credentials: "include",
+      });
 
-  
+      if (!response.ok) {
+        throw new Error("랜덤 애니메이션을 가져오는 데 실패했습니다.");
+      }
+
+      const data = await response.json();
+      setRandomAnimes(data);
+    } catch (error) {
+      console.error("랜덤 애니메이션 가져오기 오류:", error);
+      setError("랜덤 애니메이션을 불러오는 데 실패했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  }, [state.isAuthenticated, state.token, setLoading, setError]);
+
   // 핸들러 함수 추가 (다른 핸들러 함수들 근처에 추가)
   const handleTagCheck = (tag: string, categoryName: string) => {
     setCheckedTags(prev => 
@@ -256,6 +261,7 @@ const SearchGrid: React.FC = () => {
       <div className="flex-grow pt-40 px-4">
         <div className="max-w-6xl lg:max-w-screen-2xl mx-auto">
           <div className="w-full flex flex-col gap-4 items-center">
+              {/* 검색 입력 필드 */}
             <div className="max-w-md w-full relative" style={{ height: '40px' }}> {/* 높이 지정 */}
               <div className="relative">
                 <input
@@ -263,9 +269,11 @@ const SearchGrid: React.FC = () => {
                   className="w-full pl-10 pr-4 py-2 rounded-full border border-[#F7f7f7] focus:outline-none focus:ring-2 focus:ring-[#F35815] focus:border-transparent bg-[#F7f7f7] text-gray-700 placeholder-gray-400 caret-[#3c3b3b]"
                   placeholder="원하는 애니를 검색해보세요"
                   value={searchTerm}
-                  onChange={handleInputChange}
-                  onKeyPress={handleKeyPress}
-                  onFocus={handleInputFocus}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && handleSearch(searchTerm)}
+                  // onChange={handleInputChange}
+                  // onKeyPress={handleKeyPress}
+                  // onFocus={handleInputFocus}
                 />
                 <div className="absolute inset-y-0 left-3 flex items-center">
                   <svg
@@ -298,135 +306,180 @@ const SearchGrid: React.FC = () => {
             </div>
           </div>
         </div>
-
-        <div className="w-full mt-4"> {/* 장르 및 태그 섹션을 위한 마진 추가 */}
-          <div className="mb-4">
-            <h1 className="font-bold mb-2">장르</h1>
-            <div className="flex flex-wrap gap-2">
-              {genres.map((genre) => (
-                <button
-                  key={genre}
-                  onClick={() => handleFilterClick(genre)}
-                  className={`
-                    px-2 py-0.5 text-s font-medium btn-outline border border-gray-300 rounded-lg bg-white
-                    transition-all duration-200 ease-in-out
-                    ${selectedFilters.includes(genre) 
-                      ? 'text-orange-600 border-orange-600  hover:bg-white hover:text-orange-500 hover:border-orange-500 border-2' 
-                      : 'bg-white text-gray-700 hover:text-orange-600 hover:border-orange-600 hover:bg-white'}
-                  `}
-                >
-                  {genre}
-                </button>
-              ))}
-                </div>
+        {searchPerformed ? (
+          <div className="w-full mt-4">
+            {/* 장르 필터 */}
+            <div className="mb-4 px-40">
+              <h1 className="font-bold mb-2">장르</h1>
+              <div className="flex flex-wrap gap-2">
+                {genres.map((genre) => (
+                  <button
+                    key={genre}
+                    onClick={() => handleFilterClick(genre)}
+                    className={`
+                      px-2 py-0.5 text-s font-medium btn-outline border border-gray-300 rounded-lg bg-white
+                      transition-all duration-200 ease-in-out
+                      ${selectedFilters.includes(genre) 
+                        ? 'text-orange-600 border-orange-600  hover:bg-white hover:text-orange-500 hover:border-orange-500 border-2' 
+                        : 'bg-white text-gray-700 hover:text-orange-600 hover:border-orange-600 hover:bg-white'}
+                    `}
+                  >
+                    {genre}
+                  </button>
+                ))}
               </div>
-              <div>
-
-              <h2 className="font-bold mb-2">태그</h2>
-      <div className="flex flex-wrap gap-2">
-      {tagCategories.map((category) => (
-        <div key={category.name} className="mb-2">
-          <div className="dropdown">
-            <div
-              tabIndex={0}
-              role="button"
-              className={`btn btn-sm ${
-                category.tags.some(tag => checkedTags.includes(tag))
-                ? 'text-orange-600 border-orange-600  hover:bg-white hover:text-orange-500 hover:border-orange-500 border-2' 
-                : 'bg-white text-gray-700 hover:text-orange-600 hover:border-orange-600 hover:bg-white'}
-            `}
-              onClick={() => toggleDropdown(category.name)}
-            >
-              <span>{category.name}</span>
-              <ChevronDown
-                className={`ml-1 h-4 w-4 transition-transform duration-200 ${
-                  openDropdowns.includes(category.name) ? 'transform rotate-180' : ''
-                }`}
-              />
             </div>
-            {openDropdowns.includes(category.name) && (
-              <div className="dropdown-content bg-base-100 rounded-box z-[1] p-2 shadow mt-1">
-                <div className="grid grid-cols-2 gap-2 w-[400px]">
-                  {category.tags.map((tag) => (
-                    <label key={tag} className="flex items-center space-x-2 cursor-pointer py-1 px-2">
-                      <input
-                        type="checkbox"
-                        checked={checkedTags.includes(tag)}
-                        onChange={() => handleTagCheck(tag, category.name)}
-                        className="form-checkbox h-4 w-4 text-custom-orange rounded border-gray-300 focus:ring-custom-orange focus:ring-offset-0 focus:ring-0 focus:outline-none"
-                      />
-                      <span className="text-sm peer-checked:text-orange-600 flex-grow">
-                        {tag}
-                      </span>
-                    </label>
-                    ))}
-                  </div>
+{/* 태그 카테고리 */}
+<div>
+  <h2 className="font-bold mb-2 px-40">태그</h2>
+  <div className="grid grid-cols-7 gap-6 px-40">
+    {tagCategories.map((category) => (
+      <div key={category.name} className="mb-2">
+        <div 
+          className={`btn btn-sm w-full justify-between ${
+            category.tags.some(tag => checkedTags.includes(tag))
+            ? 'text-orange-600 border-orange-600 hover:bg-white hover:text-orange-500 hover:border-orange-500 border-2' 
+            : 'bg-white text-gray-700 hover:text-orange-600 hover:border-orange-600 hover:bg-white'
+          }`}
+          onClick={() => toggleDropdown(category.name)}
+        >
+          <span className="font-normal">{category.name}</span>
+          <ChevronDown
+            className={`ml-1 h-4 w-4 transition-transform duration-200 ${
+              openDropdowns.includes(category.name) ? 'transform rotate-180' : ''
+            }`}
+          />
+        </div>
+        {openDropdowns.includes(category.name) && (
+          <div className="dropdown-content absolute z-[10] bg-base-100 rounded-box shadow mt-1">
+            <div className="grid grid-cols-3 gap-2 w-[400px]">
+              {category.tags.map((tag) => (
+                <label key={tag} className="flex items-center space-x-2 cursor-pointer py-1 px-2">
+                  <input
+                    type="checkbox"
+                    checked={checkedTags.includes(tag)}
+                    onChange={() => handleTagCheck(tag, category.name)}
+                    className="form-checkbox h-4 w-4 text-custom-orange rounded border-gray-300 focus:ring-custom-orange focus:ring-offset-0 focus:ring-0 focus:outline-none"
+                  />
+                  <span className="text-sm peer-checked:text-orange-600 flex-grow">
+                    {tag}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+</div>
+            {/* 검색 결과 및 필터 표시 */}
+            <div className="w-full px-40">
+              <div className="flex justify-between items-center mb-4">
+                <span className="font-bold">
+                  {loading ? "검색 중..." : `총 ${filteredAnimes.length}개`}
+                </span>
+              </div>
+
+              {/* 필터 태그 및 초기화 버튼 */}
+              {(selectedFilters.length > 0 || checkedTags.length > 0) && (
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {/* 선택된 필터 태그 */}
+                  {selectedFilters.map((filter) => (
+                    <span
+                      key={filter}
+                      className="bg-orange-100 text-orange-800 text-sm px-2 py-1 rounded-full"
+                    >
+                      {filter}
+                      <button
+                        className="ml-1 text-orange-600 hover:text-orange-800"
+                        onClick={() => handleFilterClick(filter)}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                  
+                  {/* 선택된 태그 */}
+                  {checkedTags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="bg-orange-100 text-orange-800 text-sm py-1 rounded-full px-2"
+                    >
+                      {tag}
+                      <button
+                        className="ml-1 text-orange-600 hover:text-orange-800"
+                        onClick={() => handleTagCheck(tag, "")}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                  
+                  {/* 초기화 버튼 */}
+                  <div className="flex-grow"></div>
+                  <button
+                    className="text-sm text-orange-600 hover:text-orange-800 self-start"
+                    onClick={() => {
+                      setSelectedFilters([]);
+                      setCheckedTags([]);
+                    }}
+                  >
+                    초기화
+                  </button>
                 </div>
               )}
             </div>
-          </div>
-        ))}
-      </div>
-    
-      {searchPerformed && (
-        <div className="w-full">
-          <div className="flex justify-between items-center mb-4">
-            <span className="font-bold">
-              {loading ? "검색 중..." : `총 ${filteredAnimes.length}개`}
-            </span>
           
-            {selectedFilters.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {selectedFilters.map((filter) => (
-                  <span key={filter} className="bg-orange-100 text-orange-800 text-sm px-2 py-1 rounded-full">
-                    {filter}
-                    <button
-                      className="ml-1 text-orange-600 hover:text-orange-800"
-                      onClick={() => handleFilterClick(filter)}
-                    >
-                      ×
-                    </button>
-                  </span>
-                ))}
-                <button
-                  className="text-sm text-orange-600 hover:text-orange-800"
-                  onClick={() => setSelectedFilters([])}
-                >
-                  초기화
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
-      <div className="flex-grow flex flex-wrap gap-4">
-        {error && (
-          <div className="text-red-500 text-center mt-4 w-full">
-            {error}
-          </div>
-        )}
+            {/* 검색 결과 표시 */}
+            <div className="flex-grow flex flex-wrap gap-4">
+              {error && (
+                <div className="text-red-500 text-center mt-4 w-full">
+                  {error}
+                </div>
+              )}
 
-        {loading ? (
-          <div className="text-center mt-8 w-full">검색 중...</div>
-        ) : (
-          filteredAnimes.map((anime, index) => (
-            <div
-              key={anime.anime_id}
-              className="flex-shrink-0 w-[265px]"
-            >
-              <AnimeCard
-                {...anime}
-                index={index}
-                onRatingClick={() => setIsModalOpen(true)}
-                isModalOpen={isModalOpen}
-              />
-            </div>
+              {loading ? (
+                <div className="text-center mt-8 w-full">검색 중...</div>
+              ) : (
+                filteredAnimes.map((anime, index) => (
+                  <div
+                    key={anime.anime_id}
+                    className="flex-shrink-0 w-[265px]"
+                  >
+                    <AnimeCard
+                      {...anime}
+                      index={index}
+                      onRatingClick={() => setIsModalOpen(true)}
+                      isModalOpen={isModalOpen}
+                    />
+                  </div>
                 ))
               )}
             </div>
           </div>
-        </div>
+        ) : (
+          // 검색 전 랜덤 애니메이션 카드 표시
+          <div className="w-full mt-8">
+            <h2 className="font-bold mb-4 text-xl">추천 애니메이션</h2>
+            <div className="flex flex-wrap gap-4">
+              {randomAnimes.map((anime, index) => (
+                <div
+                  key={anime.anime_id}
+                  className="flex-shrink-0 w-[265px]"
+                >
+                  <AnimeCard
+                    {...anime}
+                    index={index}
+                    onRatingClick={() => setIsModalOpen(true)}
+                    isModalOpen={isModalOpen}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

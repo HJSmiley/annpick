@@ -110,7 +110,12 @@ const App: React.FC = () => {
                 <Route path="/anime-search" element={<AnimeSearch />} />
                 <Route path="/anime/:id" element={<AnimeDetail />} />
                 <Route path="/evaluation" element={<EvaluationPage />} />
-                <Route path="*" element={<NotFound />} />
+                {/* /not-found 경로로 리다이렉트 */}
+                <Route
+                  path="*"
+                  element={<Navigate to="/not-found" replace />}
+                />
+                <Route path="/not-found" element={<NotFound />} />
               </Routes>
             </Suspense>
           </Layout>

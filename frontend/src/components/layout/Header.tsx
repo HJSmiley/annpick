@@ -12,12 +12,6 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
   const { state } = useAuth();
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isFixedHeader, setIsFixedHeader] = useState(false);
-  const isPolicyPage = [
-    "/terms-of-service",
-    "/privacy-policy",
-    "/marketing-agreement",
-  ].includes(location.pathname);
-  const isNotFound = location.pathname !== "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,6 +32,10 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
       "/evaluation",
       "/my-ratings",
       "/my-picks",
+      "/terms-of-service",
+      "/privacy-policy",
+      "/marketing-agreement",
+      "/not-found",
     ];
     setIsFixedHeader(fixedHeaderRoutes.includes(location.pathname));
   }, [location]);
@@ -45,8 +43,6 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
   const isActive = (path: string) => location.pathname === path;
 
   const getTextColor = (isActiveLink: boolean) => {
-    if (isNotFound) return "rgb(0, 0, 0)";
-    if (isPolicyPage) return "rgb(0, 0, 0)";
     if (isActiveLink) return "rgb(249, 115, 22)"; // 오렌지색
     if (isFixedHeader) return "rgb(107, 114, 128)"; // 회색 (Tailwind의 gray-500)
     const colorValue = Math.round(255 - scrollProgress * 255);
@@ -54,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
   };
 
   const getLogoImage = () => {
-    if (isFixedHeader || isPolicyPage || isNotFound || scrollProgress >= 0.5) {
+    if (isFixedHeader || scrollProgress >= 0.5) {
       return "/images/logo_annpick_dk.svg";
     } else {
       return "/images/logo_annpick_white.svg";

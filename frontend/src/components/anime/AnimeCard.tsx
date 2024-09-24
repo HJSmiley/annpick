@@ -279,7 +279,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
               </div>
               {/* 태그 표시 */}
               <div className="text-[13px] mb-[5px] pl-[10px] flex flex-wrap">
-                {tags.slice(0, 3).map((tag, index) => (
+                {tags.slice(0, 4).map((tag, index) => (
                   <span
                     key={index}
                     className="bg-gray-400 bg-opacity-60 px-2 py-1 rounded-[8px] text-m mr-2 mb-2 whitespace-nowrap"

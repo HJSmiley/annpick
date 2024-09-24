@@ -395,9 +395,10 @@ const getRecommendedAnimeSections = async (req, res) => {
       const {
         genre_id,
         tag_id,
-        preference_score,
         Genre: genre,
         Tag: tag,
+        preference_score,
+        preference_rank,
       } = preference;
 
       // RecommendationCluster에서 해당 장르+태그의 애니메이션 ID 가져오기
@@ -422,6 +423,7 @@ const getRecommendedAnimeSections = async (req, res) => {
         sections.push({
           title: recommendationPhrase,
           preference_score,
+          preference_rank,
           ids: animeIds, // 평가한 애니메이션 제외된 ID 배열 반환
         });
       }

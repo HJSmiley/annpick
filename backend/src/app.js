@@ -23,9 +23,9 @@ const {
 
 const app = express();
 
-// Sequelize 데이터베이스 동기화
 sequelize
   .sync({ force: false })
+  // .sync({ alter: true })
   .then(() => {
     console.log("All models were synchronized successfully.");
   })
@@ -35,9 +35,9 @@ sequelize
 
 // 미들웨어 설정
 const allowedOrigins = [
-  process.env.FRONTEND_URL, // 배포된 프론트엔드 URL
-  "http://localhost:3000", // 개발 환경 URL
-  "http://127.0.0.1:3000", // 로컬 개발 환경 URL
+  process.env.FRONTEND_URL,
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
 ];
 
 app.use(
@@ -65,9 +65,6 @@ app.use(passport.initialize());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // 라우트 설정
-app.get("/", (req, res) => {
-  res.send("Hello");
-});
 app.use("/api/v1", authRoutes);
 app.use("/api/v1/anime", animeRoutes);
 app.use("/api/v1", recommendRoutes);

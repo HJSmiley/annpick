@@ -12,19 +12,19 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 async function getRecommendations(userId) {
-  // 1. 선호작 생성
+  // 1. 선호작을 생성합니다.
   const preferredAnimes = await generateRecommendations(userId);
 
-  // 선호작이 없을 경우 빈 배열 반환 및 UserClusterPreference 생성 방지
+  // 1-1. 선호작이 없을 경우 빈 배열 반환 및 UserClusterPreference 생성을 방지합니다.
   if (!preferredAnimes || preferredAnimes.length === 0) {
     return [];
   }
 
-  // 2. 장르와 태그 빈도 계산
+  // 2. 장르와 태그 빈도를 계산합니다.
   const { genreFrequencies, tagFrequencies } =
     await calculateGenreTagFrequencies(preferredAnimes);
 
-  // 3. 빈도수가 없을 경우 저장하지 않도록 추가 검사
+  // 2-1. 빈도수가 없을 경우 저장하지 않도록 추가로 검사합니다.
   if (
     Object.keys(genreFrequencies).length === 0 ||
     Object.keys(tagFrequencies).length === 0
@@ -32,10 +32,10 @@ async function getRecommendations(userId) {
     return [];
   }
 
-  // 4. UserClusterPreference에 저장
+  // 3. UserClusterPreference에 저장합니다.
   await saveUserClusterPreferences(userId, genreFrequencies, tagFrequencies);
 
-  // 5. 추천 애니메이션 가져오기
+  // 4. 추천 애니메이션을 가져옵니다.
   const recommendedAnimes = await fetchRecommendedAnimes(userId);
 
   return recommendedAnimes;
@@ -75,10 +75,10 @@ async function generateRecommendations(userId) {
   // 3. 상위 20%의 인덱스를 계산합니다.
   const top20PercentIndex = Math.ceil(userRatings.length * 0.2);
 
-  // 최소 한 개의 작품은 선호작으로 포함되도록 조정
+  // 4. 최소 한 개의 작품은 선호작으로 포함되도록 조정합니다.
   const adjustedTopIndex = Math.max(top20PercentIndex, 1);
 
-  // 4. 상위 20% 작품을 선호작으로 선택합니다.
+  // 5. 상위 20% 작품을 선호작으로 선택합니다.
   const preferredAnimes = sortedRatings.slice(0, adjustedTopIndex);
 
   return preferredAnimes;
@@ -93,7 +93,7 @@ async function calculateGenreTagFrequencies(preferredAnimes) {
 
     if (!anime) continue;
 
-    // 장르 빈도수 계산
+    // 1. 장르 빈도수 계산
     if (anime.Genres && Array.isArray(anime.Genres)) {
       for (const genre of anime.Genres) {
         const genreId = genre.genre_id;
@@ -101,14 +101,14 @@ async function calculateGenreTagFrequencies(preferredAnimes) {
       }
     }
 
-    // 태그 빈도수 계산
+    // 2. 태그 빈도수 계산
     if (anime.Tags && Array.isArray(anime.Tags)) {
       for (const tag of anime.Tags) {
-        // AniTag 모델을 통해 tag_score 접근
+        // 2-1. AniTag 모델을 통해 tag_score 접근
         const tagId = tag.tag_id;
         const tagScore = tag.AniTag.tag_score;
 
-        // tag_score가 70 이상인 태그만 포함
+        // 2-2. tag_score가 70 이상인 태그만 포함
         if (tagScore >= 70) {
           tagFrequencies[tagId] = (tagFrequencies[tagId] || 0) + 1;
         }
@@ -124,20 +124,20 @@ async function saveUserClusterPreferences(
   genreFrequencies,
   tagFrequencies
 ) {
-  // 장르와 태그의 최대 빈도수 계산
+  // 1. 장르와 태그의 최대 빈도수 계산
   const maxGenreFrequency = Math.max(...Object.values(genreFrequencies));
   const maxTagFrequency = Math.max(...Object.values(tagFrequencies));
 
   const userPreferences = [];
 
-  // 모든 장르와 태그 조합 생성
+  // 2. 모든 장르와 태그 조합 생성
   for (const genreId in genreFrequencies) {
     for (const tagId in tagFrequencies) {
-      // 장르와 태그의 정규화된 점수 계산
+      // 2-1. 장르와 태그의 정규화된 점수 계산
       const genreScore = genreFrequencies[genreId] / maxGenreFrequency;
       const tagScore = tagFrequencies[tagId] / maxTagFrequency;
 
-      // 두 점수를 더해 백분율로 환산
+      // 2-2. 두 점수를 더해 백분율로 환산
       const preferenceScore = ((genreScore + tagScore) / 2) * 100;
 
       userPreferences.push({
@@ -149,54 +149,26 @@ async function saveUserClusterPreferences(
     }
   }
 
-  // preference_score를 기준으로 내림차순 정렬
+  // 3. preference_score를 기준으로 내림차순 정렬
   userPreferences.sort((a, b) => b.preference_score - a.preference_score);
 
-  // 기존 데이터 삭제 후 새로운 데이터 삽입
+  // 4. 상위 33%, 중위 34%, 하위 33%로 분류
+  const top33PercentIndex = Math.ceil(userPreferences.length * 0.33);
+  const bottom33PercentIndex = Math.floor(userPreferences.length * 0.67);
+
+  userPreferences.forEach((preference, index) => {
+    if (index < top33PercentIndex) {
+      preference.preference_rank = "상";
+    } else if (index >= bottom33PercentIndex) {
+      preference.preference_rank = "하";
+    } else {
+      preference.preference_rank = "중";
+    }
+  });
+
+  // 5. 기존 데이터 삭제 후 새로운 데이터 삽입
   await UserClusterPreference.destroy({ where: { user_id: userId } });
   await UserClusterPreference.bulkCreate(userPreferences);
-}
-
-async function populateRecommendationClusters() {
-  // 모든 장르와 태그 조합 가져오기
-  const genres = await Genre.findAll();
-  const tags = await Tag.findAll();
-
-  for (const genre of genres) {
-    for (const tag of tags) {
-      // 해당 장르와 태그를 가진 애니메이션 찾기
-      const animes = await Anime.findAll({
-        include: [
-          {
-            model: Genre,
-            where: { genre_id: genre.genre_id },
-            through: { attributes: [] },
-          },
-          {
-            model: Tag,
-            where: { tag_id: tag.tag_id },
-            through: {
-              attributes: [],
-              where: { tag_score: { [Op.gte]: 70 } },
-            },
-          },
-        ],
-      });
-
-      // 추천 문구 생성 (일단 장르+태그 문자열 조합으로 설정)
-      const recommendationPhrase = `${genre.genre_name} + ${tag.tag_name}`;
-
-      // RecommendationCluster 테이블에 저장
-      for (const anime of animes) {
-        await RecommendationCluster.create({
-          anime_id: anime.anime_id,
-          genre_id: genre.genre_id,
-          tag_id: tag.tag_id,
-          recommendation_phrase: recommendationPhrase,
-        });
-      }
-    }
-  }
 }
 
 async function fetchRecommendedAnimes(userId) {
@@ -244,8 +216,4 @@ async function fetchRecommendedAnimes(userId) {
   return animes;
 }
 
-module.exports = {
-  getRecommendations,
-  generateRecommendations,
-  calculateGenreTagFrequencies,
-};
+module.exports = { getRecommendations };

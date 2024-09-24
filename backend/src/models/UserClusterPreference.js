@@ -19,12 +19,10 @@ const UserClusterPreference = sequelize.define(
       allowNull: false,
     },
     genre_id: {
-      // 기존의 genre -> genre_id로 수정
       type: DataTypes.INTEGER,
       allowNull: false,
     },
     tag_id: {
-      // 기존의 tag -> tag_id로 수정
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -32,6 +30,10 @@ const UserClusterPreference = sequelize.define(
       type: DataTypes.FLOAT,
       comment:
         "사용자가 특정 군집에 대해 얼마나 선호하는지를 정량적으로 나타내는 점수",
+    },
+    preference_rank: {
+      type: DataTypes.CHAR(1),
+      comment: "preference_score를 상/중/하로 분류",
     },
   },
   {

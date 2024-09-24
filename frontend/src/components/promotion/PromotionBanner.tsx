@@ -33,11 +33,6 @@ const PromotionBanner: React.FC = () => {
       link: "/anime/2915",
       title: "프로모션 4",
     },
-    {
-      imageUrl: "/images/지브리16.jpg",
-      link: "https://laftel.net/search?keyword=%ED%86%A0%ED%86%A0%EB%A1%9C&modal=14943",
-      title: "프로모션 5",
-    },
   ];
 
   // 다음 슬라이드로 이동하는 함수

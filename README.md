@@ -32,7 +32,9 @@
 
 ## 프로젝트 구조
 
-### 전체 아키텍처
+### 아키텍처
+
+![architecture](./docs/architecture.png)
 
 ### ERD
 
@@ -207,38 +209,56 @@ backend
 <details>
 <summary>Front-end</summary>
 
+- 프레임워크 및 라이브러리
+  - `React` : 프론트엔드 UI 라이브러리
+  - `React Router DOM` : 클라이언트 사이드 라우팅
+  - `Axios` : HTTP 요청 처리
+  - `Framer Motion` : 애니메이션 라이브러리
+  - `React Icons` : 아이콘 컴포넌트
+  - `React Markdown` : 마크다운 렌더링
+  - `JWT Decode` : JWT 토큰 디코딩
+
+* 스타일링
+  - `Tailwind CSS` : 유틸리티 기반의 CSS 프레임워크
+  - `DaisyUI` : Tailwind와 함께 사용하는 UI 컴포넌트 라이브러리
+  - `@tailwindcss/forms` : Tailwind의 form 스타일링 확장
+  - `@tailwindcss/typography` : 타이포그래피 확장(Markdown 등)
+* 빌드 및 개발 도구
+  - `npm` : 패키지 관리 도구로, 의존성 설치 및 스크립트 실행을 관리
+  - `TypeScript` : 타입스크립트 사용
+
 </details>
 <br>
 <details>
 <summary>Back-end</summary>
 
 - 서버 프레임워크
-  - `Express`: 백엔드 애플리케이션의 주요 서버 프레임워크
+  - `Express` : 백엔드 애플리케이션의 주요 서버 프레임워크
 - 인증 및 세션 관리
-  - `passport`: 인증 미들웨어
-  - `passport-jwt`: JWT 토큰 인증 처리
-  - `passport-naver`: 네이버 인증 지원
-  - `jsonwebtoken`: JWT 토큰 생성 및 검증
-  - `express-session`: 세션 관리
+  - `passport` : 인증 미들웨어
+  - `passport-naver` : 네이버 인증 지원
+  - `passport-jwt` : JWT 토큰 인증 처리
+  - `jsonwebtoken` : JWT 토큰 생성 및 검증
+  - `express-session` : 세션 관리
 - 데이터베이스 및 ORM
-  - `MySQL`: 데이터베이스로 사용
-  - `sequelize`: MySQL과의 상호작용을 위한 ORM (Object-Relational Mapping)
-  - `sequelize-cli`: Sequelize 데이터 마이그레이션 도구
+  - `MySQL` : 데이터베이스로 사용
+  - `sequelize` : MySQL과의 상호작용을 위한 ORM (Object-Relational Mapping)
+  - `sequelize-cli` : Sequelize 데이터 마이그레이션 도구
 - 파일 업로드 및 파싱
-  - `multer`: 파일 업로드 처리 미들웨어
-  - `body-parser`: 요청 본문 파싱
-  - `cookie-parser`: 쿠키 파싱
+  - `multer` : 파일 업로드 처리 미들웨어
+  - `body-parser` : 요청 본문 파싱
+  - `cookie-parser` : 쿠키 파싱
 - 검색 엔진
-  - `meilisearch`: 검색 기능 구현
+  - `meilisearch` : 검색 기능 구현
 - API 문서화
-  - `swagger-jsdoc`: Swagger 문서 생성
-  - `swagger-ui-express`: Swagger UI를 Express에서 제공
+  - `swagger-jsdoc` : Swagger 문서 생성
+  - `swagger-ui-express` : Swagger UI를 Express에서 제공
 - 환경 변수 관리
-  - `dotenv`: 환경 변수 관리
+  - `dotenv` : 환경 변수 관리
 - 클라우드 서비스
-  - `aws-sdk`: AWS 서비스와 상호작용
+  - `aws-sdk` : AWS 서비스와 상호작용
 - HTTP 요청 처리
-  - `axios`: HTTP 클라이언트 라이브러리
+  - `axios` : HTTP 클라이언트 라이브러리
 
 </details>
 
@@ -321,7 +341,7 @@ npm run build
 
 [Swagger API](http://43.203.213.200/api-docs/)
 
-[Notion](https://www.notion.so/adapterz/3-8675874bc9ea4b4bb8e6964eda02a429?pvs=4)
+[팀 노션](https://www.notion.so/adapterz/3-8675874bc9ea4b4bb8e6964eda02a429?pvs=4)
 
 ## 개발 규칙
 

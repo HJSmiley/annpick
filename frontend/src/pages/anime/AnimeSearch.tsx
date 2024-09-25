@@ -19,6 +19,7 @@ interface AnimeData {
 
 const SearchGrid: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [isFocused, setIsFocused] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
@@ -220,12 +221,15 @@ const SearchGrid: React.FC = () => {
       handleSearchSubmit();
     }
   };
+  const animeIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   const fetchRandomAnimes = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/random?limit=10`,
+        `${
+          process.env.REACT_APP_BACKEND_URL
+        }/api/v1/anime/public/cards/?ids=${animeIds.join(",")}`,
         {
           method: "GET",
           headers: {
@@ -276,6 +280,11 @@ const SearchGrid: React.FC = () => {
 
   const handleInputFocus = () => {
     setShowRecentSearches(true);
+    setIsFocused(true);
+  };
+
+  const handleInputBlur = () => {
+    setIsFocused(false);
   };
 
   const handleFilterClick = (filter: string) => {
@@ -307,16 +316,21 @@ const SearchGrid: React.FC = () => {
     <div className="min-h-screen flex flex-col items-center mb-10">
       <div className="flex-grow w-full max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 sm:pt-30 md:pt-40">
         <div className="w-full flex flex-col gap-4 items-center">
-          <div className="max-w-md w-full relative" style={{ height: "40px" }}>
+          <div className="max-w-md w-full relative" style={{ height: "50px" }}>
             <div className="relative">
               <input
                 type="text"
-                className="w-full pl-10 pr-4 py-2 rounded-full border border-[#F7f7f7] focus:outline-none focus:ring-2 focus:ring-[#F35815] focus:border-transparent bg-[#F7f7f7] text-gray-700 placeholder-gray-400 caret-[#3c3b3b]"
+                className="w-full pl-10 pr-4 py-2 rounded-full border border-[#F7f7f7] focus:outline-none focus:ring-2 focus:ring-[#F35815] focus:border-transparent bg-[#F7f7f7] text-gray-700 placeholder-gray-400 ${
+            isFocused ? 'caret-[#3c3b3b]': 'caret-transparent'"
+                style={{
+                  caretColor: isFocused ? "#3c3b3b" : "transparent",
+                }}
                 placeholder="원하는 애니를 검색해보세요"
                 value={searchTerm}
                 onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
                 onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
               />
               <div className="absolute inset-y-0 left-3 flex items-center">
                 <svg
@@ -378,7 +392,7 @@ const SearchGrid: React.FC = () => {
             {/* 태그 카테고리 */}
             <div ref={dropdownRef}>
               <h2 className="font-bold mb-2">태그</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-2 sm:gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 gap-2 sm:gap-4">
                 {tagCategories.map((category) => (
                   <div key={category.name} className="mb-2">
                     <div
@@ -516,21 +530,12 @@ const SearchGrid: React.FC = () => {
           <div className="w-full mt-8">
             <h2 className="font-bold mb-4 text-xl">추천 애니메이션</h2>
             <div className="flex flex-wrap gap-4 justify-center">
-              {randomAnimes.map((anime, index) => (
+              {randomAnimes.map((anime) => (
                 <div
                   key={anime.anime_id}
                   className="flex-shrink-0 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5"
                 >
-                  <AnimeCard
-                    {...anime}
-                    index={index}
-                    onRatingClick={() => {
-                      /* 로그인 모달 열기 로직 */
-                    }}
-                    onPickStatusChange={(animeId, isPicked) => {
-                      /* Pick 상태 변경 로직 */
-                    }}
-                  />
+                  <AnimeCard index={0} {...anime} />
                 </div>
               ))}
             </div>

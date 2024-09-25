@@ -281,65 +281,15 @@ backend
 - 스토리지 및 CDN : AWS S3, CloudFront
 ```
 
-## 설치 및 실행
-
-### 1. 패키지 설치
-
-#### 백엔드 설치
-
-> 백엔드 루트 디렉토리에서 아래 명령어를 실행
-
-```
-npm install
-```
-
-#### 프론트엔드 설치
-
-> 프론트엔드 프로젝트 루트 디렉토리에서 다음 명령어를 실행하여 TypeScript 기반의 React 프로젝트를 초기화
-
-```
-npx create-react-app . --template typescript
-```
-
-> 이후 필요한 패키지를 설치하기 위해 다음 명령어를 실행
-
-```
-npm install
-```
-
-### 2. 실행
-
-#### 백엔드 실행
-
-> 백엔드 서버를 실행하기 위해 루트 디렉토리에서 다음 명령어를 실행
-
-```
-npm start
-```
-
-#### 프론트엔드 실행
-
-> 프론트엔드 서버를 실행하기 위해 해당 디렉토리에서 다음 명령어를 실행
-
-```
-npm start
-```
-
-### 3. 빌드(프론트엔드)
-
-> 프로덕션 환경에서 사용할 빌드 파일을 생성하려면 프론트엔드 디렉토리에서 다음 명령어를 실행
-
-```
-npm run build
-```
-
 ## 개발 문서
+
+[설치 및 실행](/docs/installation.md)
 
 [WBS](https://docs.google.com/spreadsheets/d/10T6W1k2AkRwmw0QwMH2H5F0rfvRBhQ6vu44VWWv_7-U/edit?usp=sharing)
 
 [테이블 정의서](https://docs.google.com/spreadsheets/d/1abxsR-jKPNRI4qfe9dXE0NrXWX4AAo1sC5M0-JlBaVM/edit?gid=629411476#gid=629411476)
 
-[Swagger API](http://43.203.213.200/api-docs/)
+[API 명세서](http://43.203.213.200/api-docs/)
 
 [팀 노션](https://www.notion.so/adapterz/3-8675874bc9ea4b4bb8e6964eda02a429?pvs=4)
 

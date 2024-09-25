@@ -253,7 +253,7 @@ const SearchGrid: React.FC = () => {
     <div className="min-h-screen flex flex-col items-center mb-10">
      <div className="flex-grow w-full max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 sm:pt-30 md:pt-40">
         <div className="w-full flex flex-col gap-4 items-center">
-          <div className="max-w-md w-full relative" style={{ height: '40px' }}>
+          <div className="max-w-md w-full relative" style={{ height: '50px' }}>
             <div className="relative">
               <input
                 type="text"
@@ -325,7 +325,7 @@ const SearchGrid: React.FC = () => {
 {/* 태그 카테고리 */}
 <div ref={dropdownRef}>
               <h2 className="font-bold mb-2">태그</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-2 sm:gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 gap-2 sm:gap-4">
                 {tagCategories.map((category) => (
                   <div key={category.name} className="mb-2">
                     <div 

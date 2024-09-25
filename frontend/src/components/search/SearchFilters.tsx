@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { genres, tags } from "../../services/constants";
+import { genres, tags } from "../../configs/constants";
 
 interface SearchFiltersProps {
   activeFilter: string;

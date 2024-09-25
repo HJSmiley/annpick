@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
-import LoginModal from "../components/auth/LoginModal";
+import LoginModal from "../../components/auth/LoginModal";
 
 interface Staff {
   name: string;

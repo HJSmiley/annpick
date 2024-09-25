@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useAuth } from "../contexts/AuthContext";
-import AnimeList from "../components/anime/AnimeList";
-import { AnimeData } from "../types/anime";
-import LoginModal from "../components/auth/LoginModal";
+import { useAuth } from "../../contexts/AuthContext";
+import AnimeList from "../../components/anime/AnimeList";
+import { AnimeData } from "../../types/anime";
+import LoginModal from "../../components/auth/LoginModal";
 
 interface PickData {
   anime_id: number;

@@ -4,7 +4,7 @@ import axios from "axios";
 import PromotionBanner from "../components/promotion/PromotionBanner";
 import AnimeList from "../components/anime/AnimeList";
 import { AnimeData } from "../types/anime";
-import { getAnimeSections } from "../services/sections";
+import { getAnimeSections } from "../configs/sections";
 import { useAuth } from "../contexts/AuthContext";
 import LoginModal from "../components/auth/LoginModal";
 

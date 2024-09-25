@@ -7,9 +7,7 @@ const Footer = () => {
     // footer 전체 컨테이너
     // 모바일에서는 높이 자동 조정, 태블릿 이상에서는 280px 고정
     <footer className="bg-gray-100 h-auto md:h-[280px] pt-8 md:pt-[60px] relative">
-      {/* 내용을 감싸는 컨테이너 */}
       <div className="container mx-auto px-8">
-        {/* 로고, 회사 정보, 메뉴를 포함하는 flex 컨테이너 */}
         <div className="flex flex-col md:flex-row justify-between">
           {/* 로고 및 회사 정보 섹션 */}
           <div className="w-full md:w-1/3 pl-0 md:pl-12 mb-8 md:mb-0">
@@ -98,7 +96,6 @@ const Footer = () => {
         </div>
       </div>
       {/* 저작권 정보 */}
-      {/* 모바일에서도 보이도록 수정: position 제거, 하단 패딩 추가 */}
       <div className="mt-8 md:mt-0 md:absolute md:bottom-4 left-0 right-0 text-center pb-4 md:pb-0">
         <p className="text-sm text-gray-500">
           © {currentYear} 앤픽. All rights reserved.

@@ -1,6 +1,4 @@
-// src/components/common/LoadingSpinner.tsx
-
-import React from 'react';
+import React from "react";
 
 const LoadingSpinner: React.FC = () => {
   return (

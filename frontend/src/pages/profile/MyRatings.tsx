@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { useAuth } from "../contexts/AuthContext";
-import AnimeList from "../components/anime/AnimeList";
-import AnimeCard from "../components/anime/AnimeCard";
-import { AnimeData } from "../types/anime";
-import LoginModal from "../components/auth/LoginModal";
+import { useAuth } from "../../contexts/AuthContext";
+import AnimeList from "../../components/anime/AnimeList";
+import AnimeCard from "../../components/anime/AnimeCard";
+import { AnimeData } from "../../types/anime";
+import LoginModal from "../../components/auth/LoginModal";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface RatingData {

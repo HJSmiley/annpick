@@ -24,7 +24,7 @@ body {
 }
 
 .checkbox:checked {
-  background-color: #f97316; /* 주황색 (Tailwind의 orange-500에 해당) */
+  background-color: #f97316;
   border-color: #f97316;
 }
 

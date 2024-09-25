@@ -30,7 +30,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
       const redirectTo = location.state?.from?.pathname || location.pathname;
 
       setTimeout(() => {
-        navigate(redirectTo, { replace: true }); // replace 옵션 추가
+        navigate(redirectTo, { replace: true });
       }, 500);
     }
   }, [state.isAuthenticated, hasRedirected, navigate, location]);

@@ -7,15 +7,16 @@
 
 ### 1. 프로젝트 주제
 
-- 애니메이션 취향을 기반으로 추천해 주는 서비스
+- 애니메이션 취향을 분석하고 큐레이팅하는 서비스
 
 ### 2. 메인/서브 기능
 
 ```markdown
-1. Recommend MVP : 추천 기능
+1. Recommendation MVP : 취향 분석 및 추천 기능
 2. Information MVP : 애니메이션 정보 제공
-3. Search MVP: 키워드로 애니 검색
-4. User MVP: 로그인, 회원가입, 회원정보 수정, 회원 탈퇴
+3. Search MVP : 제목, 장르, 태그로 애니 검색
+4. Rating MVP : 평점 저장 및 북마크(픽하기) 기능
+5. User MVP : 로그인, 회원가입, 회원정보 수정, 회원 탈퇴
 ```
 
 ### 3. 프로젝트 팀원
@@ -29,12 +30,298 @@
 
 ---
 
-## 프로젝트 진행 규칙
+## 프로젝트 구조
 
-### 1. 데일리 스크럼
+### 전체 아키텍처
 
-- **open**: 10시 30분 - 스프린트 후 각자 할 일 notion에 적기
-- **close**: 4시 30분 - 작업 진행도, 이유 보고
+### ERD
+
+![ERD](./docs/erd.png)
+
+### 디렉토리 구조
+
+<details>
+<summary>Front-end</summary>
+
+```
+frontend
+ ┣ node_modules
+ ┣ public
+ ┃ ┣ images
+ ┃ ┣ favicon.ico
+ ┃ ┗ index.html
+ ┣ src
+ ┃ ┣ assets
+ ┃ ┃ ┣ font
+ ┃ ┃ ┗ icons
+ ┃ ┣ components
+ ┃ ┃ ┣ anime
+ ┃ ┃ ┃ ┣ AnimeCard.tsx
+ ┃ ┃ ┃ ┗ AnimeList.tsx
+ ┃ ┃ ┣ auth
+ ┃ ┃ ┃ ┗ LoginModal.tsx
+ ┃ ┃ ┣ common
+ ┃ ┃ ┃ ┣ LoadingSpinner.css
+ ┃ ┃ ┃ ┣ LoadingSpinner.tsx
+ ┃ ┃ ┃ ┗ SwipeButton.tsx
+ ┃ ┃ ┣ error
+ ┃ ┃ ┃ ┗ ErrorBoundary.tsx
+ ┃ ┃ ┣ layout
+ ┃ ┃ ┃ ┣ Footer.tsx
+ ┃ ┃ ┃ ┗ Header.tsx
+ ┃ ┃ ┣ mypage
+ ┃ ┃ ┃ ┗ AvatarDropdown.tsx
+ ┃ ┃ ┣ promotion
+ ┃ ┃ ┃ ┗ PromotionBanner.tsx
+ ┃ ┃ ┣ review
+ ┃ ┃ ┃ ┗ .gitkeep
+ ┃ ┃ ┗ search
+ ┃ ┃ ┃ ┣ EvaluationSearchGrid.tsx
+ ┃ ┃ ┃ ┣ RecentSearches.tsx
+ ┃ ┃ ┃ ┣ SearchFilters.tsx
+ ┃ ┃ ┃ ┗ SearchSuggestions.tsx
+ ┃ ┣ config
+ ┃ ┃ ┣ constants.ts
+ ┃ ┃ ┣ react-app-env.d.ts
+ ┃ ┃ ┣ reportWebVitals.ts
+ ┃ ┃ ┣ sections.ts
+ ┃ ┃ ┣ setupTests.ts
+ ┃ ┃ ┗ TagCategories.ts
+ ┃ ┣ contexts
+ ┃ ┃ ┣ AnimeContext.tsx
+ ┃ ┃ ┗ AuthContext.tsx
+ ┃ ┣ pages
+ ┃ ┃ ┣ anime
+ ┃ ┃ ┃ ┣ AnimeDetail.tsx
+ ┃ ┃ ┃ ┗ AnimeSearch.tsx
+ ┃ ┃ ┣ profile
+ ┃ ┃ ┃ ┣ MyPicks.tsx
+ ┃ ┃ ┃ ┣ MyRatings.tsx
+ ┃ ┃ ┃ ┗ Profile.tsx
+ ┃ ┃ ┣ terms
+ ┃ ┃ ┃ ┣ MarketingAgreement.tsx
+ ┃ ┃ ┃ ┣ PrivacyPolicy.tsx
+ ┃ ┃ ┃ ┗ TermsOfService.tsx
+ ┃ ┃ ┣ EvaluationPage.tsx
+ ┃ ┃ ┣ Home.tsx
+ ┃ ┃ ┗ NotFound.tsx
+ ┃ ┣ service
+ ┃ ┃ ┣ SearchHooks.ts
+ ┃ ┃ ┣ SearchUtils.ts
+ ┃ ┃ ┗ useHover.ts
+ ┃ ┣ styles
+ ┃ ┃ ┣ globals.css
+ ┃ ┃ ┗ tailwind.css
+ ┃ ┣ types
+ ┃ ┃ ┣ anime.ts
+ ┃ ┃ ┗ auth.ts
+ ┃ ┣ App.css
+ ┃ ┣ App.tsx
+ ┃ ┣ index.css
+ ┃ ┗ index.tsx
+ ┣ .env
+ ┣ package-lock.json
+ ┣ package.json
+ ┣ tailwind.config.js
+ ┗ tsconfig.json
+```
+
+</details>
+<br>
+<details>
+<summary>Back-end</summary>
+
+```
+backend
+ ┣ data
+ ┃ ┣ anime_data.json
+ ┃ ┗ meilisearch.service
+ ┣ scripts
+ ┃ ┣ deleteNonTVAnimes
+ ┃ ┣ populateRecommendationClusters.js
+ ┃ ┣ saveAnimeData.js
+ ┃ ┣ translateGenres.js
+ ┃ ┗ translateTags.js
+ ┣ src
+ ┃ ┣ config
+ ┃ ┃ ┣ appConfig.js
+ ┃ ┃ ┣ authConfig.js
+ ┃ ┃ ┣ config.js
+ ┃ ┃ ┣ dbConfig.js
+ ┃ ┃ ┣ meiliConfig.js
+ ┃ ┃ ┗ swaggerConfig.js
+ ┃ ┣ controllers
+ ┃ ┃ ┣ animeController.js
+ ┃ ┃ ┣ authController.js
+ ┃ ┃ ┣ pickController.js
+ ┃ ┃ ┣ recommendController.js
+ ┃ ┃ ┗ userController.js
+ ┃ ┣ middleware
+ ┃ ┃ ┣ authMiddleware.js
+ ┃ ┃ ┗ multer.js
+ ┃ ┣ models
+ ┃ ┃ ┣ AniGenre.js
+ ┃ ┃ ┣ AnilistAnime.js
+ ┃ ┃ ┣ Anime.js
+ ┃ ┃ ┣ AniStaff.js
+ ┃ ┃ ┣ AniTag.js
+ ┃ ┃ ┣ associations.js
+ ┃ ┃ ┣ Genre.js
+ ┃ ┃ ┣ index.js
+ ┃ ┃ ┣ RecommendationCluster.js
+ ┃ ┃ ┣ Review.js
+ ┃ ┃ ┣ Staff.js
+ ┃ ┃ ┣ Tag.js
+ ┃ ┃ ┣ User.js
+ ┃ ┃ ┣ UserClusterPreference.js
+ ┃ ┃ ┣ UserRatedAnime.js
+ ┃ ┃ ┗ WithdrawnUser.js
+ ┃ ┣ routes
+ ┃ ┃ ┣ animeRoutes.js
+ ┃ ┃ ┣ authRoutes.js
+ ┃ ┃ ┣ pickRoutes.js
+ ┃ ┃ ┣ recommendRoutes.js
+ ┃ ┃ ┗ userRoutes.js
+ ┃ ┣ services
+ ┃ ┃ ┣ animeService.js
+ ┃ ┃ ┣ authService.js
+ ┃ ┃ ┣ pickService.js
+ ┃ ┃ ┣ recommendService.js
+ ┃ ┃ ┗ s3Service.js
+ ┃ ┣ utils
+ ┃ ┃ ┣ animeFormatting.js
+ ┃ ┃ ┗ animeTranslate.js
+ ┃ ┣ app.js
+ ┃ ┗ server.js
+ ┣ .env
+ ┣ package-lock.json
+ ┗ package.json
+```
+
+</details>
+
+## 프로젝트 환경
+
+### 1. 기술 스택
+
+<details>
+<summary>Front-end</summary>
+
+</details>
+<br>
+<details>
+<summary>Back-end</summary>
+
+- 서버 프레임워크
+  - `Express`: 백엔드 애플리케이션의 주요 서버 프레임워크
+- 인증 및 세션 관리
+  - `passport`: 인증 미들웨어
+  - `passport-jwt`: JWT 토큰 인증 처리
+  - `passport-naver`: 네이버 인증 지원
+  - `jsonwebtoken`: JWT 토큰 생성 및 검증
+  - `express-session`: 세션 관리
+- 데이터베이스 및 ORM
+  - `MySQL`: 데이터베이스로 사용
+  - `sequelize`: MySQL과의 상호작용을 위한 ORM (Object-Relational Mapping)
+  - `sequelize-cli`: Sequelize 데이터 마이그레이션 도구
+- 파일 업로드 및 파싱
+  - `multer`: 파일 업로드 처리 미들웨어
+  - `body-parser`: 요청 본문 파싱
+  - `cookie-parser`: 쿠키 파싱
+- 검색 엔진
+  - `meilisearch`: 검색 기능 구현
+- API 문서화
+  - `swagger-jsdoc`: Swagger 문서 생성
+  - `swagger-ui-express`: Swagger UI를 Express에서 제공
+- 환경 변수 관리
+  - `dotenv`: 환경 변수 관리
+- 클라우드 서비스
+  - `aws-sdk`: AWS 서비스와 상호작용
+- HTTP 요청 처리
+  - `axios`: HTTP 클라이언트 라이브러리
+
+</details>
+
+### 2. 개발 환경
+
+```
+- Node.js : v20.17.0
+- npm : v10.8.2
+- git : v2.45.2
+- OS : Windows_NT x64
+- IDE : VSCode v1.90.2
+```
+
+### 3. 배포 환경
+
+```
+- 서버(WAS) : AWS EC2 (Express API 서버)
+- 검색 서버 : AWS EC2 (MeiliSearch)
+- 데이터베이스 : AWS RDS (MySQL)
+- 스토리지 및 CDN : AWS S3, CloudFront
+```
+
+## 설치 및 실행
+
+### 1. 패키지 설치
+
+#### 백엔드 설치
+
+> 백엔드 루트 디렉토리에서 아래 명령어를 실행
+
+```
+npm install
+```
+
+#### 프론트엔드 설치
+
+> 프론트엔드 프로젝트 루트 디렉토리에서 다음 명령어를 실행하여 TypeScript 기반의 React 프로젝트를 초기화
+
+```
+npx create-react-app . --template typescript
+```
+
+> 이후 필요한 패키지를 설치하기 위해 다음 명령어를 실행
+
+```
+npm install
+```
+
+### 2. 실행
+
+#### 백엔드 실행
+
+> 백엔드 서버를 실행하기 위해 루트 디렉토리에서 다음 명령어를 실행
+
+```
+npm start
+```
+
+#### 프론트엔드 실행
+
+> 프론트엔드 서버를 실행하기 위해 해당 디렉토리에서 다음 명령어를 실행
+
+```
+npm start
+```
+
+### 3. 빌드(프론트엔드)
+
+> 프로덕션 환경에서 사용할 빌드 파일을 생성하려면 프론트엔드 디렉토리에서 다음 명령어를 실행
+
+```
+npm run build
+```
+
+## 개발 문서
+
+[WBS](https://docs.google.com/spreadsheets/d/10T6W1k2AkRwmw0QwMH2H5F0rfvRBhQ6vu44VWWv_7-U/edit?usp=sharing)
+
+[테이블 정의서](https://docs.google.com/spreadsheets/d/1abxsR-jKPNRI4qfe9dXE0NrXWX4AAo1sC5M0-JlBaVM/edit?gid=629411476#gid=629411476)
+
+[Swagger API](http://43.203.213.200/api-docs/)
+
+[Notion](https://www.notion.so/adapterz/3-8675874bc9ea4b4bb8e6964eda02a429?pvs=4)
 
 ## 개발 규칙
 
@@ -45,11 +332,11 @@
 #### Front-end
 
 - 변수, 함수 camelCase 사용, Class는 PascalCase 사용
-- 상수는 Snack Case 활용해 대문자와 `_`를 사용
+- 문자열에선 기본적으로 `""`를 씀 (특수한 경우 제외)
 
 #### Back-end
 
-- 변수, 함수 Snack Case 사용, Class는 PascalCase 사용
+- 변수, 함수 camelCase 사용, Class는 PascalCase 사용
 - 파일 구조는 MVC 패턴 따름
 - 문자열에선 기본적으로 `""`를 씀 (특수한 경우 제외)
 
@@ -63,12 +350,16 @@
 
 <details>
 <summary>GitFlow 과정</summary>
-- master 브랜치에서 develop 브랜치를 분기합니다.<br />
-- 개발자들은 develop 브랜치에 자유롭게 커밋을 합니다.<br />
-- 기능 구현이 있는 경우 develop 브랜치에서 feature-* 브랜치를 분기합니다.<br />
-- 배포를 준비하기 위해 develop 브랜치에서 release-* 브랜치를 분기합니다.<br />
-- 테스트를 진행하면서 발생하는 버그 수정은 release-* 브랜치에 직접 반영합니다.<br />
+
+```
+- master 브랜치에서 develop 브랜치를 분기합니다.
+- 개발자들은 develop 브랜치에 자유롭게 커밋을 합니다.
+- 기능 구현이 있는 경우 develop 브랜치에서 feature-* 브랜치를 분기합니다.
+- 배포를 준비하기 위해 develop 브랜치에서 release-* 브랜치를 분기합니다.
+- 테스트를 진행하면서 발생하는 버그 수정은 release-* 브랜치에 직접 반영합니다.
 - 테스트가 완료되면 release 브랜치를 master와 develop에 merge합니다.
+```
+
 </details>
 
 ### 3. 커밋 메시지

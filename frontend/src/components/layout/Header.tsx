@@ -43,8 +43,8 @@ const Header: React.FC<HeaderProps> = ({ openLoginModal }) => {
   const isActive = (path: string) => location.pathname === path;
 
   const getTextColor = (isActiveLink: boolean) => {
-    if (isActiveLink) return "rgb(249, 115, 22)"; // 오렌지색
-    if (isFixedHeader) return "rgb(107, 114, 128)"; // 회색 (Tailwind의 gray-500)
+    if (isActiveLink) return "rgb(249, 115, 22)";
+    if (isFixedHeader) return "rgb(107, 114, 128)";
     const colorValue = Math.round(255 - scrollProgress * 255);
     return `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
   };

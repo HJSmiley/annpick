@@ -19,6 +19,7 @@ interface AnimeData {
 
 const SearchGrid: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [isFocused, setIsFocused] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
@@ -221,6 +222,11 @@ const SearchGrid: React.FC = () => {
   
   const handleInputFocus = () => {
     setShowRecentSearches(true);
+    setIsFocused(true);
+  };
+
+  const handleInputBlur = () => {
+    setIsFocused(false);
   };
 
   const handleFilterClick = (filter: string) => {
@@ -251,12 +257,18 @@ const SearchGrid: React.FC = () => {
             <div className="relative">
               <input
                 type="text"
-                className="w-full pl-10 pr-4 py-2 rounded-full border border-[#F7f7f7] focus:outline-none focus:ring-2 focus:ring-[#F35815] focus:border-transparent bg-[#F7f7f7] text-gray-700 placeholder-gray-400 caret-[#3c3b3b]"
+                className="w-full pl-10 pr-4 py-2 rounded-full border border-[#F7f7f7] focus:outline-none focus:ring-2 focus:ring-[#F35815] focus:border-transparent bg-[#F7f7f7] text-gray-700 placeholder-gray-400 ${
+            isFocused ? 'caret-[#3c3b3b]': 'caret-transparent'"
+            style={{
+              caretColor: isFocused ? '#3c3b3b' : 'transparent',
+            }}
+
                 placeholder="원하는 애니를 검색해보세요"
                 value={searchTerm}
                 onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
                 onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
               />
               <div className="absolute inset-y-0 left-3 flex items-center">
                 <svg

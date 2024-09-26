@@ -34,6 +34,13 @@ const SearchGrid: React.FC = () => {
   const recentSearchesRef = useRef<HTMLDivElement>(null);
   const [filteredAnimes, setFilteredAnimes] = useState<AnimeData[]>([]);
   const [randomAnimes, setRandomAnimes] = useState<AnimeData[]>([]);
+
+  const animeIds = [
+    10, 11, 569, 659, 1031, 1099, 1326, 1441, 1470, 1629, 1733, 1747, 1755,
+    1805, 1811, 1845, 1882, 1892, 1951, 1991, 2021, 2027, 2069, 2104, 2115,
+    2206, 2216, 2282, 2373, 2418, 2496, 2543, 2546, 2547, 2600, 2606, 2625,
+    2725, 2788, 2954,
+  ];
   const genres = [
     "액션",
     "모험",
@@ -221,7 +228,6 @@ const SearchGrid: React.FC = () => {
       handleSearchSubmit();
     }
   };
-  const animeIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   const fetchRandomAnimes = useCallback(async () => {
     try {

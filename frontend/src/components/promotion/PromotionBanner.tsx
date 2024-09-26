@@ -69,8 +69,7 @@ const PromotionBanner: React.FC = () => {
     setIsAutoSliding(false);
 
     // 링크로 이동
-    window.open(link, "_blank");
-
+    window.location.href = link;
     // 5초 후 자동 슬라이딩 재개
     setTimeout(() => setIsAutoSliding(true), 500);
   };

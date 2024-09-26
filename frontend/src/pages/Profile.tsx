@@ -1,6 +1,6 @@
 // src/pages/Profile.tsx
 import React, { useState, useRef, ReactNode } from "react";
-import { Camera} from "lucide-react";
+import { Camera } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 
@@ -19,7 +19,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
       <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
         <h3 className="text-xl font-bold mb-10 mt-5 px-5">{title}</h3>
         <div className="flex flex-col items-center justify-center min-h-[60px] text-xl">
-          {children} </div>
+          {children}{" "}
+        </div>
         <div className="flex justify-end mt-4">
           <button
             onClick={onClose}
@@ -255,8 +256,6 @@ const ProfileForm = () => {
         </button>
       </form>
 
-      
-
       {/* 탈퇴하기 버튼 */}
       <div className="w-full mt-8 flex justify-end">
         <button
@@ -316,13 +315,13 @@ const ProfileForm = () => {
                 </option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-700">
-                <svg
+                {/* <svg
                   className="fill-current h-6 w-6"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                 >
                   <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
+                </svg> */}
               </div>
             </div>
           </div>

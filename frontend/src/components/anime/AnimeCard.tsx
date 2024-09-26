@@ -314,11 +314,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
                   <div className="relative bottom-2 left-1 group">
                     {" "}
                     {/* Arrow 아이콘 위치 조정 */}
-                    <Link
-                      to={`/anime/${anime_id}`}
-                      className="text-white"
-                      target="_blank"
-                    >
+                    <Link to={`/anime/${anime_id}`} className="text-white">
                       <ArrowIcon className="w-13 h-13" />
                     </Link>
                     <span className="absolute bottom-full left-5 -translate-y-1 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">

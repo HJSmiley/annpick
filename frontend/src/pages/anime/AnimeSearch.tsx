@@ -7,6 +7,7 @@ import RecentSearches from "../../components/search/RecentSearches";
 import { tagCategories } from "../../configs/TagCategories";
 import { ChevronDown, ArrowUpCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import LoginModal from "../../components/auth/LoginModal";
 
 interface AnimeData {
   anime_id: number;
@@ -16,6 +17,12 @@ interface AnimeData {
   title: string;
   format: string;
   status: string;
+}
+
+interface AnimeCardProps extends AnimeData {
+  index: number;
+  onRatingClick: () => void;
+  isModalOpen: boolean;
 }
 
 const SearchGrid: React.FC = () => {
@@ -36,6 +43,7 @@ const SearchGrid: React.FC = () => {
   const [filteredAnimes, setFilteredAnimes] = useState<AnimeData[]>([]);
   const [randomAnimes, setRandomAnimes] = useState<AnimeData[]>([]);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const animeIds = [
     10, 11, 569, 659, 1031, 1099, 1326, 1441, 1470, 1629, 1733, 1747, 1755,
@@ -142,6 +150,12 @@ const SearchGrid: React.FC = () => {
   const clearRecentSearches = () => {
     setRecentSearches([]);
     localStorage.removeItem("recentSearches");
+  };
+
+  const handleRatingClick = () => {
+    if (!state.isAuthenticated) {
+      setIsModalOpen(true);
+    }
   };
 
   const handleRemoveRecentSearch = (searchTerm: string) => {
@@ -512,39 +526,47 @@ const SearchGrid: React.FC = () => {
               )}
             </div>
 
-            <div className="flex-grow flex flex-wrap gap-4 justify-center mt-8">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-8"
+            >
               {error && (
-                <div className="text-red-500 text-center mt-10 w-full">
+                <div className="text-red-500 text-center mt-10 w-full col-span-full">
                   {error}
                 </div>
               )}
 
               {loading ? (
-                <div className="text-center mt-8 w-full">검색 중...</div>
+                <div className="text-center mt-8 w-full col-span-full">
+                  검색 중...
+                </div>
               ) : (
                 filteredAnimes.map((anime, index) => (
-                  <div
+                  <motion.div
                     key={anime.anime_id}
-                    className="flex-shrink-0 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5"
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: index * 0.05 }}
                   >
                     <AnimeCard
                       {...anime}
                       index={index}
-                      onRatingClick={() => {
-                        /* 로그인 모달 열기 로직 */
-                      }}
+                      onRatingClick={handleRatingClick}
+                      isModalOpen={isModalOpen}
                       onPickStatusChange={(animeId, isPicked) => {
                         /* Pick 상태 변경 로직 */
                       }}
                     />
-                  </div>
+                  </motion.div>
                 ))
               )}
-            </div>
+            </motion.div>
           </div>
         ) : (
-          <div className="w-full mt-8">
-            <h2 className="font-bold mb-4 text-xl">추천 애니메이션</h2>
+          <div className="w-full mt-16">
+            <h2 className="font-bold mb-4 text-xl"></h2>
             {randomAnimes.length > 0 ? (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -561,11 +583,12 @@ const SearchGrid: React.FC = () => {
                   >
                     <AnimeCard
                       {...anime}
-                      index={index + 1}
-                      onRatingClick={() => {
-                        /* 로그인 모달 열기 로직 */
+                      index={index}
+                      onRatingClick={handleRatingClick}
+                      isModalOpen={isModalOpen}
+                      onPickStatusChange={(animeId, isPicked) => {
+                        /* Pick 상태 변경 로직 */
                       }}
-                      isModalOpen={false}
                     />
                   </motion.div>
                 ))}
@@ -587,6 +610,7 @@ const SearchGrid: React.FC = () => {
           <ArrowUpCircle size={24} />
         </button>
       )}
+      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };

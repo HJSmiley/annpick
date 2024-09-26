@@ -4,8 +4,10 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/home/ec2-user/meilisearch --master-key="@nnpickSecretKey1324" --http-addr="0.0.0.0:7700"
+ExecStart=/home/ec2-user/meilisearch --master-key=`{process.env.MEILISEARCH_API_KEY}` --http-addr=">
 Restart=always
+User=ec2-user
+WorkingDirectory=/home/ec2-user
 
 [Install]
 WantedBy=multi-user.target

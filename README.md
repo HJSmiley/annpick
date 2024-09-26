@@ -46,86 +46,86 @@
 <summary>Front-end</summary>
 
 ```
-frontend
- ┣ node_modules
- ┣ public
- ┃ ┣ images
- ┃ ┣ favicon.ico
- ┃ ┗ index.html
- ┣ src
- ┃ ┣ assets
- ┃ ┃ ┣ font
- ┃ ┃ ┗ icons
- ┃ ┣ components
- ┃ ┃ ┣ anime
- ┃ ┃ ┃ ┣ AnimeCard.tsx
- ┃ ┃ ┃ ┗ AnimeList.tsx
- ┃ ┃ ┣ auth
- ┃ ┃ ┃ ┗ LoginModal.tsx
- ┃ ┃ ┣ common
- ┃ ┃ ┃ ┣ LoadingSpinner.css
- ┃ ┃ ┃ ┣ LoadingSpinner.tsx
- ┃ ┃ ┃ ┗ SwipeButton.tsx
- ┃ ┃ ┣ error
- ┃ ┃ ┃ ┗ ErrorBoundary.tsx
- ┃ ┃ ┣ layout
- ┃ ┃ ┃ ┣ Footer.tsx
- ┃ ┃ ┃ ┗ Header.tsx
- ┃ ┃ ┣ mypage
- ┃ ┃ ┃ ┗ AvatarDropdown.tsx
- ┃ ┃ ┣ promotion
- ┃ ┃ ┃ ┗ PromotionBanner.tsx
- ┃ ┃ ┣ review
- ┃ ┃ ┃ ┗ .gitkeep
- ┃ ┃ ┗ search
- ┃ ┃ ┃ ┣ EvaluationSearchGrid.tsx
- ┃ ┃ ┃ ┣ RecentSearches.tsx
- ┃ ┃ ┃ ┣ SearchFilters.tsx
- ┃ ┃ ┃ ┗ SearchSuggestions.tsx
- ┃ ┣ config
- ┃ ┃ ┣ constants.ts
- ┃ ┃ ┣ react-app-env.d.ts
- ┃ ┃ ┣ reportWebVitals.ts
- ┃ ┃ ┣ sections.ts
- ┃ ┃ ┣ setupTests.ts
- ┃ ┃ ┗ TagCategories.ts
- ┃ ┣ contexts
- ┃ ┃ ┣ AnimeContext.tsx
- ┃ ┃ ┗ AuthContext.tsx
- ┃ ┣ pages
- ┃ ┃ ┣ anime
- ┃ ┃ ┃ ┣ AnimeDetail.tsx
- ┃ ┃ ┃ ┗ AnimeSearch.tsx
- ┃ ┃ ┣ profile
- ┃ ┃ ┃ ┣ MyPicks.tsx
- ┃ ┃ ┃ ┣ MyRatings.tsx
- ┃ ┃ ┃ ┗ Profile.tsx
- ┃ ┃ ┣ terms
- ┃ ┃ ┃ ┣ MarketingAgreement.tsx
- ┃ ┃ ┃ ┣ PrivacyPolicy.tsx
- ┃ ┃ ┃ ┗ TermsOfService.tsx
- ┃ ┃ ┣ EvaluationPage.tsx
- ┃ ┃ ┣ Home.tsx
- ┃ ┃ ┗ NotFound.tsx
- ┃ ┣ service
- ┃ ┃ ┣ SearchHooks.ts
- ┃ ┃ ┣ SearchUtils.ts
- ┃ ┃ ┗ useHover.ts
- ┃ ┣ styles
- ┃ ┃ ┣ globals.css
- ┃ ┃ ┗ tailwind.css
- ┃ ┣ types
- ┃ ┃ ┣ anime.ts
- ┃ ┃ ┗ auth.ts
- ┃ ┣ App.css
- ┃ ┣ App.tsx
- ┃ ┣ index.css
- ┃ ┗ index.tsx
- ┣ .env
- ┣ package-lock.json
- ┣ package.json
- ┣ tailwind.config.js
- ┗ tsconfig.json
+frontend/ # 프론트엔드 관련 파일들
+├── node_modules/ # 프로젝트 종속성 모듈
+├── public/ # 정적 파일들
+├── images/ # 이미지 파일들
+│   ├── favicon.ico # 웹사이트 아이콘
+│   └── index.html # 메인 HTML 파일
+├── src/ # 소스 코드
+│   ├── assets/ # 정적 자산 파일들
+│   │   ├── font/ # 폰트 파일들
+│   │   └── icons/ # 아이콘 파일들
+│   ├── components/ # 재사용 가능한 UI 컴포넌트들
+│   │   ├── anime/ # 애니메이션 관련 컴포넌트
+│   │   │   ├── AnimeCard.tsx # 애니메이션 카드 컴포넌트
+│   │   │   └── AnimeList.tsx # 애니메이션 목록 컴포넌트
+│   │   ├── auth/ # 인증 관련 컴포넌트
+│   │   │   └── LoginModal.tsx # 로그인 모달 컴포넌트
+│   │   ├── common/ # 공통 컴포넌트
+│   │   │   ├── LoadingSpinner.css # 로딩 스피너 스타일
+│   │   │   ├── LoadingSpinner.tsx # 로딩 스피너 컴포넌트
+│   │   │   └── SwipeButton.tsx # 스와이프 버튼 컴포넌트
+│   │   ├── error/ # 에러 처리 관련 컴포넌트
+│   │   │   └── ErrorBoundary.tsx # 에러 경계 컴포넌트
+│   │   ├── layout/ # 레이아웃 관련 컴포넌트
+│   │   │   ├── Footer.tsx # 푸터 컴포넌트
+│   │   │   └── Header.tsx # 헤더 컴포넌트
+│   │   ├── mypage/ # 마이페이지 관련 컴포넌트
+│   │   │   └── AvatarDropdown.tsx # 아바타 드롭다운 컴포넌트
+│   │   ├── promotion/ # 프로모션 관련 컴포넌트
+│   │   │   └── PromotionBanner.tsx # 프로모션 배너 컴포넌트
+│   │   ├── review/ # 리뷰 관련 컴포넌트
+│   │   │   └── .gitkeep # 추후 구현을 위한 빈 파일
+│   │   └── search/ # 검색 관련 컴포넌트
+│   │       ├── EvaluationSearchGrid.tsx # 평가 검색 그리드 컴포넌트
+│   │       ├── RecentSearches.tsx # 최근 검색어 컴포넌트
+│   │       ├── SearchFilters.tsx # 검색 필터 컴포넌트
+│   │       └── SearchSuggestions.tsx # 검색 제안 컴포넌트
+│   ├── config/ # 설정 파일들
+│   │   ├── constants.ts # 상수 정의
+│   │   ├── react-app-env.d.ts # React 앱 환경 타입 정의
+│   │   ├── reportWebVitals.ts # 웹 성능 측정
+│   │   ├── sections.ts # 섹션 관련 설정
+│   │   ├── setupTests.ts # 테스트 설정
+│   │   └── TagCategories.ts # 태그 카테고리 정의
+│   ├── contexts/ # React Context 관련 파일들
+│   │   ├── AnimeContext.tsx # 애니메이션 관련 컨텍스트
+│   │   └── AuthContext.tsx # 인증 관련 컨텍스트
+│   ├── pages/ # 페이지 컴포넌트들
+│   │   ├── anime/ # 애니메이션 관련 페이지
+│   │   │   ├── AnimeDetail.tsx # 애니메이션 상세 페이지
+│   │   │   └── AnimeSearch.tsx # 애니메이션 검색 페이지
+│   │   ├── profile/ # 프로필 관련 페이지
+│   │   │   ├── MyPicks.tsx # 내 선택 페이지
+│   │   │   ├── MyRatings.tsx # 내 평가 페이지
+│   │   │   └── Profile.tsx # 프로필 페이지
+│   │   ├── terms/ # 약관 관련 페이지
+│   │   │   ├── MarketingAgreement.tsx # 마케팅 동의 페이지
+│   │   │   ├── PrivacyPolicy.tsx # 개인정보 처리방침 페이지
+│   │   │   └── TermsOfService.tsx # 서비스 이용약관 페이지
+│   │   ├── EvaluationPage.tsx # 평가 페이지
+│   │   ├── Home.tsx # 홈 페이지
+│   │   └── NotFound.tsx # 404 Not Found 페이지
+│   ├── service/ # 서비스 관련 파일들
+│   │   ├── SearchHooks.ts # 검색 관련 커스텀 훅
+│   │   ├── SearchUtils.ts # 검색 유틸리티 함수들
+│   │   └── useHover.ts # 호버 관련 커스텀 훅
+│   ├── styles/ # 스타일 관련 파일들
+│   │   ├── globals.css # 전역 스타일
+│   │   └── tailwind.css # Tailwind CSS 설정
+│   ├── types/ # 타입 정의 파일들
+│   │   ├── anime.ts # 애니메이션 관련 타입 정의
+│   │   └── auth.ts # 인증 관련 타입 정의
+│   ├── App.css # 앱 전체 스타일
+│   ├── App.tsx # 앱의 메인 컴포넌트
+│   ├── index.css # 인덱스 페이지 스타일
+│   └── index.tsx # 앱의 진입점
+├── .env # 환경 변수 파일
+├── package-lock.json # 패키지 버전 잠금 파일
+├── package.json # 프로젝트 설정 및 종속성 정의
+├── tailwind.config.js # Tailwind CSS 설정 파일
+└── tsconfig.json # TypeScript 설정 파일
 ```
 
 </details>
@@ -281,65 +281,15 @@ backend
 - 스토리지 및 CDN : AWS S3, CloudFront
 ```
 
-## 설치 및 실행
-
-### 1. 패키지 설치
-
-#### 백엔드 설치
-
-> 백엔드 루트 디렉토리에서 아래 명령어를 실행
-
-```
-npm install
-```
-
-#### 프론트엔드 설치
-
-> 프론트엔드 프로젝트 루트 디렉토리에서 다음 명령어를 실행하여 TypeScript 기반의 React 프로젝트를 초기화
-
-```
-npx create-react-app . --template typescript
-```
-
-> 이후 필요한 패키지를 설치하기 위해 다음 명령어를 실행
-
-```
-npm install
-```
-
-### 2. 실행
-
-#### 백엔드 실행
-
-> 백엔드 서버를 실행하기 위해 루트 디렉토리에서 다음 명령어를 실행
-
-```
-npm start
-```
-
-#### 프론트엔드 실행
-
-> 프론트엔드 서버를 실행하기 위해 해당 디렉토리에서 다음 명령어를 실행
-
-```
-npm start
-```
-
-### 3. 빌드(프론트엔드)
-
-> 프로덕션 환경에서 사용할 빌드 파일을 생성하려면 프론트엔드 디렉토리에서 다음 명령어를 실행
-
-```
-npm run build
-```
-
 ## 개발 문서
+
+[설치 및 실행](/docs/installation.md)
 
 [WBS](https://docs.google.com/spreadsheets/d/10T6W1k2AkRwmw0QwMH2H5F0rfvRBhQ6vu44VWWv_7-U/edit?usp=sharing)
 
 [테이블 정의서](https://docs.google.com/spreadsheets/d/1abxsR-jKPNRI4qfe9dXE0NrXWX4AAo1sC5M0-JlBaVM/edit?gid=629411476#gid=629411476)
 
-[Swagger API](http://43.203.213.200/api-docs/)
+[API 명세서](http://43.203.213.200/api-docs/)
 
 [팀 노션](https://www.notion.so/adapterz/3-8675874bc9ea4b4bb8e6964eda02a429?pvs=4)
 

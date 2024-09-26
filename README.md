@@ -97,6 +97,35 @@ frontend/ # 프론트엔드 관련 파일들
 │   │   │   ├── AnimeDetail.tsx # 애니메이션 상세 페이지
 │   │   │   └── AnimeSearch.tsx # 애니메이션 검색 페이지
 │   │   ├── profile/ # 프로필 관련 페이지
+│   │   │   ├── MyPicks.tsx # 내 선택 페이지
+│   │   │   ├── MyRatings.tsx # 내 평가 페이지
+│   │   │   └── Profile.tsx # 프로필 페이지
+│   │   ├── terms/ # 약관 관련 페이지
+│   │   │   ├── MarketingAgreement.tsx # 마케팅 동의 페이지
+│   │   │   ├── PrivacyPolicy.tsx # 개인정보 처리방침 페이지
+│   │   │   └── TermsOfService.tsx # 서비스 이용약관 페이지
+│   │   ├── EvaluationPage.tsx # 평가 페이지
+│   │   ├── Home.tsx # 홈 페이지
+│   │   └── NotFound.tsx # 404 Not Found 페이지
+│   ├── service/ # 서비스 관련 파일들
+│   │   ├── SearchHooks.ts # 검색 관련 커스텀 훅
+│   │   ├── SearchUtils.ts # 검색 유틸리티 함수들
+│   │   └── useHover.ts # 호버 관련 커스텀 훅
+│   ├── styles/ # 스타일 관련 파일들
+│   │   ├── globals.css # 전역 스타일
+│   │   └── tailwind.css # Tailwind CSS 설정
+│   ├── types/ # 타입 정의 파일들
+│   │   ├── anime.ts # 애니메이션 관련 타입 정의
+│   │   └── auth.ts # 인증 관련 타입 정의
+│   ├── App.css # 앱 전체 스타일
+│   ├── App.tsx # 앱의 메인 컴포넌트
+│   ├── index.css # 인덱스 페이지 스타일
+│   └── index.tsx # 앱의 진입점
+├── .env # 환경 변수 파일
+├── package-lock.json # 패키지 버전 잠금 파일
+├── package.json # 프로젝트 설정 및 종속성 정의
+├── tailwind.config.js # Tailwind CSS 설정 파일
+└── tsconfig.json # TypeScript 설정 파일
 ```
 
 </details>

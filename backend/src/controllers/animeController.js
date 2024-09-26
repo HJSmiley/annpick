@@ -369,17 +369,16 @@ const getRecommendedAnimeSections = async (req, res) => {
       return res.status(401).json({ error: "인증된 사용자가 아닙니다." });
     }
 
-    // UserClusterPreference에서 사용자 선호 조합 3개 랜덤 선택
+    // UserClusterPreference에서 사용자 선호 조합 최대 5개 랜덤 선택
     const userPreferences = await UserClusterPreference.findAll({
       where: { user_id: userId },
       order: Sequelize.literal("RAND()"),
-      limit: 3,
+      limit: 5, // 3개의 섹션을 채우기 위해 5개의 선호 조합을 먼저 가져옴
       include: [{ model: Genre }, { model: Tag }],
     });
 
     if (userPreferences.length === 0) {
-      // 선호 조합이 없을 경우 빈 배열 반환
-      return res.status(200).json([]);
+      return res.status(200).json([]); // 선호 조합이 없을 경우 빈 배열 반환
     }
 
     // 사용자가 이미 평가한 애니메이션 ID 목록 조회
@@ -390,6 +389,7 @@ const getRecommendedAnimeSections = async (req, res) => {
     const ratedAnimeIds = ratedAnimes.map((ra) => ra.anime_id); // 평가한 애니메이션 ID 배열
 
     const sections = [];
+    let sectionCount = 0; // 반환할 섹션의 개수를 추적하는 변수
 
     for (const preference of userPreferences) {
       const {
@@ -406,6 +406,10 @@ const getRecommendedAnimeSections = async (req, res) => {
         where: { genre_id, tag_id },
         attributes: ["anime_id", "recommendation_phrase"],
       });
+
+      if (recommendations.length === 0) {
+        continue;
+      }
 
       let animeIds = recommendations
         .map((rec) => rec.anime_id)
@@ -426,7 +430,23 @@ const getRecommendedAnimeSections = async (req, res) => {
           preference_rank,
           ids: animeIds, // 평가한 애니메이션 제외된 ID 배열 반환
         });
+        sectionCount++;
       }
+
+      // 섹션이 3개가 되면 더 이상 추가하지 않음
+      if (sectionCount >= 3) {
+        break;
+      }
+    }
+
+    // 3개의 섹션이 채워지지 않은 경우, 남은 섹션을 더 가져옴
+    if (sectionCount < 3) {
+      const additionalSections = await getAdditionalUserPreferences(
+        userId,
+        ratedAnimeIds,
+        3 - sectionCount
+      );
+      sections.push(...additionalSections);
     }
 
     res.status(200).json(sections);
@@ -441,12 +461,10 @@ function shuffleArray(array) {
   let currentIndex = array.length,
     randomIndex;
 
-  // 남은 요소가 없을 때까지 반복
   while (currentIndex !== 0) {
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
 
-    // 현재 요소와 선택한 무작위 요소를 교환
     [array[currentIndex], array[randomIndex]] = [
       array[randomIndex],
       array[currentIndex],
@@ -454,6 +472,50 @@ function shuffleArray(array) {
   }
 
   return array;
+}
+
+// 추가로 사용자 선호 조합에서 섹션을 더 가져오는 함수
+async function getAdditionalUserPreferences(
+  userId,
+  ratedAnimeIds,
+  requiredCount
+) {
+  const additionalSections = [];
+
+  // 사용자 선호 조합에서 더 많은 섹션을 가져옴 (이전에 선택되지 않은 선호 조합)
+  const additionalPreferences = await UserClusterPreference.findAll({
+    where: { user_id: userId },
+    order: Sequelize.literal("RAND()"),
+    limit: 5, // 여유 있게 5개의 선호 조합을 더 가져옴
+    include: [{ model: Genre }, { model: Tag }],
+  });
+
+  for (const preference of additionalPreferences) {
+    const { genre_id, tag_id, Genre: genre, Tag: tag } = preference;
+
+    // RecommendationCluster에서 해당 장르+태그의 애니메이션 ID 가져오기
+    const recommendations = await RecommendationCluster.findAll({
+      where: { genre_id, tag_id },
+      attributes: ["anime_id", "recommendation_phrase"],
+    });
+
+    let animeIds = recommendations
+      .map((rec) => rec.anime_id)
+      .filter((id) => !ratedAnimeIds.includes(id)); // 평가한 애니메이션 제외
+
+    if (animeIds.length > 0) {
+      additionalSections.push({
+        title: `${genre.genre_name} + ${tag.tag_name} 추천`,
+        ids: shuffleArray(animeIds).slice(0, 15),
+      });
+    }
+
+    if (additionalSections.length >= requiredCount) {
+      break; // 필요한 섹션 개수를 채우면 중단
+    }
+  }
+
+  return additionalSections;
 }
 
 module.exports = {

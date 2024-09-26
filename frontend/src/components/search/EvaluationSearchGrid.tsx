@@ -188,7 +188,7 @@ const EvalSearchGrid: React.FC = () => {
               </svg>
             </div>
             {showRecentSearches && (
-              <div className="absolute w-full mt-0.5 bg-white rounded-md">
+              <div className="absolute w-full mt-0.5 bg-white rounded-md z-10">
                 <RecentSearches
                   recentSearches={recentSearches}
                   onRecentSearchClick={handleRecentSearchClick}

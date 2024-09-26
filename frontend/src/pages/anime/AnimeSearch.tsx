@@ -5,7 +5,8 @@ import AnimeCard from "../../components/anime/AnimeCard";
 import SearchSuggestions from "../../components/search/SearchSuggestions";
 import RecentSearches from "../../components/search/RecentSearches";
 import { tagCategories } from "../../configs/TagCategories";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ArrowUpCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface AnimeData {
   anime_id: number;
@@ -34,6 +35,7 @@ const SearchGrid: React.FC = () => {
   const recentSearchesRef = useRef<HTMLDivElement>(null);
   const [filteredAnimes, setFilteredAnimes] = useState<AnimeData[]>([]);
   const [randomAnimes, setRandomAnimes] = useState<AnimeData[]>([]);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   const animeIds = [
     10, 11, 569, 659, 1031, 1099, 1326, 1441, 1470, 1629, 1733, 1747, 1755,
@@ -117,6 +119,15 @@ const SearchGrid: React.FC = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.pageYOffset > 300);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const saveRecentSearch = (search: string) => {
@@ -318,16 +329,19 @@ const SearchGrid: React.FC = () => {
     );
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center mb-10">
-      <div className="flex-grow w-full max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 sm:pt-30 md:pt-40">
+      <div className="flex-grow w-full max-w-screen-2xl px-4 sm:px-6 lg:px-20 pt-20 sm:pt-30 md:pt-40">
         <div className="w-full flex flex-col gap-4 items-center">
           <div className="max-w-md w-full relative" style={{ height: "50px" }}>
             <div className="relative">
               <input
                 type="text"
-                className="w-full pl-10 pr-4 py-2 rounded-full border border-[#F7f7f7] focus:outline-none focus:ring-2 focus:ring-[#F35815] focus:border-transparent bg-[#F7f7f7] text-gray-700 placeholder-gray-400 ${
-            isFocused ? 'caret-[#3c3b3b]': 'caret-transparent'"
+                className="w-full pl-10 pr-4 py-2 rounded-full border border-[#F7f7f7] focus:outline-none focus:ring-2 focus:ring-[#F35815] focus:border-transparent bg-[#F7f7f7] text-gray-700 placeholder-gray-400"
                 style={{
                   caretColor: isFocused ? "#3c3b3b" : "transparent",
                 }}
@@ -381,21 +395,20 @@ const SearchGrid: React.FC = () => {
                     key={genre}
                     onClick={() => handleFilterClick(genre)}
                     className={`
-                      px-2 py-0.5 text-xs sm:text-sm font-medium btn-outline border border-gray-300 rounded-lg bg-white
-                      transition-all duration-200 ease-in-out
-                      ${
-                        selectedFilters.includes(genre)
-                          ? "text-orange-600 border-orange-600  hover:bg-white hover:text-orange-500 hover:border-orange-500 border-2"
-                          : "bg-white text-gray-700 hover:text-orange-600 hover:border-orange-600 hover:bg-white"
-                      }
-                    `}
+                    px-2 py-0.5 text-xs sm:text-sm font-medium btn-outline border border-gray-300 rounded-lg bg-white
+                    transition-all duration-200 ease-in-out
+                    ${
+                      selectedFilters.includes(genre)
+                        ? "text-orange-600 border-orange-600  hover:bg-white hover:text-orange-500 hover:border-orange-500 border-2"
+                        : "bg-white text-gray-700 hover:text-orange-600 hover:border-orange-600 hover:bg-white"
+                    }
+                  `}
                   >
                     {genre}
                   </button>
                 ))}
               </div>
             </div>
-            {/* 태그 카테고리 */}
             <div ref={dropdownRef}>
               <h2 className="font-bold mb-2">태그</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 gap-2 sm:gap-4">
@@ -446,7 +459,6 @@ const SearchGrid: React.FC = () => {
                 ))}
               </div>
             </div>
-            {/* 검색 결과 및 필터 표시 */}
             <div className="w-full mt-4">
               <div className="flex justify-between items-center mb-4">
                 <span className="font-bold">
@@ -500,7 +512,6 @@ const SearchGrid: React.FC = () => {
               )}
             </div>
 
-            {/* 검색 결과 표시 */}
             <div className="flex-grow flex flex-wrap gap-4 justify-center mt-8">
               {error && (
                 <div className="text-red-500 text-center mt-10 w-full">
@@ -532,22 +543,50 @@ const SearchGrid: React.FC = () => {
             </div>
           </div>
         ) : (
-          // 검색 전 랜덤 애니메이션 카드 표시
           <div className="w-full mt-8">
             <h2 className="font-bold mb-4 text-xl">추천 애니메이션</h2>
-            <div className="flex flex-wrap gap-4 justify-center">
-              {randomAnimes.map((anime) => (
-                <div
-                  key={anime.anime_id}
-                  className="flex-shrink-0 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5"
-                >
-                  <AnimeCard index={0} {...anime} />
-                </div>
-              ))}
-            </div>
+            {randomAnimes.length > 0 ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+              >
+                {randomAnimes.map((anime, index) => (
+                  <motion.div
+                    key={anime.anime_id}
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <AnimeCard
+                      {...anime}
+                      index={index + 1}
+                      onRatingClick={() => {
+                        /* 로그인 모달 열기 로직 */
+                      }}
+                      isModalOpen={false}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <div className="text-gray-500 text-center mb-10">
+                추천 애니메이션을 불러오는 중입니다...
+              </div>
+            )}
           </div>
         )}
       </div>
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-4 right-6 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 lg:bottom-10 lg:right-20 text-orange-600 bg-white p-2 sm:p-3 rounded-full shadow-lg hover:bg-orange-400 transition-all duration-300 z-50"
+          aria-label="맨 위로 스크롤"
+        >
+          <ArrowUpCircle size={24} />
+        </button>
+      )}
     </div>
   );
 };

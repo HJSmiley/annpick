@@ -17,18 +17,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
-        <h3 className="text-xl font-bold mb-10 mt-5 px-5">{title}</h3>
+        <h3 className="text-xl font-bold mb-5 mt-5 px-2">{title}</h3>
         <div className="flex flex-col items-center justify-center min-h-[60px] text-xl">
           {children}{" "}
         </div>
-        <div className="flex justify-end mt-4">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition duration-300"
-          >
-            닫기
-          </button>
-        </div>
+        <div className="flex justify-end mt-4"></div>
       </div>
     </div>
   );
@@ -71,7 +64,7 @@ const ProfileForm = () => {
 
     if (nickname.length < 2) {
       setErrorMessage("닉네임은 2자 이상 입력해주세요.");
-      setIsErrorModalOpen(true);
+      alert("닉네임은 2자 이상 입력해주세요");
       return;
     }
 
@@ -148,7 +141,7 @@ const ProfileForm = () => {
 
       if (response.ok) {
         setErrorMessage("회원 탈퇴가 완료되었습니다.");
-        setIsErrorModalOpen(true);
+        alert("회원 탈퇴가 완료되었습니다.");
         logout();
       } else if (response.status === 401) {
         await refreshAccessToken();
@@ -272,8 +265,8 @@ const ProfileForm = () => {
         onClose={() => setIsWithdrawModalOpen(false)}
         title="정말 떠나시겠어요?"
       >
-        <div className="px-5 pt-50 ">
-          <p className="mb-2 mt-2">
+        <div className="px-5 pt-50">
+          <p className="mb-2 mt-2 text-lg whitespace-nowrap">
             탈퇴하시면 그동안 등록하신 애니메이션 평가를 비롯한
             <br />
             <span className="text-orange-500 font-bold text-base">
@@ -282,7 +275,7 @@ const ProfileForm = () => {
             😢
           </p>
           <br />
-          <div className="mb-10">
+          <div className="mt-5 mb-10">
             <label
               htmlFor="withdrawalReason"
               className="block text-lg text-gray-700 mb-2 font-bold"
@@ -314,15 +307,6 @@ const ProfileForm = () => {
                   기타
                 </option>
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-700">
-                <svg
-                  className="fill-current h-6 w-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
-              </div>
             </div>
           </div>
           <div className="flex w-full space-x-4">

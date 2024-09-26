@@ -239,7 +239,6 @@ backend
   - `passport-naver` : 네이버 인증 지원
   - `passport-jwt` : JWT 토큰 인증 처리
   - `jsonwebtoken` : JWT 토큰 생성 및 검증
-  - `express-session` : 세션 관리
 - 데이터베이스 및 ORM
   - `MySQL` : 데이터베이스로 사용
   - `sequelize` : MySQL과의 상호작용을 위한 ORM (Object-Relational Mapping)

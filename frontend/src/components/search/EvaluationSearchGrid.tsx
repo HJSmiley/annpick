@@ -16,9 +16,12 @@ const EvalSearchGrid: React.FC = () => {
   const [showRecentSearches, setShowRecentSearches] = useState<boolean>(false);
 
   const { state } = useAuth();
-  const { animes, setAnimes, loading, setLoading, error, setError } = useAnime();
+  const { animes, setAnimes, loading, setLoading, error, setError } =
+    useAnime();
   const handleRemoveRecentSearch = (searchTerm: string) => {
-    const updatedSearches = recentSearches.filter(search => search !== searchTerm);
+    const updatedSearches = recentSearches.filter(
+      (search) => search !== searchTerm
+    );
     setRecentSearches(updatedSearches);
     localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
   };
@@ -72,7 +75,9 @@ const EvalSearchGrid: React.FC = () => {
         }
 
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/anime/search?query=${encodeURIComponent(
+          `${
+            process.env.REACT_APP_BACKEND_URL
+          }/api/v1/anime/search?query=${encodeURIComponent(
             term
           )}${filterParam}`,
           {
@@ -106,7 +111,15 @@ const EvalSearchGrid: React.FC = () => {
         setLoading(false);
       }
     },
-    [genreFilter, tagFilter, state.isAuthenticated, state.token, setAnimes, setError, setLoading]
+    [
+      genreFilter,
+      tagFilter,
+      state.isAuthenticated,
+      state.token,
+      setAnimes,
+      setError,
+      setLoading,
+    ]
   );
 
   const handleSearchButtonClick = () => {
@@ -160,7 +173,7 @@ const EvalSearchGrid: React.FC = () => {
               onKeyPress={handleKeyPress}
               onFocus={handleInputFocus}
             />
-            <div className="absolute inset-y-0 left-3 flex items-center">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
               <svg
                 onClick={handleSearchButtonClick}
                 className="h-5 w-5 text-gray-400 cursor-pointer"
@@ -175,12 +188,14 @@ const EvalSearchGrid: React.FC = () => {
               </svg>
             </div>
             {showRecentSearches && (
-              <RecentSearches
-                recentSearches={recentSearches}
-                onRecentSearchClick={handleRecentSearchClick}
-                onClearRecentSearches={clearRecentSearches}
-                onRemoveRecentSearch={handleRemoveRecentSearch} 
-              />
+              <div className="absolute w-full mt-0.5 bg-white rounded-md">
+                <RecentSearches
+                  recentSearches={recentSearches}
+                  onRecentSearchClick={handleRecentSearchClick}
+                  onClearRecentSearches={clearRecentSearches}
+                  onRemoveRecentSearch={handleRemoveRecentSearch}
+                />
+              </div>
             )}
           </div>
         </div>

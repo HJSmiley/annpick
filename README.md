@@ -37,7 +37,7 @@
 
 ### 아키텍처
 
-![architecture](./docs/architecture.png)
+![architecture](./docs/aws.png)
 
 ### ERD
 

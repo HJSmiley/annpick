@@ -1,7 +1,10 @@
 # AnnPick
 
 > 취향을 기반으로 애니메이션을 추천해 드립니다.
-> <br />
+
+![annpick](/frontend/public/images/Banner.png)
+
+[바로가기](https://annpick.link)
 
 ## 프로젝트 개요
 

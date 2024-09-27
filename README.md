@@ -46,86 +46,86 @@
 <summary>Front-end</summary>
 
 ```
-frontend/ # 프론트엔드 관련 파일들
-├── node_modules/ # 프로젝트 종속성 모듈
-├── public/ # 정적 파일들
-├── images/ # 이미지 파일들
-│   ├── favicon.ico # 웹사이트 아이콘
-│   └── index.html # 메인 HTML 파일
-├── src/ # 소스 코드
-│   ├── assets/ # 정적 자산 파일들
-│   │   ├── font/ # 폰트 파일들
-│   │   └── icons/ # 아이콘 파일들
-│   ├── components/ # 재사용 가능한 UI 컴포넌트들
-│   │   ├── anime/ # 애니메이션 관련 컴포넌트
-│   │   │   ├── AnimeCard.tsx # 애니메이션 카드 컴포넌트
-│   │   │   └── AnimeList.tsx # 애니메이션 목록 컴포넌트
-│   │   ├── auth/ # 인증 관련 컴포넌트
-│   │   │   └── LoginModal.tsx # 로그인 모달 컴포넌트
-│   │   ├── common/ # 공통 컴포넌트
-│   │   │   ├── LoadingSpinner.css # 로딩 스피너 스타일
-│   │   │   ├── LoadingSpinner.tsx # 로딩 스피너 컴포넌트
-│   │   │   └── SwipeButton.tsx # 스와이프 버튼 컴포넌트
-│   │   ├── error/ # 에러 처리 관련 컴포넌트
-│   │   │   └── ErrorBoundary.tsx # 에러 경계 컴포넌트
-│   │   ├── layout/ # 레이아웃 관련 컴포넌트
-│   │   │   ├── Footer.tsx # 푸터 컴포넌트
-│   │   │   └── Header.tsx # 헤더 컴포넌트
-│   │   ├── mypage/ # 마이페이지 관련 컴포넌트
-│   │   │   └── AvatarDropdown.tsx # 아바타 드롭다운 컴포넌트
-│   │   ├── promotion/ # 프로모션 관련 컴포넌트
-│   │   │   └── PromotionBanner.tsx # 프로모션 배너 컴포넌트
-│   │   ├── review/ # 리뷰 관련 컴포넌트
-│   │   │   └── .gitkeep # 추후 구현을 위한 빈 파일
-│   │   └── search/ # 검색 관련 컴포넌트
-│   │       ├── EvaluationSearchGrid.tsx # 평가 검색 그리드 컴포넌트
-│   │       ├── RecentSearches.tsx # 최근 검색어 컴포넌트
-│   │       ├── SearchFilters.tsx # 검색 필터 컴포넌트
-│   │       └── SearchSuggestions.tsx # 검색 제안 컴포넌트
-│   ├── config/ # 설정 파일들
-│   │   ├── constants.ts # 상수 정의
-│   │   ├── react-app-env.d.ts # React 앱 환경 타입 정의
-│   │   ├── reportWebVitals.ts # 웹 성능 측정
-│   │   ├── sections.ts # 섹션 관련 설정
-│   │   ├── setupTests.ts # 테스트 설정
-│   │   └── TagCategories.ts # 태그 카테고리 정의
-│   ├── contexts/ # React Context 관련 파일들
-│   │   ├── AnimeContext.tsx # 애니메이션 관련 컨텍스트
-│   │   └── AuthContext.tsx # 인증 관련 컨텍스트
-│   ├── pages/ # 페이지 컴포넌트들
-│   │   ├── anime/ # 애니메이션 관련 페이지
-│   │   │   ├── AnimeDetail.tsx # 애니메이션 상세 페이지
-│   │   │   └── AnimeSearch.tsx # 애니메이션 검색 페이지
-│   │   ├── profile/ # 프로필 관련 페이지
-│   │   │   ├── MyPicks.tsx # 내 선택 페이지
-│   │   │   ├── MyRatings.tsx # 내 평가 페이지
-│   │   │   └── Profile.tsx # 프로필 페이지
-│   │   ├── terms/ # 약관 관련 페이지
-│   │   │   ├── MarketingAgreement.tsx # 마케팅 동의 페이지
-│   │   │   ├── PrivacyPolicy.tsx # 개인정보 처리방침 페이지
-│   │   │   └── TermsOfService.tsx # 서비스 이용약관 페이지
-│   │   ├── EvaluationPage.tsx # 평가 페이지
-│   │   ├── Home.tsx # 홈 페이지
-│   │   └── NotFound.tsx # 404 Not Found 페이지
-│   ├── service/ # 서비스 관련 파일들
-│   │   ├── SearchHooks.ts # 검색 관련 커스텀 훅
-│   │   ├── SearchUtils.ts # 검색 유틸리티 함수들
-│   │   └── useHover.ts # 호버 관련 커스텀 훅
-│   ├── styles/ # 스타일 관련 파일들
-│   │   ├── globals.css # 전역 스타일
-│   │   └── tailwind.css # Tailwind CSS 설정
-│   ├── types/ # 타입 정의 파일들
-│   │   ├── anime.ts # 애니메이션 관련 타입 정의
-│   │   └── auth.ts # 인증 관련 타입 정의
-│   ├── App.css # 앱 전체 스타일
-│   ├── App.tsx # 앱의 메인 컴포넌트
-│   ├── index.css # 인덱스 페이지 스타일
-│   └── index.tsx # 앱의 진입점
-├── .env # 환경 변수 파일
-├── package-lock.json # 패키지 버전 잠금 파일
-├── package.json # 프로젝트 설정 및 종속성 정의
-├── tailwind.config.js # Tailwind CSS 설정 파일
-└── tsconfig.json # TypeScript 설정 파일
+frontend/                                # 프론트엔드 관련 파일들
+├── node_modules/                        # 프로젝트 종속성 모듈
+├── public/                              # 정적 파일들
+│   ├── images/                          # 이미지 파일들
+│   ├── favicon.ico                      # 파비콘 파일
+│   └── index.html                       # 메인 HTML 파일
+├── src/                                 # 소스 코드
+│   ├── assets/                          # 정적 자산 파일들
+│   │   ├── font/                        # 폰트 파일들
+│   │   └── icons/                       # 아이콘 파일들
+│   ├── components/                      # 재사용 가능한 UI 컴포넌트(위젯)
+│   │   ├── anime/                       # 애니메이션 관련 컴포넌트
+│   │   │   ├── AnimeCard.tsx            # 애니메이션 카드 컴포넌트
+│   │   │   └── AnimeList.tsx            # 애니메이션 슬라이더 리스트 컴포넌트
+│   │   ├── auth/                        # 인증 관련 컴포넌트
+│   │   │   └── LoginModal.tsx           # 로그인 모달 컴포넌트
+│   │   ├── common/                      # 공통 컴포넌트
+│   │   │   ├── LoadingSpinner.css       # 로딩 스피너 스타일
+│   │   │   ├── LoadingSpinner.tsx       # 로딩 스피너 컴포넌트
+│   │   │   └── SwipeButton.tsx          # 스와이프 버튼 컴포넌트
+│   │   ├── error/                       # 에러 처리 관련 컴포넌트
+│   │   │   └── ErrorBoundary.tsx        # 에러 경계 컴포넌트
+│   │   ├── layout/                      # 레이아웃 관련 컴포넌트
+│   │   │   ├── Footer.tsx               # 푸터 컴포넌트
+│   │   │   └── Header.tsx               # 헤더 컴포넌트
+│   │   ├── mypage/                      # 마이페이지 관련 컴포넌트
+│   │   │   └── AvatarDropdown.tsx       # 아바타 드롭다운 컴포넌트
+│   │   ├── promotion/                   # 프로모션 관련 컴포넌트
+│   │   │   └── PromotionBanner.tsx      # 프로모션 배너 컴포넌트
+│   │   ├── review/                      # 리뷰 관련 컴포넌트(2차 개발)
+│   │   │   └── .gitkeep                 # 추후 구현을 위한 빈 파일
+│   │   └── search/                      # 검색 관련 컴포넌트
+│   │       ├── EvaluationSearchGrid.tsx # 평가 페이지 검색 그리드 컴포넌트
+│   │       ├── RecentSearches.tsx       # 최근 검색어 컴포넌트
+│   │       ├── SearchFilters.tsx        # 검색 필터 컴포넌트
+│   │       └── SearchSuggestions.tsx    # 검색 제안 컴포넌트
+│   ├── config/                          # 설정 파일들
+│   │   ├── constants.ts                 # 상수 정의
+│   │   ├── react-app-env.d.ts           # React 앱 환경 타입 정의
+│   │   ├── reportWebVitals.ts           # 웹 성능 측정
+│   │   ├── sections.ts                  # 섹션 관련 설정
+│   │   ├── setupTests.ts                # 테스트 설정
+│   │   └── TagCategories.ts             # 태그 카테고리 정의
+│   ├── contexts/                        # React Context 관련 파일들
+│   │   ├── AnimeContext.tsx             # 애니메이션 관련 컨텍스트
+│   │   └── AuthContext.tsx              # 전역 인증 상태 관리 컨텍스트
+│   ├── pages/                           # 페이지 컴포넌트들
+│   │   ├── anime/                       # 애니메이션 관련 페이지
+│   │   │   ├── AnimeDetail.tsx          # 애니메이션 상세 페이지
+│   │   │   └── AnimeSearch.tsx          # 애니메이션 검색 페이지
+│   │   ├── profile/                     # 프로필 관련 페이지
+│   │   │   ├── MyPicks.tsx              # 픽한 애니메이션 페이지
+│   │   │   ├── MyRatings.tsx            # 내 평가 페이지
+│   │   │   └── Profile.tsx              # 프로필 페이지
+│   │   ├── terms/                       # 약관 관련 페이지
+│   │   │   ├── MarketingAgreement.tsx   # 마케팅 동의 약관 페이지
+│   │   │   ├── PrivacyPolicy.tsx        # 개인정보 처리방침 페이지
+│   │   │   └── TermsOfService.tsx       # 서비스 이용 약관 페이지
+│   │   ├── EvaluationPage.tsx           # 평가 페이지
+│   │   ├── Home.tsx                     # 홈 페이지
+│   │   └── NotFound.tsx                 # 404 Not Found 페이지
+│   ├── service/                         # 서비스 관련 파일들
+│   │   ├── SearchHooks.ts               # 검색 관련 커스텀 훅
+│   │   ├── SearchUtils.ts               # 검색 유틸리티 함수들
+│   │   └── useHover.ts                  # 호버 관련 커스텀 훅
+│   ├── styles/                          # 스타일 관련 파일들
+│   │   ├── globals.css                  # 전역 스타일
+│   │   └── tailwind.css                 # Tailwind CSS 설정
+│   ├── types/                           # 타입 정의 파일들
+│   │   ├── anime.ts                     # 애니메이션 관련 타입 정의
+│   │   └── auth.ts                      # 인증 관련 타입 정의
+│   ├── App.css                          # 앱 전체 스타일
+│   ├── App.tsx                          # 앱의 메인 컴포넌트
+│   ├── index.css                        # 인덱스 페이지 스타일
+│   └── index.tsx                        # 앱의 진입점
+├── .env                                 # 환경 변수 파일
+├── package-lock.json                    # 패키지 버전 잠금 파일
+├── package.json                         # 프로젝트 설정 및 종속성 정의
+├── tailwind.config.js                   # Tailwind CSS 설정 파일
+└── tsconfig.json                        # TypeScript 설정 파일
 ```
 
 </details>
@@ -134,70 +134,70 @@ frontend/ # 프론트엔드 관련 파일들
 <summary>Back-end</summary>
 
 ```
-backend/ # 백엔드 관련 파일들
-├── data/ # 데이터 관련 파일들
-│   ├── anime_data.json # 애니메이션 데이터 파일
-│   └── meilisearch.service # MeiliSearch 서비스 파일
-├── scripts/ # 스크립트 파일들
-│   ├── deleteNonTVAnimes # TV 애니메이션이 아닌 항목 삭제 스크립트
+backend/                                  # 백엔드 관련 파일들
+├── data/                                 # 데이터 관련 파일들
+│   ├── anime_data.json                   # 애니메이션 데이터 인덱싱 파일(Meilisearch)
+│   └── meilisearch.service               # MeiliSearch 서비스 파일
+├── scripts/                              # 스크립트 파일들
+│   ├── deleteNonTVAnimes                 # TV 애니메이션이 아닌 항목 삭제 스크립트
 │   ├── populateRecommendationClusters.js # 추천 클러스터 생성 스크립트
-│   ├── saveAnimeData.js # 애니메이션 데이터 저장 스크립트
-│   ├── translateGenres.js # 장르 번역 스크립트
-│   └── translateTags.js # 태그 번역 스크립트
-├── src/ # 소스 코드
-│   ├── config/ # 설정 파일들
-│   │   ├── appConfig.js # 앱 설정
-│   │   ├── authConfig.js # 인증 설정
-│   │   ├── config.js # 일반 설정
-│   │   ├── dbConfig.js # 데이터베이스 설정
-│   │   ├── meiliConfig.js # MeiliSearch 설정
-│   │   └── swaggerConfig.js # Swagger 설정
-│   ├── controllers/ # 컨트롤러 파일들
-│   │   ├── animeController.js # 애니메이션 관련 컨트롤러
-│   │   ├── authController.js # 인증 관련 컨트롤러
-│   │   ├── pickController.js # 선택 관련 컨트롤러
-│   │   ├── recommendController.js # 추천 관련 컨트롤러
-│   │   └── userController.js # 사용자 관련 컨트롤러
-│   ├── middleware/ # 미들웨어 파일들
-│   │   ├── authMiddleware.js # 인증 미들웨어
-│   │   └── multer.js # 파일 업로드 미들웨어
-│   ├── models/ # 모델 파일들
-│   │   ├── AniGenre.js # 애니메이션 장르 모델
-│   │   ├── AnilistAnime.js # AniList 애니메이션 모델
-│   │   ├── Anime.js # 애니메이션 모델
-│   │   ├── AniStaff.js # 애니메이션 스태프 모델
-│   │   ├── AniTag.js # 애니메이션 태그 모델
-│   │   ├── associations.js # 모델 간 연관 관계
-│   │   ├── Genre.js # 장르 모델
-│   │   ├── index.js # 모델 인덱스 파일
-│   │   ├── RecommendationCluster.js # 추천 클러스터 모델
-│   │   ├── Review.js # 리뷰 모델
-│   │   ├── Staff.js # 스태프 모델
-│   │   ├── Tag.js # 태그 모델
-│   │   ├── User.js # 사용자 모델
-│   │   ├── UserClusterPreference.js # 사용자 클러스터 선호도 모델
-│   │   ├── UserRatedAnime.js # 사용자 애니메이션 평가 모델
-│   │   └── WithdrawnUser.js # 탈퇴 사용자 모델
-│   ├── routes/ # 라우트 파일들
-│   │   ├── animeRoutes.js # 애니메이션 관련 라우트
-│   │   ├── authRoutes.js # 인증 관련 라우트
-│   │   ├── pickRoutes.js # 선택 관련 라우트
-│   │   ├── recommendRoutes.js # 추천 관련 라우트
-│   │   └── userRoutes.js # 사용자 관련 라우트
-│   ├── services/ # 서비스 파일들
-│   │   ├── animeService.js # 애니메이션 관련 서비스
-│   │   ├── authService.js # 인증 관련 서비스
-│   │   ├── pickService.js # 선택 관련 서비스
-│   │   ├── recommendService.js # 추천 관련 서비스
-│   │   └── s3Service.js # AWS S3 관련 서비스
-│   ├── utils/ # 유틸리티 파일들
-│   │   ├── animeFormatting.js # 애니메이션 포맷팅 유틸리티
-│   │   └── animeTranslate.js # 애니메이션 번역 유틸리티
-│   ├── app.js # Express 앱 설정
-│   └── server.js # 서버 시작 파일
-├── .env # 환경 변수 파일
-├── package-lock.json # 패키지 버전 잠금 파일
-└── package.json # 프로젝트 설정 및 종속성 정의
+│   ├── saveAnimeData.js                  # 애니메이션 데이터를 AniList API에서 불러와 저장하는 스크립트
+│   ├── translateGenres.js                # 장르 번역 스크립트
+│   └── translateTags.js                  # 태그 번역 스크립트
+├── src/                                  # 소스 코드
+│   ├── config/                           # 설정 파일들
+│   │   ├── appConfig.js                  # 앱 설정
+│   │   ├── authConfig.js                 # 인증 및 소셜 로그인 전략 설정
+│   │   ├── config.js                     # 일반 설정
+│   │   ├── dbConfig.js                   # 데이터베이스 설정
+│   │   ├── meiliConfig.js                # MeiliSearch 설정
+│   │   └── swaggerConfig.js              # Swagger 설정
+│   ├── controllers/                      # 컨트롤러 파일들
+│   │   ├── animeController.js            # 애니메이션 관련 컨트롤러
+│   │   ├── authController.js             # 인증 관련 컨트롤러
+│   │   ├── pickController.js             # 픽하기 관련 컨트롤러
+│   │   ├── recommendController.js        # 추천 관련 컨트롤러
+│   │   └── userController.js             # 회원 정보 관련 컨트롤러
+│   ├── middleware/                       # 미들웨어 파일들
+│   │   ├── authMiddleware.js             # 인증 미들웨어
+│   │   └── multer.js                     # 파일 업로드 미들웨어
+│   ├── models/                           # 모델 파일들
+│   │   ├── AniGenre.js                   # 애니메이션-장르 모델
+│   │   ├── AnilistAnime.js               # AniList 아이디 조회를 위한 모델
+│   │   ├── Anime.js                      # 애니메이션 모델
+│   │   ├── AniStaff.js                   # 애니메이션 스태프 모델
+│   │   ├── AniTag.js                     # 애니메이션-태그 모델
+│   │   ├── associations.js               # 모델 간 연관 관계
+│   │   ├── Genre.js                      # 장르 모델
+│   │   ├── index.js                      # 모델 인덱스 파일(내보내기)
+│   │   ├── RecommendationCluster.js      # 추천 클러스터 모델
+│   │   ├── Review.js                     # 리뷰 모델(2차 개발)
+│   │   ├── Staff.js                      # 스태프 모델
+│   │   ├── Tag.js                        # 태그 모델
+│   │   ├── User.js                       # 사용자 모델
+│   │   ├── UserClusterPreference.js      # 사용자 선호 정보를 저장하는 모델
+│   │   ├── UserRatedAnime.js             # 사용자가 평가/픽하기한 애니메이션 정보를 저장하는 모델
+│   │   └── WithdrawnUser.js              # 탈퇴 회원 모델
+│   ├── routes/                           # 라우트 파일들
+│   │   ├── animeRoutes.js                # 애니메이션 관련 라우트
+│   │   ├── authRoutes.js                 # 인증 관련 라우트
+│   │   ├── pickRoutes.js                 # 픽하기 관련 라우트
+│   │   ├── recommendRoutes.js            # 추천 관련 라우트
+│   │   └── userRoutes.js                 # 회원 정보 관련 라우트
+│   ├── services/                         # 서비스 파일들
+│   │   ├── animeService.js               # 애니메이션 관련 서비스
+│   │   ├── authService.js                # 인증 관련 서비스
+│   │   ├── pickService.js                # 픽하기 관련 서비스
+│   │   ├── recommendService.js           # 추천 관련 서비스
+│   │   └── s3Service.js                  # AWS S3 관련 서비스
+│   ├── utils/                            # 유틸리티 파일들
+│   │   ├── animeFormatting.js            # 애니메이션 정보 포맷팅 유틸리티
+│   │   └── animeTranslate.js             # 애니메이션 번역 유틸리티
+│   ├── app.js                            # Express 앱 설정
+│   └── server.js                         # 서버 시작 파일
+├── .env                                  # 환경 변수 파일
+├── package-lock.json                     # 패키지 버전 잠금 파일
+└── package.json                          # 프로젝트 설정 및 종속성 정의
 ```
 
 </details>
@@ -354,4 +354,3 @@ backend/ # 백엔드 관련 파일들
 | **chore**    | 빌드 업무 수정, 패키지 매니저 수정 (gitignore 수정 등)                 |
 | **rename**   | 파일 혹은 폴더명을 수정만 한 경우                                      |
 | **remove**   | 파일을 삭제만 한 경우                                                  |
-| ------------ | ---------------------------------------------------------------------  |

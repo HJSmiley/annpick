@@ -16,10 +16,10 @@
 
 ```markdown
 1. Recommendation MVP : 취향 분석 및 추천 기능
-2. Information MVP : 애니메이션 정보 제공
-3. Search MVP : 제목, 장르, 태그로 애니 검색
-4. Rating MVP : 평점 저장 및 북마크(픽하기) 기능
-5. User MVP : 로그인, 회원가입, 회원정보 수정, 회원 탈퇴
+2. User MVP : 로그인, 회원가입, 회원정보 수정, 회원 탈퇴
+3. Rating MVP : 평점 저장 및 북마크(픽하기) 기능
+4. Information MVP : 애니메이션 정보 제공
+5. Search MVP : 제목, 장르, 태그로 애니 검색
 ```
 
 ### 3. 프로젝트 팀원
@@ -285,7 +285,7 @@ backend/                                  # 백엔드 관련 파일들
 
 ## 개발 문서
 
-[설치 및 실행](/docs/installation.md)
+[설치 및 실행](/docs/setup.md)
 
 [WBS](https://docs.google.com/spreadsheets/d/10T6W1k2AkRwmw0QwMH2H5F0rfvRBhQ6vu44VWWv_7-U/edit?usp=sharing)
 

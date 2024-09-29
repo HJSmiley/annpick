@@ -42,7 +42,6 @@ export const tagCategories: TagCategory[] = [
       "요정",
       "마법소녀",
       "마스코트",
-      "닌자",
       "아이돌",
       "블론디",
       "쇼타",
@@ -51,7 +50,6 @@ export const tagCategories: TagCategory[] = [
       "불량배",
       "아가씨",
       "집사",
-      "메이드",
       "왕",
       "여왕",
       "공주",
@@ -59,7 +57,6 @@ export const tagCategories: TagCategory[] = [
       "트랩",
       "표선",
       "무사",
-      "사무라이",
     ],
   },
   {

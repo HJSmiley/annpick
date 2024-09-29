@@ -181,6 +181,12 @@ const Home: React.FC = () => {
                 onRatingClick={handleRatingClick}
                 isModalOpen={isModalOpen}
               />
+              {index === 1 && (
+                // 두 번째 섹션 아래에 stripbanner.svg 추가
+                <div className="mt-8">
+                  <img src="/images/stripbanner.svg" alt="Strip Banner" />
+                </div>
+              )}
             </div>
           ))}
         </div>

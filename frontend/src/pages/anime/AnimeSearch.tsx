@@ -254,6 +254,16 @@ const SearchGrid: React.FC = () => {
     }
   };
 
+  // 랜덤 정렬을 위한 함수
+  const shuffleArray = (array: AnimeData[]) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   const fetchRandomAnimes = useCallback(async () => {
     try {
       setLoading(true);
@@ -278,7 +288,7 @@ const SearchGrid: React.FC = () => {
       }
 
       const data = await response.json();
-      setRandomAnimes(data);
+      setRandomAnimes(shuffleArray(data)); // 랜덤하게 섞은 결과를 저장
     } catch (error) {
       console.error("랜덤 애니메이션 가져오기 오류:", error);
       setError("랜덤 애니메이션을 불러오는 데 실패했습니다.");

@@ -14,7 +14,7 @@ export const tagCategories: TagCategory[] = [
       "귀여운 남자아이들",
       "귀여운 여자아이들",
       "아동",
-      "양상불 캐스트",
+      "앙상블 캐스트",
     ],
   },
   {

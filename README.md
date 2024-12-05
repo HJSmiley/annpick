@@ -1,6 +1,5 @@
 # AnnPick
-
-> 취향을 기반으로 애니메이션을 추천해 드립니다.
+취향을 기반으로 애니메이션을 추천해 드립니다.
 
 ![annpick](/frontend/public/images/Banner.png)
 

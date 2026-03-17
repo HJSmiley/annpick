@@ -3,7 +3,7 @@
 
 ![annpick](/frontend/public/images/Banner.png)
 
-[바로가기](https://annpick.link)
+[바로가기](https://annpick.daraerang.com)
 
 ## 프로젝트 개요
 
@@ -290,7 +290,7 @@ backend/                                  # 백엔드 관련 파일들
 
 [테이블 정의서](https://docs.google.com/spreadsheets/d/1abxsR-jKPNRI4qfe9dXE0NrXWX4AAo1sC5M0-JlBaVM/edit?gid=629411476#gid=629411476)
 
-[API 명세서](http://43.203.213.200/api-docs/)
+[API 명세서](http://ec2-32-236-0-161.ap-southeast-2.compute.amazonaws.com:8000/api-docs/)
 
 [팀 노션](https://www.notion.so/adapterz/3-8675874bc9ea4b4bb8e6964eda02a429?pvs=4)
 

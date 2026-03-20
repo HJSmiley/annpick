@@ -20,17 +20,17 @@ const PromotionBanner: React.FC = () => {
     },
     {
       imageUrl: "/images/banner-img-run.png",
-      link: "/anime/3391",
+      link: "/anime/3373",
       title: "프로모션 2",
     },
     {
       imageUrl: "/images/banner-img-ayakashi.png",
-      link: "/anime/318",
+      link: "/anime/769",
       title: "프로모션 3",
     },
     {
       imageUrl: "/images/banner-img-horimiya.png",
-      link: "/anime/2915",
+      link: "/anime/2901",
       title: "프로모션 4",
     },
   ];
